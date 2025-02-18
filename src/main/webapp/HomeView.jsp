@@ -27,7 +27,7 @@
     <body>
         <!-- Header -->
         <jsp:include page="Header.jsp"></jsp:include>
-            
+
             <div class="container-fluid">
                 <!-- Thanh tìm kiếm và menu trong cùng một form -->
                 <form action="home-search" method="GET">
@@ -43,11 +43,11 @@
 
                 <!-- Product Section + Cart -->
                 <div class="container my-5">
-                    <!-- Menu -->
+                    <!-- Categories -->
                     <div class="menu-nav">
                         <a href="home" class="col-md">Tất cả</a>
-                    <c:forEach items="${requestScope.categorys}" var="c">
-                        <a href="home?categoryid=${c.id}&index=${i}" class="col-md ${param.categoryid == c.id ? 'active' : ''}">${c.name}</a>
+                    <c:forEach items="${requestScope.categories}" var="c">
+                        <a href="home?categoryid=${c.categoryID}&index=${i}" class="col-md ${param.categoryID == c.categoryID ? 'active' : ''}">${c.categoryName}</a>
                     </c:forEach>
 
                 </div>
@@ -97,36 +97,31 @@
                     <!-- Phần sản phẩm -->
                     <div class="col-md-9">
                         <div class="row g-4">
-                            <c:forEach items="${requestScope.products}" var="p">
+                            <c:forEach items="${requestScope.foods}" var="f">
                                 <c:set var="quantity" value="1" /> <!-- Số lượng mặc định -->
                                 <c:forEach items="${cartlists}" var="item">
-                                    <c:if test="${item.product.id == p.id}">
+                                    <c:if test="${item.product.id == f.id}">
                                         <c:set var="quantity" value="${item.quantity + 1}" /> <!-- Nếu đã có trong giỏ hàng, cộng thêm 1 -->
                                     </c:if>
                                 </c:forEach>
 
                                 <div class="col-sm-12 col-md-6 col-lg-3">
                                     <div class="card product-card">
-                                        <a href="product-detail?pro_id=${p.id}">
-                                            <img src="${p.imageUrl != null ? p.imageUrl : 'default-image.jpg'}" class="card-img-top" alt="${p.name}">
+                                        <a href="product-detail?pro_id=${f.foodID}">
+                                            <img src="${f.image != null ? p.image : 'default-image.jpg'}" class="card-img-top" alt="${f.foodName}">
                                         </a>
                                         <div class="card-body">
-                                            <a style="text-decoration: none" href="product-detail?pro_id=${p.id}">
-                                                <h5 class="card-title">${p.name}</h5>
+                                            <a style="text-decoration: none" href="product-detail?pro_id=${f.foodID}">
+                                                <h5 class="card-title">${f.foodName}</h5>
                                             </a>
-                                            <p class="card-text">${p.price}</p>
+                                            <p class="card-text">${f.price}</p>
+
                                             <!-- Thay đổi nút Đặt Món thành một form -->
                                             <form action="updateCart" method="post" style="display:inline;">
-                                                <input type="hidden" name="productId" value="${p.id}">
+                                                <input type="hidden" name="productId" value="${f.foodID}">
                                                 <input type="hidden" name="quantity" value="${quantity}"> <!-- Sử dụng số lượng đã tính -->
-                                                <c:if test="${p.quantity > 0}">
-                                                    <button type="submit" class="btn btn-primary">Đặt Món</button>
-                                                </c:if>
-                                                <c:if test="${p.quantity <= 0}">
-                                                    <buttonlass="btn btn-primary">Hết Hàng</button>
 
-                                                    </c:if>
-
+                                                <button type="submit" class="btn btn-primary">Đặt Món</button>
                                             </form>
                                         </div>
                                     </div>

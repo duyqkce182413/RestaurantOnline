@@ -69,7 +69,8 @@
     <servlet-mapping>
         <servlet-name>FoodController</servlet-name>
         <url-pattern>/foodcontroller</url-pattern>
-        <url-pattern>/list-of-foods-for-guest</url-pattern>
+        <url-pattern>/all</url-pattern>
+        <url-pattern>/view-food-detail</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>IngredientController</servlet-name>

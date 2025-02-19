@@ -17,7 +17,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="home">Trang Chủ</a>
+                    <a class="nav-link" href="all">Trang Chủ</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="introduction.jsp">Giới Thiệu</a>

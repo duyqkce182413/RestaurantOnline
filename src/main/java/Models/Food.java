@@ -16,11 +16,12 @@ public class Food {
     private String description;
     private String image;
     private boolean available;
+    private int quantity;
 
     public Food() {
     }
 
-    public Food(int foodID, String foodName, double price, int categoryID, String description, String image, boolean available) {
+    public Food(int foodID, String foodName, double price, int categoryID, String description, String image, boolean available, int quantity) {
         this.foodID = foodID;
         this.foodName = foodName;
         this.price = price;
@@ -28,6 +29,7 @@ public class Food {
         this.description = description;
         this.image = image;
         this.available = available;
+        this.quantity = quantity;
     }
 
     public int getFoodID() {
@@ -86,10 +88,18 @@ public class Food {
         this.available = available;
     }
 
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
     @Override
     public String toString() {
-        return "Food{" + "foodID=" + foodID + ", foodName=" + foodName + ", price=" + price + ", categoryID=" + categoryID + ", description=" + description + ", image=" + image + ", available=" + available + '}';
-    }
+        return "Food{" + "foodID=" + foodID + ", foodName=" + foodName + ", price=" + price + ", categoryID=" + categoryID + ", description=" + description + ", image=" + image + ", available=" + available + ", quantity=" + quantity + '}';
+    }   
     
     
 }

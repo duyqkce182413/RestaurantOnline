@@ -55,7 +55,12 @@ public class CartController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String action = request.getServletPath();
+        switch (action) {
+            case "/view-cart":
+                getCart(request, response);
+                break;
+        }
     }
 
     /**
@@ -82,4 +87,8 @@ public class CartController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    protected void getCart(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
 }

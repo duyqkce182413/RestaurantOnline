@@ -64,8 +64,11 @@ public class FoodController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getServletPath();
         switch (action) {
-            case "/list-of-foods-for-guest":
+            case "/all":
                 getAllFoods(request, response);
+                break;
+            case "/view-food-detail":
+                viewFoodDetail(request, response);
                 break;
             default:
                 getAllFoods(request, response);
@@ -118,7 +121,6 @@ public class FoodController extends HttpServlet {
 //            list = new ArrayList<>(); // Nếu chưa đăng nhập, tạo danh sách giỏ hàng trống
 //        }
 //        request.setAttribute("cartlists", list);
-
         FoodDAO dao = new FoodDAO();
         List<Category> categories = dao.selectAllCategories();
 
@@ -152,13 +154,22 @@ public class FoodController extends HttpServlet {
         if (categories == null) {
             categories = new ArrayList<>(); // Tránh NullPointerException nếu không có danh mục
         }
-        
         System.out.println(foods);
-        System.out.println(categories);
         request.setAttribute("currentPage", index);
         request.setAttribute("endPage", endPage);
         request.setAttribute("foods", foods);
         request.setAttribute("categories", categories);
         request.getRequestDispatcher("HomeView.jsp").forward(request, response);
+    }
+
+    protected void viewFoodDetail(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String foodID = request.getParameter("foodID");
+        FoodDAO dao = new FoodDAO();
+        
+        Food food = dao.getProductBYID(foodID);
+ 
+        request.setAttribute("food_detail", food);
+        request.getRequestDispatcher("FoodDetailView.jsp").forward(request, response);
     }
 }

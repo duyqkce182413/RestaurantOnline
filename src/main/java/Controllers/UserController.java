@@ -110,7 +110,7 @@ public class UserController extends HttpServlet {
             if (user.getRole().equalsIgnoreCase("Admin")) {
                 request.getRequestDispatcher("view-users").forward(request, response);
             } else {
-                response.sendRedirect("HomeView.jsp");
+                response.sendRedirect("all");
             }
         }
     }

@@ -62,8 +62,9 @@ public class FoodDAO extends DBContext {
                 String description = rs.getString("Description");
                 String imageUrl = rs.getString("image");
                 boolean available = rs.getBoolean("available");
-
-                FoodList.add(new Food(id, name, price, catId, description, imageUrl, available));
+                int quantity = rs.getInt("quantity");
+                
+                FoodList.add(new Food(id, name, price, catId, description, imageUrl, available, quantity));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -100,5 +101,27 @@ public class FoodDAO extends DBContext {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public Food getProductBYID(String id) {
+        String sql = "select * from Foods\n"
+                + "where FoodID = ?";
+        try ( Connection connection = new DBContext().getConnection();  PreparedStatement prepareStatement = connection.prepareStatement(sql);) {
+            prepareStatement.setString(1, id);
+            ResultSet pr = prepareStatement.executeQuery();
+            while (pr.next()) {
+                return new Food(pr.getInt(1),
+                        pr.getString(2),
+                        pr.getDouble(3),
+                        pr.getInt(4),
+                        pr.getString(5),
+                        pr.getString(6),
+                        pr.getBoolean(7),
+                        pr.getInt(8));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
     }
 }

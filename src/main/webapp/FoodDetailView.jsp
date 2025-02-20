@@ -151,13 +151,13 @@
                     <p class="food-price">${food_detail.price} VND</p>
 
                     <!-- Quantity and Add to Cart -->
-                    <form action="ProductDetailController" method="post"> <!-- Đổi action thành 'cart' để gửi đến CartController -->
+                    <form action="add-to-cart" method="get"> <!-- Đổi action thành 'cart' để gửi đến CartController -->
                         <div class="form-group">
                             <label for="quantity">Số Lượng:</label>
-                            <input type="number" id="quantity" name="quantity" class="form-control quantity" min="1" value="1">
+                            <input type="number" id="quantity" name="quantity" class="form-control quantity" min="1" value="1" max="${food_detail.quantity}">
                         </div>
 
-                        <input type="hidden" name="productId" value="${food_detail.foodID}"> <!-- ID của món ăn -->
+                        <input type="hidden" name="foodId" value="${food_detail.foodID}"> <!-- ID của món ăn -->
                         <c:if test="${food_detail.quantity > 0}">
                             <p>Còn lại: ${food_detail.quantity}</p> 
                             <button type="submit" class="btn btn-cart mt-3 text-white">Thêm Vào Giỏ Hàng</button>

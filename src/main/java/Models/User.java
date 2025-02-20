@@ -20,7 +20,7 @@ public class User {
     private Date dateOfBirth;
     private String gender;
     private String avatar;
-    private Date createAt;
+    private Date createdAt;
     private String status;
     private String role;
 
@@ -37,7 +37,7 @@ public class User {
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.avatar = avatar;
-        this.createAt = createAt;
+        this.createdAt = createAt;
         this.status = status;
         this.role = role;
     }
@@ -115,11 +115,11 @@ public class User {
     }
 
     public Date getCreateAt() {
-        return createAt;
+        return createdAt;
     }
 
     public void setCreateAt(Date createAt) {
-        this.createAt = createAt;
+        this.createdAt = createAt;
     }
 
     public String getStatus() {
@@ -140,7 +140,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" + "userID=" + userID + ", username=" + username + ", fullName=" + fullName + ", email=" + email + ", passwordHash=" + passwordHash + ", phoneNumber=" + phoneNumber + ", dateOfBirth=" + dateOfBirth + ", gender=" + gender + ", avatar=" + avatar + ", createAt=" + createAt + ", status=" + status + ", role=" + role + '}';
+        return "User{" + "userID=" + userID + ", username=" + username + ", fullName=" + fullName + ", email=" + email + ", passwordHash=" + passwordHash + ", phoneNumber=" + phoneNumber + ", dateOfBirth=" + dateOfBirth + ", gender=" + gender + ", avatar=" + avatar + ", createAt=" + createdAt + ", status=" + status + ", role=" + role + '}';
     }
 
 }

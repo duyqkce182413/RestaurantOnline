@@ -57,6 +57,9 @@
     <servlet-mapping>
         <servlet-name>CartController</servlet-name>
         <url-pattern>/cartcontroller</url-pattern>
+        <url-pattern>/view-cart</url-pattern>
+        <url-pattern>/add-to-cart</url-pattern>
+        <url-pattern>/update-cart</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CategoryController</servlet-name>

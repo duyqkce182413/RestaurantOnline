@@ -10,9 +10,9 @@
         <title>Shopping Cart</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-        
+
         <link rel="stylesheet" href="./CSS/HeaderAndFooter_CSS.css">
-        
+
         <script src="./JS/header-script.js"></script>
 
         <style>
@@ -166,7 +166,7 @@
             <div class="container my-5">
                 <h3 class="text-center mb-4">Giỏ Hàng Của Bạn</h3>
                 <div class="cart-table">
-                    <form action="updateCart" method="post" id="cartForm">
+                    <form action="update-cart" method="get" id="cartForm">
                         <input type="hidden" name="action" value="update">
                         <table class="table table-striped">
                             <thead>
@@ -181,32 +181,38 @@
                             </thead>
                             <tbody>
 
-                            <c:forEach items="${cartlists}" var="cartlists">
+                            <c:forEach items="${cartItems}" var="cartItems">
 
                                 <tr>
-                                    <td class="product-name" >${cartlists.getProduct().name}</td>
-                                    <td><img style="width: 100px" src="${cartlists.getProduct().imageUrl}" alt="${cartlists.getProduct().name}"/></td>
+                                    <td class="product-name" >${cartItems.getFood().foodName}</td>
+<!--                                    <input type="hidden" name="foodId" value="${cartItems.getFood().foodID}">-->
+
+                                    <td><img style="width: 100px" src="${cartItems.getFood().image}" alt="${cartItems.getFood().foodName}"/></td>
                                     <td>
                                         <div class="quantity-control">
                                             <button type="button" class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
 
                                             <input type="number" name="quantity" class="quantity-input" 
-                                                   value="${cartlists.quantity}" min="1"
-                                                   data-price="${cartlists.getProduct().price}"
+                                                   value="${cartItems.getCart().quantity}" min="1"
+                                                   data-price="${cartItems.getFood().price}"
                                                    onchange="updateRowTotal(this)">
 
                                             <button type="button" class="quantity-btn" onclick="increaseQuantity(this)">+</button>
                                         </div>
                                     </td>
-                                    <td class="price">${cartlists.getProduct().price}</td>
-                                    <td class="row-total"></td>
-                                    <td>
-                                        <input type="hidden" name="productId" value="${cartlists.getProduct().id}">
-                                        <a href="javascript:void(0)" onclick="removeItem(this, ${cartlists.getProduct().id})"><i class="fa-solid fa-trash"></i></a>
-                                    </td>
-                                </tr>
+                                    <td class="price">${cartItems.getFood().price}</td>
+                                    <td class="row-total">${cartItems.getFood().price*cartItems.getCart().quantity}</td>
+<!--                            <input type="hidden" name="foodId" value="${cartItems.getFood().foodID}">-->
+                            <td>
+                                <input type="hidden" name="foodId" value="${cartItems.getFood().foodID}">
+                                <a href="javascript:void(0)" onclick="removeItem(this, ${cartItems.getFood().foodID})">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
 
-                            </c:forEach>
+                            </td>
+                            </tr>
+
+                        </c:forEach>
 
                         </tbody>
 
@@ -230,7 +236,7 @@
 
 
                 <div class="cart-actions">
-                    <a href="getallp    roduct" class="btn btn-primary">Tiếp Tục Mua</a>
+                    <a href="all" class="btn btn-primary">Tiếp Tục Mua</a>
                     <form action="checkout" method="post" style="display: inline;">
                         <button type="submit" class="btn btn-success paybtn" style="border-radius: 20px">Thanh Toán</button>
                     </form>

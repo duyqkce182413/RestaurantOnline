@@ -72,7 +72,6 @@
     <body>
         <jsp:include page="Dashboard_Header.jsp"></jsp:include>
 
-
             <div class="wrapper clearfix">
                 <!-- Sidebar -->
                 <jsp:include page="Dashboard_Sidebar.jsp"></jsp:include>

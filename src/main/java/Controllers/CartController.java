@@ -4,12 +4,19 @@
  */
 package Controllers;
 
+import DAO.CartDAO;
+import DAO.FoodDAO;
+import Models.CartItem;
+import Models.Food;
+import Models.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  *
@@ -34,7 +41,7 @@ public class CartController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CartController</title>");            
+            out.println("<title>Servlet CartController</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet CartController at " + request.getContextPath() + "</h1>");
@@ -59,6 +66,11 @@ public class CartController extends HttpServlet {
         switch (action) {
             case "/view-cart":
                 getCart(request, response);
+            case "/add-to-cart":
+                addToCart(request, response);
+                break;
+            case "/update-cart":
+                updateCart(request, response);
                 break;
         }
     }
@@ -89,6 +101,86 @@ public class CartController extends HttpServlet {
 
     protected void getCart(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            // Nếu acc là null, chuyển hướng đến trang đăng nhập hoặc trang lỗi
+            response.sendRedirect("LoginView.jsp"); // hoặc trang khác phù hợp
+            return;
+        }
+        FoodDAO foodDAO = new FoodDAO();
+        CartDAO cartDAO = new CartDAO();
+        int id = user.getUserID();
+
+        List<CartItem> cartItems = cartDAO.getcart(id);
+
+        request.setAttribute("cartItems", cartItems);
+        //request.setAttribute("productsList", productsList);
+        request.getRequestDispatcher("CartView.jsp").forward(request, response);
     }
+
+    protected void addToCart(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        int userId = user.getUserID();
+        int productId = Integer.parseInt(request.getParameter("foodId"));
+        int quantity = Integer.parseInt(request.getParameter("quantity"));
+
+        CartDAO dao = new CartDAO();
+
+        // Kiểm tra nếu sản phẩm đã có trong giỏ hàng
+        if (dao.isFoodInCart(userId, productId)) {
+            // Nếu đã có, cập nhật số lượng bằng cách cộng thêm số lượng mới
+            int quantityOfExistingItem = dao.getQuantityOfExistingCartItem(userId, productId);
+            int newQuantity = quantityOfExistingItem + quantity;
+            dao.updateCartItemQuantity(userId, productId, newQuantity);
+        } else {
+            // Nếu chưa có, thêm sản phẩm vào giỏ hàng
+            dao.addCartItem(userId, productId, quantity);
+        }
+
+        // Gọi phương thưc getCart
+        getCart(request, response);
+    }
+
+    protected void updateCart(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            // Nếu acc là null, chuyển hướng đến trang đăng nhập hoặc trang lỗi
+            response.sendRedirect("LoginView.jsp"); // hoặc trang khác phù hợp
+            return;
+        }
+
+        CartDAO dao = new CartDAO();
+        int userId = user.getUserID();
+        String[] foodIds = request.getParameterValues("foodId");
+        String[] quantities = request.getParameterValues("quantity");
+        String removeProductIdStr = request.getParameter("removeProductId");
+        
+        System.out.println(quantities);
+        if (removeProductIdStr != null) {
+            int removeProductId = Integer.parseInt(removeProductIdStr);
+            dao.deleteCartItem(userId, removeProductId);
+        } else if (foodIds != null && quantities != null) {
+            // Thêm sản phẩm vào giỏ hàng hoặc cập nhật số lượng
+            for (int i = 0; i < foodIds.length; i++) {
+                int productId = Integer.parseInt(foodIds[i]);
+                int quantity = Integer.parseInt(quantities[i]);
+                // Kiểm tra nếu sản phẩm đã có trong giỏ hàng
+                if (dao.isFoodInCart(userId, productId)) {
+
+                    dao.updateCartItemQuantity(userId, productId, quantity);
+                } else {
+                    // Nếu chưa có, thêm sản phẩm vào giỏ hàng
+                    dao.addCartItem(userId, productId, quantity);
+                }
+            }
+        }
+        getCart(request, response);
+    }
+
 }

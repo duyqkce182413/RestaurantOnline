@@ -108,14 +108,12 @@ public class CartController extends HttpServlet {
             response.sendRedirect("LoginView.jsp"); // hoặc trang khác phù hợp
             return;
         }
-        FoodDAO foodDAO = new FoodDAO();
         CartDAO cartDAO = new CartDAO();
         int id = user.getUserID();
 
         List<CartItem> cartItems = cartDAO.getcart(id);
 
         request.setAttribute("cartItems", cartItems);
-        //request.setAttribute("productsList", productsList);
         request.getRequestDispatcher("CartView.jsp").forward(request, response);
     }
 

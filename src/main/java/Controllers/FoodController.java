@@ -4,6 +4,7 @@
  */
 package Controllers;
 
+import DAO.CategoryDAO;
 import DAO.FoodDAO;
 import Models.Category;
 import Models.Food;
@@ -172,4 +173,17 @@ public class FoodController extends HttpServlet {
         request.setAttribute("food_detail", food);
         request.getRequestDispatcher("FoodDetailView.jsp").forward(request, response);
     }
+    
+    protected void searchFood(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        FoodDAO dao = new FoodDAO();
+        String searchName = request.getParameter("search");
+        List<Food> products = dao.searchFoodsByName(searchName);
+        List<Category> categories = dao.selectAllCategories();
+                
+        request.setAttribute("products", products);
+        request.setAttribute("categorys", categories);
+        request.getRequestDispatcher("admin_product_crud.jsp").forward(request, response);
+    }
+    
 }

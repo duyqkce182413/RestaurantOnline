@@ -124,4 +124,38 @@ public class FoodDAO extends DBContext {
         }
         return null;
     }
+    
+    public List<Food> searchFoodsByName(String foodName) {
+        String sql = "SELECT * FROM Foods WHERE FoodName LIKE ?";
+        List<Food> FoodList = new ArrayList<>();
+        try ( Connection connection = new DBContext().getConnection();  PreparedStatement prepareStatement = connection.prepareStatement(sql);) {
+            prepareStatement.setString(1, "%" + foodName + "%");
+            ResultSet rs = prepareStatement.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("FoodID");
+                String name = rs.getString("FoodName");
+                double price = rs.getDouble("Price");
+                int catId = rs.getInt("CategoryID");
+                String description = rs.getString("Description");
+                String imageUrl = rs.getString("image");
+                boolean available = rs.getBoolean("available");
+                int quantity = rs.getInt("quantity");
+                
+                FoodList.add(new Food(id, name, price, catId, description, imageUrl, available, quantity));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null; 
+    }
+    
+    
+    
+    public static void main(String[] args) {
+        FoodDAO dao = new FoodDAO();
+        List<Food> list = dao.searchFoodsByName("Pizza");
+        for (Food food : list) {
+            System.out.println(food);
+        }
+    }
 }

@@ -74,6 +74,7 @@
         <url-pattern>/foodcontroller</url-pattern>
         <url-pattern>/all</url-pattern>
         <url-pattern>/view-food-detail</url-pattern>
+        <url-pattern>/search-food</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>IngredientController</servlet-name>

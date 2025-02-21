@@ -32,7 +32,7 @@
 
             <div class="container-fluid">
                 <!-- Thanh tìm kiếm và menu trong cùng một form -->
-                <form action="home-search" method="GET">
+                <form action="search-food" method="GET">
                     <div class="search-bar">
                         <div class="container">
                             <div class="d-flex justify-content-center">

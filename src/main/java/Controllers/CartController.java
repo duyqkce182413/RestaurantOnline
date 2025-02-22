@@ -66,6 +66,7 @@ public class CartController extends HttpServlet {
         switch (action) {
             case "/view-cart":
                 getCart(request, response);
+                break;
             case "/add-to-cart":
                 addToCart(request, response);
                 break;

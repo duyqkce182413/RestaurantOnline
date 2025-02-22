@@ -167,7 +167,6 @@
                 <h3 class="text-center mb-4">Giỏ Hàng Của Bạn</h3>
                 <div class="cart-table">
                     <form action="update-cart" method="get" id="cartForm">
-
                         <input type="hidden" name="action" value="update">
                         <table class="table table-striped">
                             <thead>
@@ -189,16 +188,13 @@
 <!--                                    <input type="hidden" name="foodId" value="${cartItems.getFood().foodID}">-->
 
                                     <td><img style="width: 100px" src="${cartItems.getFood().image}" alt="${cartItems.getFood().foodName}"/></td>
-
                                     <td>
                                         <div class="quantity-control">
                                             <button type="button" class="quantity-btn" onclick="decreaseQuantity(this)">-</button>
 
                                             <input type="number" name="quantity" class="quantity-input" 
-
                                                    value="${cartItems.getCart().quantity}" min="1"
                                                    data-price="${cartItems.getFood().price}"
-
                                                    onchange="updateRowTotal(this)">
 
                                             <button type="button" class="quantity-btn" onclick="increaseQuantity(this)">+</button>
@@ -217,7 +213,6 @@
                             </tr>
 
                         </c:forEach>
-
 
                         </tbody>
 
@@ -242,7 +237,6 @@
 
                 <div class="cart-actions">
                     <a href="all" class="btn btn-primary">Tiếp Tục Mua</a>
-
                     <form action="checkout" method="post" style="display: inline;">
                         <button type="submit" class="btn btn-success paybtn" style="border-radius: 20px">Thanh Toán</button>
                     </form>

@@ -36,6 +36,7 @@
                 text-transform: uppercase;
                 font-size: 18px;
             }
+
             .sidebar a {
                 color: white;
                 text-decoration: none;
@@ -93,7 +94,6 @@
                         <tr>
                             <th>ID</th>
                             <th>Category Name</th>
-
                             <th>Description</th>
                             <th>Actions</th>
                         </tr>

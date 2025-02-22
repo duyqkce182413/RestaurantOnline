@@ -65,7 +65,6 @@
                     </div>
                 </div>
                 <a href="view-cart" class="nav-link">
-
                     <i class="fa-solid fa-basket-shopping"></i>
                 </a>
             </div>

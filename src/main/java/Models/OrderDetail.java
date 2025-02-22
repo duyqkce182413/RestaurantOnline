@@ -10,15 +10,15 @@ package Models;
  */
 public class OrderDetail {
     private int orderDetailID;
-    private int orderID;
-    private int foodID;
+    private Order orderID;
+    private Food foodID;
     private int quantity;
     private double price;
 
     public OrderDetail() {
     }
 
-    public OrderDetail(int orderDetailID, int orderID, int foodID, int quantity, double price) {
+    public OrderDetail(int orderDetailID, Order orderID, Food foodID, int quantity, double price) {
         this.orderDetailID = orderDetailID;
         this.orderID = orderID;
         this.foodID = foodID;
@@ -34,19 +34,19 @@ public class OrderDetail {
         this.orderDetailID = orderDetailID;
     }
 
-    public int getOrderID() {
+    public Order getOrderID() {
         return orderID;
     }
 
-    public void setOrderID(int orderID) {
+    public void setOrderID(Order orderID) {
         this.orderID = orderID;
     }
 
-    public int getFoodID() {
+    public Food getFoodID() {
         return foodID;
     }
 
-    public void setFoodID(int foodID) {
+    public void setFoodID(Food foodID) {
         this.foodID = foodID;
     }
 

@@ -1,10 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Models;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -12,22 +9,26 @@ import java.util.Date;
  */
 public class Order {
     private int orderID;
-    private int userID;
+    private User user;
+    private Address address;
     private Date orderDate;
     private String status;
     private double totalAmount;
     private String paymentMethod;
+    private List<OrderDetail> orderDetail; // Sửa đúng chính tả
 
     public Order() {
     }
 
-    public Order(int orderID, int userID, Date orderDate, String status, double totalAmount, String paymentMethod) {
+    public Order(int orderID, User user, Address address, Date orderDate, String status, double totalAmount, String paymentMethod, List<OrderDetail> orderDetail) {
         this.orderID = orderID;
-        this.userID = userID;
+        this.user = user;
+        this.address = address;
         this.orderDate = orderDate;
         this.status = status;
         this.totalAmount = totalAmount;
         this.paymentMethod = paymentMethod;
+        this.orderDetail = orderDetail;
     }
 
     public int getOrderID() {
@@ -38,12 +39,20 @@ public class Order {
         this.orderID = orderID;
     }
 
-    public int getUserID() {
-        return userID;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public Date getOrderDate() {
@@ -78,10 +87,25 @@ public class Order {
         this.paymentMethod = paymentMethod;
     }
 
+    public List<OrderDetail> getOrderDetail() {
+        return orderDetail;
+    }
+
+    public void setOrderDetail(List<OrderDetail> orderDetail) {
+        this.orderDetail = orderDetail;
+    }
+
     @Override
     public String toString() {
-        return "Order{" + "orderID=" + orderID + ", userID=" + userID + ", orderDate=" + orderDate + ", status=" + status + ", totalAmount=" + totalAmount + ", paymentMethod=" + paymentMethod + '}';
+        return "Order{" + 
+                "orderID=" + orderID + 
+                ", user=" + user + 
+                ", address=" + address + 
+                ", orderDate=" + orderDate + 
+                ", status=" + status + 
+                ", totalAmount=" + totalAmount + 
+                ", paymentMethod=" + paymentMethod + 
+                ", orderDetail=" + orderDetail + 
+                '}';
     }
-    
-    
 }

@@ -10,7 +10,7 @@ package Models;
  */
 public class Address {
     private int addressID;
-    private int userID;
+    private User user;
     private String name;
     private String addressLine;
     private String city;
@@ -20,9 +20,9 @@ public class Address {
     public Address() {
     }
 
-    public Address(int addressID, int userID, String name, String addressLine, String city, String phoneNumber, boolean isDefault) {
+    public Address(int addressID, User user, String name, String addressLine, String city, String phoneNumber, boolean isDefault) {
         this.addressID = addressID;
-        this.userID = userID;
+        this.user = user;
         this.name = name;
         this.addressLine = addressLine;
         this.city = city;
@@ -38,12 +38,12 @@ public class Address {
         this.addressID = addressID;
     }
 
-    public int getUserID() {
-        return userID;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getName() {
@@ -78,7 +78,7 @@ public class Address {
         this.phoneNumber = phoneNumber;
     }
 
-    public boolean isIsDefault() {
+    public boolean isDefault() {
         return isDefault;
     }
 
@@ -88,9 +88,8 @@ public class Address {
 
     @Override
     public String toString() {
-        return "Address{" + "addressID=" + addressID + ", userID=" + userID + ", name=" + name + ", addressLine=" + addressLine + ", city=" + city + ", phoneNumber=" + phoneNumber + ", isDefault=" + isDefault + '}';
+        return "Address{" + "addressID=" + addressID + ", user=" + user + ", name=" + name + ", addressLine=" + addressLine + ", city=" + city + ", phoneNumber=" + phoneNumber + ", isDefault=" + isDefault + '}';
     }
-    
-    
+
     
 }

@@ -23,7 +23,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Custom CSS -->
         <link rel="stylesheet" href="./CSS/HeaderAndFooter_CSS.css">
-<!--        <link rel="stylesheet" href="./CSS/home.css">-->
+        <!--        <link rel="stylesheet" href="./CSS/home.css">-->
         <script src="./JS/header-script.js"></script>
 
         <style>
@@ -174,7 +174,7 @@
 
     <body>
         <jsp:include page="Header.jsp"></jsp:include>
-            <!-- Address Management Section -->
+
             <div class="container content">
                 <h3 class="text-center mb-4">Thông Tin Địa Chỉ</h3>
 
@@ -192,31 +192,31 @@
 
                     <!-- Address Cards -->
                     <div class="col-md-6">
-                    <c:forEach var="address" items="${listAddresses}">
-                        <div class="address-card ${address.isIs_default() ? 'default-address' : ''}">
-                            <div>
-                                <h5>${address.name} <c:if test="${address.isIs_default()}">(Địa chỉ mặc định)</c:if></h5>
-                                <p>Địa chỉ: ${address.addressLine}, ${address.city}</p>
-                                <p>Số điện thoại: ${address.phoneNumber}</p>
-                                <c:if test="${!address.isIs_default()}">
-                                    <a href="setDefaultAddress?id=${address.id}" class="btn btn-success">Đặt Làm Địa Chỉ Mặc Định</a>
-                                </c:if>
-                            </div>
-                            <div class="address-actions">
-                                <a href="updateAddress?id=${address.id}" class="btn btn-primary">
-                                    <i class="fa-solid fa-pen"></i> Sửa
-                                </a>
-                                <c:if test="${!address.isIs_default()}">
-                                    <a href="deleteAddress?id=${address.id}" class="btn btn-danger" onclick="return confirmDelete();">
-                                        <i class="fa-solid fa-trash"></i> Xóa
+                        <c:forEach var="address" items="${listAddresses}">
+                            <div class="address-card ${address.isDefault() ? 'default-address' : ''}">
+                                <div>
+                                    <h5>${address.name} <c:if test="${address.isDefault()}">(Địa chỉ mặc định)</c:if></h5>
+                                    <p>Địa chỉ: ${address.addressLine}, ${address.city}</p>
+                                    <p>Số điện thoại: ${address.phoneNumber}</p>
+                                    <c:if test="${!address.isDefault()}">
+                                        <a href="setDefaultAddress?id=${address.addressID}" class="btn btn-success">Đặt Làm Địa Chỉ Mặc Định</a>
+                                    </c:if>
+                                </div>
+                                <div class="address-actions">
+                                    <a href="updateAddress?id=${address.addressID}" class="btn btn-primary">
+                                        <i class="fa-solid fa-pen"></i> Sửa
                                     </a>
-                                </c:if>
+                                    <c:if test="${!address.isDefault()}">
+                                        <a href="deleteAddress?id=${address.addressID}" class="btn btn-danger" onclick="return confirmDelete();">
+                                            <i class="fa-solid fa-trash"></i> Xóa
+                                        </a>
+                                    </c:if>
+                                </div>
                             </div>
-                        </div>
-                    </c:forEach>
-                </div>
+                        </c:forEach>
+                    </div>
 
-                <!-- New Address Form -->
+
                 <!-- New Address Form -->
                 <div class="col-md-3">
                     <button class="btn btn-success mb-3" onclick="toggleAddressForm()">Nhập địa chỉ mới</button>
@@ -234,25 +234,24 @@
                         </form>
                     </div>
                 </div>
-
-
             </div>
         </div>
 
-        <!-- Footer -->
         <jsp:include page="Footer.jsp"></jsp:include>
 
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                        function toggleAddressForm() {
-                            var form = document.getElementById("newAddressForm");
-                            if (form.style.display === "none") {
-                                form.style.display = "block";
-                            } else {
-                                form.style.display = "none";
-                            }
-                        }
+            function toggleAddressForm() {
+                var form = document.getElementById("newAddressForm");
+                if (form.style.display === "none") {
+                    form.style.display = "block";
+                } else {
+                    form.style.display = "none";
+                }
+            }
+
+            function confirmDelete() {
+                return confirm("Bạn có chắc chắn muốn xóa địa chỉ này không?");
+            }
         </script>
     </body>
 

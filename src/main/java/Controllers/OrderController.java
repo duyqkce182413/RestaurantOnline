@@ -4,12 +4,17 @@
  */
 package Controllers;
 
+import DAO.OrderDAO;
+import Models.Order;
+import Models.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  *
@@ -55,7 +60,24 @@ public class OrderController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        //processRequest(request, response);
+        String action = request.getServletPath();
+
+        try {
+            switch (action) {
+                case "/listOrders":
+                    listOrders(request, response);
+                    break;
+                case "/cancelOrder":
+                    cancelOrder(request, response);
+                    break;
+                default:
+                    listOrders(request, response);
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -72,6 +94,50 @@ public class OrderController extends HttpServlet {
         processRequest(request, response);
     }
 
+    
+    // Hiển thị danh sách đơn hàng
+    private void listOrders(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("LoginView.jsp");
+            return;
+        }
+        
+        OrderDAO ordersDAO = new OrderDAO();
+        List<Order> orders = ordersDAO.getOrdersByUserId(user.getUserID());
+        request.setAttribute("listOrders", orders);
+        request.getRequestDispatcher("orders.jsp").forward(request, response);
+    }
+
+    // Hủy đơn hàng
+    private void cancelOrder(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        int orderId         = Integer.parseInt(request.getParameter("id"));
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("LoginView.jsp");
+            return;
+        }
+
+        OrderDAO ordersDAO = new OrderDAO();
+        Order order = ordersDAO.getOrderById(orderId);
+
+        if (order != null && "Chưa xử lý".equalsIgnoreCase(order.getStatus())) {
+            // Gọi phương thức deleteOrder để xóa đơn hàng
+            boolean isDeleted = ordersDAO.deleteOrder(orderId);
+            if (isDeleted) {
+                response.sendRedirect("listOrders?message=Order has been canceled successfully");
+            } else {
+                response.sendRedirect("listOrders?error=Order cannot be cancelled.");
+            }
+        } else {
+            response.sendRedirect("listOrders?error=Order cannot be cancelled.");
+        }
+    }
+    
     /**
      * Returns a short description of the servlet.
      *

@@ -182,5 +182,4 @@ public class CartController extends HttpServlet {
         }
         getCart(request, response);
     }
-
 }

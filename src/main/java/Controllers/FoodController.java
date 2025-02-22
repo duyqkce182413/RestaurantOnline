@@ -155,6 +155,7 @@ public class FoodController extends HttpServlet {
             categories = new ArrayList<>(); // Tránh NullPointerException nếu không có danh mục
         }
 
+
         request.setAttribute("currentPage", index);
         request.setAttribute("endPage", endPage);
         request.setAttribute("foods", foods);

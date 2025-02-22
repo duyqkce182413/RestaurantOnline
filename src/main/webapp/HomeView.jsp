@@ -142,9 +142,9 @@
                                         </div>
                                         <h5 id="modalFoodName" class="mt-3 text-center"></h5>
                                         <p id="modalFoodPrice" class="text-center"></p>
-
                                         <form action="add-to-cart" method="get">
                                             <input type="hidden" name="foodId" id="modalFoodID">
+
                                             <div class="mb-3">
                                                 <label for="quantityInput" class="form-label">Số lượng:</label>
                                                 <input type="number" name="quantity" id="quantityInput" class="form-control" value="1" min="1">

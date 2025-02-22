@@ -61,10 +61,16 @@
         <url-pattern>/add-to-cart</url-pattern>
         <url-pattern>/update-cart</url-pattern>
     </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>CategoryController</servlet-name>
         <url-pattern>/categorycontroller</url-pattern>
+        <url-pattern>/view-categories</url-pattern>
+        <url-pattern>/add-category</url-pattern>
+        <url-pattern>/edit-category</url-pattern>
+        <url-pattern>/delete-category</url-pattern>
     </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>FeedbackController</servlet-name>
         <url-pattern>/feedbackcontroller</url-pattern>
@@ -97,7 +103,7 @@
     </servlet-mapping>
     <session-config>
         <session-timeout>
-            30
+            1200
         </session-timeout>
     </session-config>
 </web-app>

@@ -109,14 +109,12 @@ public class CartController extends HttpServlet {
             response.sendRedirect("LoginView.jsp"); // hoặc trang khác phù hợp
             return;
         }
-        FoodDAO foodDAO = new FoodDAO();
         CartDAO cartDAO = new CartDAO();
         int id = user.getUserID();
 
         List<CartItem> cartItems = cartDAO.getcart(id);
 
         request.setAttribute("cartItems", cartItems);
-        //request.setAttribute("productsList", productsList);
         request.getRequestDispatcher("CartView.jsp").forward(request, response);
     }
 
@@ -142,8 +140,8 @@ public class CartController extends HttpServlet {
             dao.addCartItem(userId, productId, quantity);
         }
 
-        // Gọi phương thưc getCart
         getCart(request, response);
+
     }
 
     protected void updateCart(HttpServletRequest request, HttpServletResponse response)
@@ -161,7 +159,7 @@ public class CartController extends HttpServlet {
         String[] foodIds = request.getParameterValues("foodId");
         String[] quantities = request.getParameterValues("quantity");
         String removeProductIdStr = request.getParameter("removeProductId");
-        
+
         System.out.println(quantities);
         if (removeProductIdStr != null) {
             int removeProductId = Integer.parseInt(removeProductIdStr);

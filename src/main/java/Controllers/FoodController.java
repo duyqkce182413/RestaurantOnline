@@ -4,7 +4,9 @@
  */
 package Controllers;
 
+import DAO.CartDAO;
 import DAO.FoodDAO;
+import Models.CartItem;
 import Models.Category;
 import Models.Food;
 import Models.User;
@@ -70,6 +72,9 @@ public class FoodController extends HttpServlet {
             case "/view-food-detail":
                 viewFoodDetail(request, response);
                 break;
+            case "/search-food":
+                getFoodByName(request, response);
+                break;
             default:
                 getAllFoods(request, response);
                 break;
@@ -112,15 +117,17 @@ public class FoodController extends HttpServlet {
             categoryid = Integer.parseInt(categoryIdStr);
         }
 
-//        List<CartItem> list;
-//        if (acc != null) {
-//            CartDAO cartDAO = new CartDAO();
-//            int id = acc.getId();
-//            list = cartDAO.getcart(id);
-//        } else {
-//            list = new ArrayList<>(); // Nếu chưa đăng nhập, tạo danh sách giỏ hàng trống
-//        }
-//        request.setAttribute("cartlists", list);
+        CartDAO cartDAO = new CartDAO();
+        List<CartItem> cartItems;
+        if (user != null) {
+            int id = user.getUserID();
+            cartItems = cartDAO.getcart(id);
+        } else {
+            cartItems = new ArrayList<>();
+        }
+       
+        request.setAttribute("cartlists", cartItems);
+
         FoodDAO dao = new FoodDAO();
         List<Category> categories = dao.selectAllCategories();
 
@@ -165,10 +172,38 @@ public class FoodController extends HttpServlet {
             throws ServletException, IOException {
         String foodID = request.getParameter("foodID");
         FoodDAO dao = new FoodDAO();
-        
+
         Food food = dao.getProductBYID(foodID);
- 
+
         request.setAttribute("food_detail", food);
         request.getRequestDispatcher("FoodDetailView.jsp").forward(request, response);
+    }
+
+    protected void getFoodByName(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        CartDAO cartDAO = new CartDAO();
+        List<CartItem> cartItems;
+        if (user != null) {
+            int id = user.getUserID();
+            cartItems = cartDAO.getcart(id);
+        } else {
+            cartItems = new ArrayList<>();
+        }
+
+        for (CartItem cartItem : cartItems) {
+            System.out.println(cartItem);
+        }
+        request.setAttribute("cartlists", cartItems);
+
+        String nameInput = request.getParameter("search");
+        FoodDAO dao = new FoodDAO();
+        List<Food> foods = dao.selectProductByName(nameInput);
+        List<Category> categories = dao.selectAllCategories();
+        request.setAttribute("foods", foods);
+        request.setAttribute("categories", categories);
+        request.getRequestDispatcher("HomeView.jsp").forward(request, response);
     }
 }

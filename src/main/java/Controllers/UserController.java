@@ -23,7 +23,8 @@ import jakarta.servlet.http.HttpSession;
     "/delete-user",
     "/edit-user",
     "/view-user-detail",
-    "/login-with-username"
+    "/login-with-username",
+    "/logout"
 })
 public class UserController extends HttpServlet {
 
@@ -51,9 +52,10 @@ public class UserController extends HttpServlet {
             case "/delete-user":
                 deleteUser(request, response);
                 break;
-            default:
-                viewUsers(request, response);
+            case "/logout":
+                logout(request, response);
                 break;
+            
         }
     }
 
@@ -72,6 +74,7 @@ public class UserController extends HttpServlet {
             case "/edit-user":
                 editUser(request, response);
                 break;
+            
             default:
                 response.sendRedirect("view-users");
                 break;
@@ -228,5 +231,13 @@ public class UserController extends HttpServlet {
                 response.sendRedirect("all");
             }
         }
+    }
+    
+    private void logout(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession();
+        session.removeAttribute("user");
+        response.sendRedirect("all");
     }
 }

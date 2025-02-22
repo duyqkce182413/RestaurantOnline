@@ -32,7 +32,7 @@
 
             <div class="container-fluid">
                 <!-- Thanh tìm kiếm và menu trong cùng một form -->
-                <form action="home-search" method="GET">
+                <form action="search-food" method="GET">
                     <div class="search-bar">
                         <div class="container">
                             <div class="d-flex justify-content-center">
@@ -65,8 +65,8 @@
                                 <ul class="list-group">
                                     <c:forEach items="${cartlists}" var="item">
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            ${item.product.name} 
-                                            <span class="minicart-quantity badge bg-primary rounded-pill">${item.quantity}</span>
+                                            ${item.getFood().foodName}
+                                            <span class="minicart-quantity badge bg-primary rounded-pill">${item.getCart().quantity}</span>
                                         </li>
                                     </c:forEach>
                                 </ul>
@@ -75,7 +75,7 @@
 
                                 <!-- Duyệt qua từng item và tính tổng giá -->
                                 <c:forEach items="${cartlists}" var="item">
-                                    <c:set var="itemTotal" value="${item.quantity * item.product.price}" />
+                                    <c:set var="itemTotal" value="${item.getCart().quantity * item.getFood().price}" />
                                     <c:set var="totalPrice" value="${totalPrice + itemTotal}" />
                                 </c:forEach>
 
@@ -88,7 +88,7 @@
 
 
 
-                                <a href="cart" class="minicart-btn btn btn-secondary mt-3">Chỉnh sửa giỏ hàng</a>
+                                <a href="view-cart" class="minicart-btn btn btn-secondary mt-3">Chỉnh sửa giỏ hàng</a>
                             </c:if>
                             <c:if test="${empty cartlists}">
                                 <p>Giỏ hàng trống.</p>
@@ -100,12 +100,7 @@
                     <div class="col-md-9">
                         <div class="row g-4">
                             <c:forEach items="${requestScope.foods}" var="f">
-                                <c:set var="quantity" value="1" /> <!-- Số lượng mặc định -->
-                                <c:forEach items="${cartlists}" var="item">
-                                    <c:if test="${item.product.id == f.id}">
-                                        <c:set var="quantity" value="${item.quantity + 1}" /> <!-- Nếu đã có trong giỏ hàng, cộng thêm 1 -->
-                                    </c:if>
-                                </c:forEach>
+                                
 
                                 <div class="col-sm-12 col-md-6 col-lg-3">
                                     <div class="card product-card">

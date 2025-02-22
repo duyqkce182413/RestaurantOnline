@@ -63,7 +63,7 @@ public class FoodDAO extends DBContext {
                 String imageUrl = rs.getString("image");
                 boolean available = rs.getBoolean("available");
                 int quantity = rs.getInt("quantity");
-                
+
                 FoodList.add(new Food(id, name, price, catId, description, imageUrl, available, quantity));
             }
         } catch (SQLException e) {
@@ -124,4 +124,35 @@ public class FoodDAO extends DBContext {
         }
         return null;
     }
+
+    public List<Food> selectProductByName(String nameInput) {
+        List<Food> foods = new ArrayList<>();
+        String sql = "SELECT * FROM Foods WHERE FoodName LIKE ?;";
+        // Step 1: Establishing a Connection
+        try ( Connection connection = getConnection(); // Step 2:Create a statement using connection object
+                  PreparedStatement preparedStatement = connection.prepareStatement(sql);) {
+            preparedStatement.setString(1, "%" + nameInput + "%");
+            System.out.println(preparedStatement);
+            // Step 3: Execute the query or update query
+            ResultSet rs = preparedStatement.executeQuery();
+
+            // Step 4: Process the ResultSet object.
+            while (rs.next()) {
+                int id = rs.getInt("FoodID");
+                String name = rs.getString("FoodName");
+                double price = rs.getDouble("Price");
+                int categoryID = rs.getInt("CategoryID");
+                String description = rs.getString("Description");
+                String image = rs.getString("Image");
+                Boolean available = rs.getBoolean("available");
+                int quantity = rs.getInt("Quantity");
+                foods.add(new Food(id, name, price, categoryID, description, image, true, quantity));
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        return foods;
+    }
+    
 }

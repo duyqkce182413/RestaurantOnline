@@ -128,8 +128,4 @@ public class CartDAO extends DBContext {
         }
     }
 
-    public static void main(String[] args) {
-        CartDAO dao = new CartDAO();
-        System.out.println(dao.updateCartItemQuantity(1, 1, 4));
-    }
 }

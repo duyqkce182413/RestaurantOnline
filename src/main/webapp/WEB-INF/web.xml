@@ -55,8 +55,9 @@
         <url-pattern>/view-users</url-pattern>
         <url-pattern>/view-user-detail</url-pattern>
         <url-pattern>/add-user</url-pattern>
-        <url-pattern>/delete-user</url-pattern>
+        <url-pattern>/delete-user</url-pattern> 
         <url-pattern>/edit-user</url-pattern>
+        <url-pattern>/logout</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AddressController</servlet-name>
@@ -93,6 +94,7 @@
         <url-pattern>/foodcontroller</url-pattern>
         <url-pattern>/all</url-pattern>
         <url-pattern>/view-food-detail</url-pattern>
+        <url-pattern>/search-food</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>IngredientController</servlet-name>

@@ -1,5 +1,6 @@
 package Controllers;
 
+import DAO.FoodDAO;
 import DAO.UserDAO;
 import Models.User;
 import com.google.gson.Gson;
@@ -16,6 +17,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @WebServlet(name = "UserController", urlPatterns = {
     "/view-users",
@@ -54,8 +57,10 @@ public class UserController extends HttpServlet {
                 break;
             case "/logout":
                 logout(request, response);
+            case "user-detail":
+                getUser(request, response);
                 break;
-            
+
         }
     }
 
@@ -74,10 +79,8 @@ public class UserController extends HttpServlet {
             case "/edit-user":
                 editUser(request, response);
                 break;
-            
-            default:
-                response.sendRedirect("view-users");
-                break;
+            case "/update-user":
+                updateUser(request, response);
         }
     }
 
@@ -111,7 +114,7 @@ public class UserController extends HttpServlet {
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd")
                 .create();
-        
+
         PrintWriter out = response.getWriter();
         out.print(gson.toJson(user));
         out.flush();
@@ -232,12 +235,63 @@ public class UserController extends HttpServlet {
             }
         }
     }
-    
+
     private void logout(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
         session.removeAttribute("user");
         response.sendRedirect("all");
+    }
+
+    private void getUser(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int userId = Integer.parseInt(request.getParameter("id"));
+        User user = userDAO.getUserById(userId);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        // Cấu hình Gson để xử lý Date
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd")
+                .create();
+
+        PrintWriter out = response.getWriter();
+        out.print(gson.toJson(user));
+        out.flush();
+    }
+
+    private void updateUser(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        int userId = user.getUserID();
+        String fullName = request.getParameter("fullName");
+        String email = request.getParameter("email");
+        String phoneNumber = request.getParameter("phoneNumber");
+        String dateOfBirth = request.getParameter("dateOfBirth");
+        String gender = request.getParameter("gender");
+        String password = request.getParameter("password"); // Có thể hash mật khẩu nếu cần
+
+        LocalDate date = LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String formattedDate = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+
+        UserDAO userDAO = new UserDAO();
+        boolean success = userDAO.updateUser(userId, fullName, email, phoneNumber, formattedDate, gender, password);
+
+        if (success) {
+            request.getSession().setAttribute("updateMessage", "Cập nhật thông tin thành công!");
+        } else {
+            request.getSession().setAttribute("updateMessage", "Cập nhật thất bại. Vui lòng thử lại.");
+        }
+
+        User updatedUser = userDAO.getUserById(userId); // Lấy thông tin mới từ DB
+
+        // Cập nhật thông tin người dùng trong session
+        session.setAttribute("user", updatedUser);
+        response.sendRedirect("UserProfile.jsp");
+
     }
 }

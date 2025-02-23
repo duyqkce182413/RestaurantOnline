@@ -9,6 +9,7 @@ import Utils.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -228,6 +229,27 @@ public class UserDAO extends DBContext {
 
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean updateUser(int userId, String fullName, String email, String phoneNumber, String dateOfBirth, String gender, String password) {
+        String sql = "UPDATE Users SET FullName = ?, Email = ?, PhoneNumber = ?, DateOfBirth = ?, Gender = ?, PasswordHash = ? WHERE UserID = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, fullName);
+            ps.setString(2, email);
+            ps.setString(3, phoneNumber);
+            ps.setString(4, dateOfBirth);
+            ps.setString(5, gender);
+            ps.setString(6, password); // Giữ nguyên mật khẩu, có thể hash nếu cần
+            ps.setInt(7, userId);
+            
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;

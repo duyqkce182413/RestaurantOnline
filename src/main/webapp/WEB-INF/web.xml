@@ -58,6 +58,7 @@
         <url-pattern>/delete-user</url-pattern> 
         <url-pattern>/edit-user</url-pattern>
         <url-pattern>/logout</url-pattern>
+        <url-pattern>/update-user</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AddressController</servlet-name>

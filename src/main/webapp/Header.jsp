@@ -56,7 +56,7 @@
                         <c:if test="${sessionScope.user != null}">
                             <p>Xin chào, ${user.username}!</p>
                             <ul class="list-unstyled">
-                                <li><a href="account.jsp"><i class="fas fa-user-circle me-2"></i>Tài khoản của tôi</a></li>
+                                <li><a href="UserProfile.jsp"><i class="fas fa-user-circle me-2"></i>Tài khoản của tôi</a></li>
                                 <li><a href="listAddress"><i class="fas fa-map-marker-alt me-2"></i>Danh sách địa chỉ</a></li>
                                 <li><a href="listOrders"><i class="fas fa-history me-2"></i>Lịch sử mua hàng</a></li>
                                 <li><a href="logout"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>

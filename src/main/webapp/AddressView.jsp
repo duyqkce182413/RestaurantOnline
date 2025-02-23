@@ -183,7 +183,7 @@
                     <div class="col-md-3">
                         <ul>
                             <h3>Tài Khoản</h3>
-                            <li><a href="account.jsp">Thông tin tài khoản</a></li>
+                            <li><a href="UserProfile.jsp">Thông tin tài khoản</a></li>
                             <li><a href="listAddress">Danh sách địa chỉ</a></li>
                             <li><a href="listOrders">Lịch sử mua hàng</a></li>
                             <li><a href="logout">Đăng xuất</a></li>

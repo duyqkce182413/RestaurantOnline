@@ -48,11 +48,20 @@
         <servlet-name>StatisticsController</servlet-name>
         <servlet-class>Controllers.StatisticsController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>StaffFeedbackController</servlet-name>
+        <servlet-class>Controllers.StaffFeedbackController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UserController</servlet-name>
         <url-pattern>/usercontroller</url-pattern>
         <url-pattern>/login-with-username</url-pattern>
         <url-pattern>/view-users</url-pattern>
+        <url-pattern>/view-user-detail</url-pattern>
+        <url-pattern>/add-user</url-pattern>
+        <url-pattern>/delete-user</url-pattern>
+        <url-pattern>/edit-user</url-pattern>
+        <url-pattern>/logout</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AddressController</servlet-name>
@@ -66,10 +75,17 @@
     <servlet-mapping>
         <servlet-name>CartController</servlet-name>
         <url-pattern>/cartcontroller</url-pattern>
+        <url-pattern>/view-cart</url-pattern>
+        <url-pattern>/add-to-cart</url-pattern>
+        <url-pattern>/update-cart</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CategoryController</servlet-name>
         <url-pattern>/categorycontroller</url-pattern>
+        <url-pattern>/view-categories</url-pattern>
+        <url-pattern>/add-category</url-pattern>
+        <url-pattern>/edit-category</url-pattern>
+        <url-pattern>/delete-category</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>FeedbackController</servlet-name>
@@ -78,7 +94,9 @@
     <servlet-mapping>
         <servlet-name>FoodController</servlet-name>
         <url-pattern>/foodcontroller</url-pattern>
-        <url-pattern>/list-of-foods-for-guest</url-pattern>
+        <url-pattern>/all</url-pattern>
+        <url-pattern>/view-food-detail</url-pattern>
+        <url-pattern>/search-food</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>IngredientController</servlet-name>
@@ -103,6 +121,13 @@
         <url-pattern>/deleteOrder</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>StaffFeedbackController</servlet-name>
+        <url-pattern>/listFeedbacks</url-pattern>
+        <url-pattern>/filterFeedbacks</url-pattern>
+        <url-pattern>/replyFeedback</url-pattern>
+        <url-pattern>/deleteFeedback</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>RecipeController</servlet-name>
         <url-pattern>/recipecontroller</url-pattern>
     </servlet-mapping>
@@ -110,9 +135,13 @@
         <servlet-name>StatisticsController</servlet-name>
         <url-pattern>/statisticscontroller</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StaffFeedbackController</servlet-name>
+        <url-pattern>/StaffFeedbackController</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
-            30
+            1200
         </session-timeout>
     </session-config>
 </web-app>

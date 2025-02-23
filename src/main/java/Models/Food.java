@@ -29,7 +29,7 @@ public class Food {
         this.image = image;
         this.available = available;
     }
-
+    
     public int getFoodID() {
         return foodID;
     }

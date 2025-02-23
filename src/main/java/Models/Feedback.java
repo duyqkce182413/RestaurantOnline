@@ -11,25 +11,38 @@ import java.util.Date;
  * @author admin
  */
 public class Feedback {
+
     private int feedbackID;
-    private int userID;
-    private int foodID;
-    private int orderID;
+    private User user;
+    private Food food;
+    private Order order;
     private int rating;
     private String comment;
     private Date createdAt;
+    private FeedbackReply reply; // Thêm phản hồi từ nhân viên
 
     public Feedback() {
     }
 
-    public Feedback(int feedbackID, int userID, int foodID, int orderID, int rating, String comment, Date createdAt) {
+    public Feedback(int feedbackID, User user, Food food, Order order, int rating, String comment, Date createdAt) {
         this.feedbackID = feedbackID;
-        this.userID = userID;
-        this.foodID = foodID;
-        this.orderID = orderID;
+        this.user = user;
+        this.food = food;
+        this.order = order;
         this.rating = rating;
         this.comment = comment;
         this.createdAt = createdAt;
+    }
+
+    public Feedback(int feedbackID, User user, Food food, Order order, int rating, String comment, Date createdAt, FeedbackReply reply) {
+        this.feedbackID = feedbackID;
+        this.user = user;
+        this.food = food;
+        this.order = order;
+        this.rating = rating;
+        this.comment = comment;
+        this.createdAt = createdAt;
+        this.reply = reply;
     }
 
     public int getFeedbackID() {
@@ -40,28 +53,28 @@ public class Feedback {
         this.feedbackID = feedbackID;
     }
 
-    public int getUserID() {
-        return userID;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public int getFoodID() {
-        return foodID;
+    public Food getFood() {
+        return food;
     }
 
-    public void setFoodID(int foodID) {
-        this.foodID = foodID;
+    public void setFood(Food food) {
+        this.food = food;
     }
 
-    public int getOrderID() {
-        return orderID;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setOrderID(int orderID) {
-        this.orderID = orderID;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public int getRating() {
@@ -88,9 +101,26 @@ public class Feedback {
         this.createdAt = createdAt;
     }
 
+    public FeedbackReply getReply() {
+        return reply;
+    }
+
+    public void setReply(FeedbackReply reply) {
+        this.reply = reply;
+    }
+
     @Override
     public String toString() {
-        return "Feedback{" + "feedbackID=" + feedbackID + ", userID=" + userID + ", foodID=" + foodID + ", orderID=" + orderID + ", rating=" + rating + ", comment=" + comment + ", createdAt=" + createdAt + '}';
+        return "Feedback{"
+                + "feedbackID=" + feedbackID
+                + ", user=" + user
+                + ", food=" + food
+                + ", order=" + order
+                + ", rating=" + rating
+                + ", comment='" + comment + '\''
+                + ", createdAt=" + createdAt
+                + ", reply=" + (reply != null ? "FeedbackReplyID: " + reply.getReplyID() : "null")
+                + '}';
     }
-    
+
 }

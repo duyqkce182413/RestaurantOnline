@@ -41,7 +41,7 @@ public class User {
         this.status = status;
         this.role = role;
     }
-
+    
     public int getUserID() {
         return userID;
     }

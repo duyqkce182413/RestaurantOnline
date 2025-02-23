@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class FeedbackReply {
     private int replyID;
-    private int feedbackID;
+    private Feedback feedback;
     private int staffID;
     private String replyText;
     private Date replyAt;
@@ -20,9 +20,9 @@ public class FeedbackReply {
     public FeedbackReply() {
     }
 
-    public FeedbackReply(int replyID, int feedbackID, int staffID, String replyText, Date replyAt) {
+    public FeedbackReply(int replyID, Feedback feedback, int staffID, String replyText, Date replyAt) {
         this.replyID = replyID;
-        this.feedbackID = feedbackID;
+        this.feedback = feedback;
         this.staffID = staffID;
         this.replyText = replyText;
         this.replyAt = replyAt;
@@ -36,12 +36,12 @@ public class FeedbackReply {
         this.replyID = replyID;
     }
 
-    public int getFeedbackID() {
-        return feedbackID;
+    public Feedback getFeedback() {
+        return feedback;
     }
 
-    public void setFeedbackID(int feedbackID) {
-        this.feedbackID = feedbackID;
+    public void setFeedback(Feedback feedback) {
+        this.feedback = feedback;
     }
 
     public int getStaffID() {
@@ -70,7 +70,7 @@ public class FeedbackReply {
 
     @Override
     public String toString() {
-        return "FeedbackReply{" + "replyID=" + replyID + ", feedbackID=" + feedbackID + ", staffID=" + staffID + ", replyText=" + replyText + ", replyAt=" + replyAt + '}';
+        return "FeedbackReply{" + "replyID=" + replyID + ", feedback=" + feedback + ", staffID=" + staffID + ", replyText=" + replyText + ", replyAt=" + replyAt + '}';
     }
     
 }

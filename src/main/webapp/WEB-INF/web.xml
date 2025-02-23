@@ -48,6 +48,10 @@
         <servlet-name>StatisticsController</servlet-name>
         <servlet-class>Controllers.StatisticsController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>StaffFeedbackController</servlet-name>
+        <servlet-class>Controllers.StaffFeedbackController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UserController</servlet-name>
         <url-pattern>/usercontroller</url-pattern>
@@ -118,6 +122,13 @@
         <url-pattern>/updateOrderStatus</url-pattern>
         <url-pattern>/searchByPhone</url-pattern>
         <url-pattern>/deleteOrder</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StaffFeedbackController</servlet-name>
+        <url-pattern>/listFeedbacks</url-pattern>
+        <url-pattern>/filterFeedbacks</url-pattern>
+        <url-pattern>/replyFeedback</url-pattern>
+        <url-pattern>/deleteFeedback</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RecipeController</servlet-name>

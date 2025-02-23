@@ -3,11 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package DAO;
-        
+
 import Models.Cart;
 import Models.CartItem;
 import Models.Food;
 import Utils.DBContext;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,7 +36,7 @@ public class CartDAO extends DBContext {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Food food = new Food(rs.getInt(5), rs.getString(6), rs.getInt(7), rs.getInt(8), rs.getString(9), rs.getString(10), rs.getBoolean(11), rs.getInt(12));
+                Food food = new Food(rs.getInt(5), rs.getString(6), rs.getDouble(7), rs.getInt(8), rs.getString(9), rs.getString(10), rs.getBoolean(11), rs.getInt(12));
                 Cart cart = new Cart(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4));
                 CartItem cartitem = new CartItem(cart, food);
                 list.add(cartitem);
@@ -125,6 +126,20 @@ public class CartDAO extends DBContext {
         } catch (SQLException e) {
             System.out.println("Error removing cart item: " + e);
             return false;
+        }
+    }
+
+    // Xóa gio hàng khi user thanh toán thành công
+    public void clearCartByUserId(int userId) {
+        String query = "DELETE FROM Cart WHERE UserID = ?";
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

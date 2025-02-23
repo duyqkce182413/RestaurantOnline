@@ -52,6 +52,10 @@
         <servlet-name>StaffFeedbackController</servlet-name>
         <servlet-class>Controllers.StaffFeedbackController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CheckOutCart</servlet-name>
+        <servlet-class>Controllers.CheckOutCart</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UserController</servlet-name>
         <url-pattern>/usercontroller</url-pattern>
@@ -137,6 +141,10 @@
     <servlet-mapping>
         <servlet-name>StatisticsController</servlet-name>
         <url-pattern>/statisticscontroller</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CheckOutCart</servlet-name>
+        <url-pattern>/checkoutcart</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

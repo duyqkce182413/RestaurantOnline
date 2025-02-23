@@ -26,8 +26,8 @@ public class OrderDAO extends DBContext {
 
     // Xu ly chuc nang thanh toan
     public int createOrder(Order order) {
-        String query = "INSERT INTO Orders (UserID, AddressID, OrderDate, TotalAmount, Status, PaymentMethod, Notes) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Orders (UserID, AddressID, OrderDate, Status, TotalAmount, PaymentMethod)"
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -42,12 +42,12 @@ public class OrderDAO extends DBContext {
             }
 
             // Thiết lập các giá trị cho câu lệnh SQL
-            ps.setInt(1, order.getUser().getUserID());         // user_id
-            ps.setInt(2, order.getAddress().getAddressID());      // address_id
-            ps.setDate(3, new java.sql.Date(System.currentTimeMillis()));  // order_date
-            ps.setDouble(4, order.getTotalAmount());       // total_amount
-            ps.setString(5, order.getStatus());            // status
-            ps.setString(6, order.getPaymentMethod());     // payment_method
+            ps.setInt(1, order.getUser().getUserID());         
+            ps.setInt(2, order.getAddress().getAddressID());      
+            ps.setDate(3, new java.sql.Date(System.currentTimeMillis()));  
+            ps.setString(4, order.getStatus());  
+            ps.setDouble(5, order.getTotalAmount());         
+            ps.setString(6, order.getPaymentMethod());     
 
             // Thực hiện truy vấn
             int affectedRows = ps.executeUpdate();
@@ -84,7 +84,7 @@ public class OrderDAO extends DBContext {
                 ps.setDouble(4, item.getPrice());
                 ps.addBatch();
             }
-            ps.executeBatch();  // Chạy lệnh batch để thêm các sản phẩm vào Order_Items
+            ps.executeBatch();  // Chạy lệnh batch để thêm các sản phẩm vào OrderDetail
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -340,16 +340,6 @@ public class OrderDAO extends DBContext {
     }
 
     public static void main(String[] args) {
-        OrderDAO orderDAO = new OrderDAO();
-
-        Order order = orderDAO.getOrderById(4);
-
-         System.out.println("Đang lấy Order ID: " + order.getOrderID());
-        if (order != null) {
-            System.out.println("Order lấy được: " + order.toString());
-        } else {
-            System.out.println("Không tìm thấy Order!");
-        }
     }
 
 }

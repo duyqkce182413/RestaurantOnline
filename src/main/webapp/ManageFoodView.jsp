@@ -5,7 +5,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin Dashboard - Account Management</title>
+        <title>Admin Dashboard - Food Management</title>
         <!-- Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
               integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
@@ -50,6 +50,7 @@
                 background-color: #495057;
                 transition: background-color 0.3s;
             }
+
             .content {
                 margin-left: 250px;
                 padding: 20px;
@@ -57,6 +58,7 @@
                 width: calc(100% - 250px);
                 float: left;
             }
+
             .clearfix::after {
                 content: "";
                 display: table;
@@ -85,72 +87,79 @@
 
                 <!-- Main content -->
                 <div class="content col-6">
-                    <h1>Account Management</h1>
+                    <h1>Food Management</h1>
                     <!-- Search and Filter Form -->
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <form action="view-users" method="GET" class="d-flex">
+                            <form action="manage-foods" method="GET" class="d-flex">
                                 <input type="text" name="search" class="form-control me-2" 
-                                       placeholder="Search by username" value="${param.search}">
+                                       placeholder="Search by Food Name" value="${param.search}">
                             <button type="submit" class="btn btn-primary">Search</button>
                         </form>
                     </div>
                     <div class="col-md-4">
-                        <form action="view-users" method="GET" class="d-flex">
-                            <select name="role" class="form-control me-2">
-                                <option value="">All Roles</option>
-                                <option value="Admin">Admin</option>
-                                <option value="Staff">Staff</option>
-                                <option value="Customer">Customer</option>
+                        <form action="manage-foods" method="GET" class="d-flex">
+                            <select name="categoryid" class="form-control me-2">
+                                <option value="">All Categories</option>
+                                <c:forEach items="${categories}" var="c">
+                                    <option value="${c.categoryID}" ${param.categoryid == c.categoryID ? 'selected' : ''}>
+                                        ${c.categoryName}
+                                    </option>
+                                </c:forEach>
                             </select>
                             <button type="submit" class="btn btn-secondary">Filter</button>
                         </form>
                     </div>
                     <div class="col-md-2">
                         <button type="button" class="btn btn-success" data-bs-toggle="modal" 
-                                data-bs-target="#addUserModal">
-                            <i class="fas fa-plus"></i> Add New Account
+                                data-bs-target="#addFoodModal">
+                            <i class="fas fa-plus"></i> Add New Food
                         </button>
                     </div>
                 </div>
 
-                <!-- Account Table -->
+                <!-- Food Table -->
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Username</th>
-                            <th>Password</th>
-                            <th>Email</th>
-                            <th>Phone Number</th>
-                            <th>Date created</th>
-                            <th>Role</th>
+                            <th>Image</th>
+                            <th>Food Name</th>
+                            <th>Description</th>                            
+                            <th>Price</th>
+                            <th>Category</th>
+                            <th>Available</th>
+                            <th>Quantity</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forEach var="a" items="${users}">
+                        <c:forEach items="${foods}" var="f">
                             <tr>
-                                <td>${a.userID}</td>
-                                <td>${a.username}</td>
-                                <td>${a.passwordHash}</td>
-                                <td>${a.email}</td>
-                                <td>${a.phoneNumber}</td>
-                                <td>${a.createdAt}</td>
-                                <td>${a.role}</td>
+                                <td>${f.foodID}</td>
                                 <td>
-                                    <button class="btn btn-info btn-sm" onclick="viewUserDetail(${a.userID})">
-                                        <i class="fas fa-eye"></i> View Detail
-                                    </button>
-                                    <button class="btn btn-warning btn-sm" onclick="editUser(${a.userID})">
+                                    <img src="${pageContext.request.contextPath}/image/${f.image}" 
+                                         alt="${f.foodName}" 
+                                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;" 
+                                         onerror="this.src='${pageContext.request.contextPath}/image/default-food.jpg'">
+                                </td>
+                                <td>${f.foodName}</td>
+                                <td>${f.description}</td>
+                                <td>${f.price}</td>
+                                <td>
+                                    <c:forEach items="${categories}" var="c">
+                                        ${f.categoryID == c.categoryID ? c.categoryName : ''}
+                                    </c:forEach>
+                                </td>
+                                <td>${f.available ? 'Yes' : 'No'}</td>
+                                <td>${f.quantity}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm" onclick="editFood(${f.foodID})">
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
-                                    <c:if test="${a.role != 'Admin'}">
-
-                                        <button class="btn btn-danger btn-sm" onclick="confirmDelete(${a.userID})">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </button>
-                                    </c:if>
+                                    <button class="btn btn-danger btn-sm" onclick="confirmDelete(${f.foodID})">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -158,144 +167,107 @@
                 </table>
             </div>
         </div>
-        <!-- Add User Modal -->
-        <div class="modal fade" id="addUserModal" tabindex="-1">
+
+        <!-- Add Food Modal -->
+        <div class="modal fade" id="addFoodModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Add New User</h5>
+                        <h5 class="modal-title">Add New Food</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="addUserForm" action="add-user" method="POST">
+                        <form id="addFoodForm" action="add-food" method="POST">
                             <div class="mb-3">
-                                <label class="form-label">Username</label>
-                                <input type="text" class="form-control" name="username" required>
+                                <label class="form-label">Food Name</label>
+                                <input type="text" class="form-control" name="foodName" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Full Name</label>
-                                <input type="text" class="form-control" name="fullName" required>
+                                <label class="form-label">Price</label>
+                                <input type="number" step="0.01" class="form-control" name="price" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Password</label>
-                                <input type="password" class="form-control" name="password" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" name="phoneNumber">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Date of Birth (yyyy-mm-dd)</label>
-                                <input type="" class ="form-control" name ="dateOfBirth">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Gender</label>
-                                <select class="form-control" name="gender">
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
+                                <label class="form-label">Category</label>
+                                <select class="form-control" name="categoryId" required>
+                                    <c:forEach items="${categories}" var="c">
+                                        <option value="${c.categoryID}">${c.categoryName}</option>
+                                    </c:forEach>
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Role</label>
-                                <select class="form-control" name="role">
-                                    <option value="Customer">Customer</option>
-                                    <option value="Staff">Staff</option>
-                                    <option value="Admin">Admin</option>
-                                </select>
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" name="description" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Image URL</label>
+                                <input type="text" class="form-control" name="image">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Quantity</label>
+                                <input type="number" class="form-control" name="quantity" min="1" required>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" name="available" value="true" checked>
+                                <label class="form-check-label">Available</label>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" form="addUserForm" class="btn btn-primary">Save</button>
+                        <button type="submit" form="addFoodForm" class="btn btn-primary">Save</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- View Detail Modal -->
-        <div class="modal fade" id="viewDetailModal" tabindex="-1">
+        <!-- Edit Food Modal -->
+        <div class="modal fade" id="editFoodModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">User Details</h5>
+                        <h5 class="modal-title">Edit Food</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <!-- Content will be dynamically populated -->
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Edit User Modal -->
-        <div class="modal fade" id="editUserModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit User</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="editUserForm" action="${pageContext.request.contextPath}/edit-user" method="POST">
-                            <input type="hidden" name="userId" id="editUserId">
+                        <form id="editFoodForm" action="edit-food" method="POST">
+                            <input type="hidden" name="foodId" id="editFoodId">
                             <div class="mb-3">
-                                <label class="form-label">Username</label>
-                                <input type="text" class="form-control" name="username" id="editUsername" required>
+                                <label class="form-label">Food Name</label>
+                                <input type="text" class="form-control" name="foodName" id="editFoodName" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Full Name</label>
-                                <input type="text" class="form-control" name="fullName" id="editFullName" required>
+                                <label class="form-label">Price</label>
+                                <input type="number" step="0.01" class="form-control" name="price" id="editPrice" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" id="editEmail" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" name="phoneNumber" id="editPhoneNumber">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Date of Birth (yyyy-mm-dd)</label>
-                                <input type="" class="form-control" name="dateOfBirth" id="editDateOfBirth">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Gender</label>
-                                <select class="form-control" name="gender" id="editGender">
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
+                                <label class="form-label">Category</label>
+                                <select class="form-control" name="categoryId" id="editCategoryId" required>
+                                    <c:forEach items="${categories}" var="c">
+                                        <option value="${c.categoryID}">${c.categoryName}</option>
+                                    </c:forEach>
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Role</label>
-                                <select class="form-control" name="role" id="editRole">
-                                    <option value="Customer">Customer</option>
-                                    <option value="Staff">Staff</option>
-                                    <option value="Admin">Admin</option>
-                                </select>
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" name="description" id="editDescription" rows="3"></textarea>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Status</label>
-                                <select class="form-control" name="status" id="editStatus">
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                    <option value="Banned">Banned</option>
-                                </select>
+                                <label class="form-label">Image URL</label>
+                                <input type="text" class="form-control" name="image" id="editImage">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Quantity</label>
+                                <input type="number" class="form-control" name="quantity" id="editQuantity" required>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" name="available" id="editAvailable" value="true">
+                                <label class="form-check-label">Available</label>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" form="editUserForm" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" form="editFoodForm" class="btn btn-primary">Save Changes</button>
                     </div>
                 </div>
             </div>
@@ -310,11 +282,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to delete this user?
+                        Are you sure you want to delete this food?
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger" onclick="deleteUser()">Delete</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteFood()">Delete</button>
                     </div>
                 </div>
             </div>
@@ -325,74 +297,36 @@
 
         <!-- JavaScript for handling modal operations -->
         <script>
-                            let userToDelete = null;
-
-                            function viewUserDetail(userId) {
-                                fetch('view-user-detail?id=' + userId)
+                            let foodToDelete = null;
+                            function editFood(foodId) {
+                                fetch('view-food-detail?foodID=' + foodId + '&format=json')
                                         .then(response => response.json())
-                                        .then(user => {
-                                            const modalBody = document.getElementById('viewDetailModal').querySelector('.modal-body');
-                                            modalBody.innerHTML = `
-                            <p><strong>Avatar:</strong> \${user.avatar || 'No Avatar'}</p>                
-                            <p><strong>ID:</strong> \${user.userID}</p>                
-                            <p><strong>Username:</strong> \${user.username}</p>
-                            <p><strong>Password:</strong> \${user.passwordHash}</p>
-                            <p><strong>Full Name:</strong> \${user.fullName}</p>
-                            <p><strong>Email:</strong> \${user.email}</p>
-                            <p><strong>Phone Number:</strong> \${user.phoneNumber}</p>
-                            <p><strong>Date of Birth:</strong> \${user.dateOfBirth}</p>
-                            <p><strong>Gender:</strong> \${user.gender}</p>
-                            <p><strong>Role:</strong> \${user.role}</p>
-                            <p><strong>Status:</strong> \${user.status}</p>
-                            <p><strong>Created At:</strong> \${user.createdAt}</p>
-                        `;
-                                            new bootstrap.Modal(document.getElementById('viewDetailModal')).show();
-                                        })
-                                        .catch(error => console.error('Error:', error));
-                            }
+                                        .then(food => {
+                                            document.getElementById('editFoodId').value = food.foodID;
+                                            document.getElementById('editFoodName').value = food.foodName;
+                                            document.getElementById('editPrice').value = food.price;
+                                            document.getElementById('editCategoryId').value = food.categoryID;
+                                            document.getElementById('editDescription').value = food.description;
+                                            document.getElementById('editImage').value = food.image;
+                                            document.getElementById('editQuantity').value = food.quantity;
+                                            document.getElementById('editAvailable').checked = food.available;
 
-                            function editUser(userId) {
-                                fetch('view-user-detail?id=' + userId)
-                                        .then(response => response.json())
-                                        .then(user => {
-                                            if (user) {
-                                                // Điền dữ liệu vào form
-                                                document.getElementById('editUserId').value = userId;
-                                                document.getElementById('editUsername').value = user.username || '';
-                                                document.getElementById('editFullName').value = user.fullName || '';
-                                                document.getElementById('editEmail').value = user.email || '';
-                                                document.getElementById('editPhoneNumber').value = user.phoneNumber || '';
-                                                // Xử lý ngày tháng
-                                                if (user.dateOfBirth) {
-                                                    const date = new Date(user.dateOfBirth);
-                                                    const formattedDate = date.toISOString().split('T')[0];
-                                                    document.getElementById('editDateOfBirth').value = formattedDate;
-
-                                                    // Loại bỏ bất kỳ placeholder nào
-                                                    document.getElementById('editDateOfBirth').placeholder = '';
-                                                }
-                                                document.getElementById('editGender').value = user.gender || 'Male';
-                                                document.getElementById('editRole').value = user.role || 'Customer';
-                                                document.getElementById('editStatus').value = user.status || 'Active';
-
-                                                // Show modal
-                                                new bootstrap.Modal(document.getElementById('editUserModal')).show();
-                                            }
+                                            new bootstrap.Modal(document.getElementById('editFoodModal')).show();
                                         })
                                         .catch(error => {
                                             console.error('Error:', error);
-                                            alert('Error loading user data');
+                                            alert('Error loading food data');
                                         });
                             }
 
-                            function confirmDelete(userId) {
-                                userToDelete = userId;
+                            function confirmDelete(foodId) {
+                                foodToDelete = foodId;
                                 new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
                             }
 
-                            function deleteUser() {
-                                if (userToDelete) {
-                                    window.location.href = 'delete-user?id=' + userToDelete;  // Sử dụng cộng chuỗi
+                            function deleteFood() {
+                                if (foodToDelete) {
+                                    window.location.href = 'delete-food?id=' + foodToDelete;
                                 }
                             }
         </script>

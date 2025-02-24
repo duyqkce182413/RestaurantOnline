@@ -60,7 +60,6 @@ public class UserController extends HttpServlet {
             case "user-detail":
                 getUser(request, response);
                 break;
-
         }
     }
 
@@ -114,7 +113,6 @@ public class UserController extends HttpServlet {
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd")
                 .create();
-
         PrintWriter out = response.getWriter();
         out.print(gson.toJson(user));
         out.flush();
@@ -235,7 +233,6 @@ public class UserController extends HttpServlet {
             }
         }
     }
-
     private void logout(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");

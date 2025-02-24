@@ -154,5 +154,93 @@ public class FoodDAO extends DBContext {
 
         return foods;
     }
-    
+
+    // Thêm các phương thức mới cho admin
+    public boolean addFood(Food food) {
+        String query = "INSERT INTO Foods (FoodName, Price, CategoryID, Description, Image, Available, Quantity) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try {
+            Connection conn = getConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, food.getFoodName());
+            ps.setDouble(2, food.getPrice());
+            ps.setInt(3, food.getCategoryID());
+            ps.setString(4, food.getDescription());
+            ps.setString(5, food.getImage());
+            ps.setBoolean(6, food.isAvailable());
+            ps.setInt(7, food.getQuantity());
+
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateFood(Food food) {
+        String query = "UPDATE Foods SET FoodName=?, Price=?, CategoryID=?, Description=?, "
+                + "Image=?, Available=?, Quantity=? WHERE FoodID=?";
+        try {
+            Connection conn = getConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+
+            ps.setString(1, food.getFoodName());
+            ps.setDouble(2, food.getPrice());
+            ps.setInt(3, food.getCategoryID());
+            ps.setString(4, food.getDescription());
+            ps.setString(5, food.getImage());
+            ps.setBoolean(6, food.isAvailable());
+            ps.setInt(7, food.getQuantity());
+            ps.setInt(8, food.getFoodID());
+
+            int rowsAffected = ps.executeUpdate();
+            System.out.println("Rows affected: " + rowsAffected);
+
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deleteFood(int foodId) {
+        String query = "DELETE FROM Foods WHERE FoodID = ?";
+        try {
+            Connection conn = getConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, foodId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Sửa lại phương thức getAllFoods để hỗ trợ phân trang cho trang quản lý
+    public List<Food> getAllFoodsForManage() {
+        String query = "SELECT * FROM Foods ORDER BY FoodID";
+        List<Food> foods = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Food food = new Food(
+                        rs.getInt("FoodID"),
+                        rs.getString("FoodName"),
+                        rs.getDouble("Price"),
+                        rs.getInt("CategoryID"),
+                        rs.getString("Description"),
+                        rs.getString("Image"),
+                        rs.getBoolean("Available"),
+                        rs.getInt("Quantity")
+                );
+                foods.add(food);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return foods;
+    }
 }

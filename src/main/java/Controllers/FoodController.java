@@ -10,6 +10,7 @@ import Models.CartItem;
 import Models.Category;
 import Models.Food;
 import Models.User;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -75,6 +76,12 @@ public class FoodController extends HttpServlet {
             case "/search-food":
                 getFoodByName(request, response);
                 break;
+            case "/manage-foods":
+                manageFoods(request, response);
+                break;
+            case "/delete-food":
+                deleteFood(request, response);
+                break;
             default:
                 getAllFoods(request, response);
                 break;
@@ -92,7 +99,18 @@ public class FoodController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+        String action = request.getServletPath();
+        switch (action) {
+            case "/add-food":
+                addFood(request, response);
+                break;
+            case "/edit-food":
+                editFood(request, response);
+                break;
+            default:
+                doGet(request, response);
+                break;
+        }
     }
 
     /**
@@ -125,7 +143,6 @@ public class FoodController extends HttpServlet {
         } else {
             cartItems = new ArrayList<>();
         }
-       
         request.setAttribute("cartlists", cartItems);
 
         FoodDAO dao = new FoodDAO();
@@ -175,8 +192,23 @@ public class FoodController extends HttpServlet {
 
         Food food = dao.getProductBYID(foodID);
 
-        request.setAttribute("food_detail", food);
-        request.getRequestDispatcher("FoodDetailView.jsp").forward(request, response);
+        // Kiểm tra xem có phải yêu cầu JSON không
+        String format = request.getParameter("format");
+        if ("json".equals(format)) {
+            // Xử lý JSON
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            // Sử dụng Gson (import thư viện)
+            Gson gson = new Gson();
+            String jsonFood = gson.toJson(food);
+
+            response.getWriter().write(jsonFood);
+        } else {
+
+            request.setAttribute("food_detail", food);
+            request.getRequestDispatcher("FoodDetailView.jsp").forward(request, response);
+        }
     }
 
     protected void getFoodByName(HttpServletRequest request, HttpServletResponse response)
@@ -206,4 +238,96 @@ public class FoodController extends HttpServlet {
         request.setAttribute("categories", categories);
         request.getRequestDispatcher("HomeView.jsp").forward(request, response);
     }
+
+    protected void manageFoods(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String searchName = request.getParameter("search");
+        String categoryIdStr = request.getParameter("categoryid");
+        Integer categoryid = null;
+
+        if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
+            categoryid = Integer.parseInt(categoryIdStr);
+        }
+
+        FoodDAO dao = new FoodDAO();
+        List<Category> categories = dao.selectAllCategories();
+        List<Food> foods;
+
+        if (searchName != null && !searchName.isEmpty()) {
+            foods = dao.selectProductByName(searchName);
+        } else {
+            foods = dao.getAllFoods(1, categoryid);
+        }
+
+        request.setAttribute("foods", foods);
+        request.setAttribute("categories", categories);
+        request.getRequestDispatcher("ManageFoodView.jsp").forward(request, response);
+    }
+
+    protected void addFood(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            String foodName = request.getParameter("foodName");
+            double price = Double.parseDouble(request.getParameter("price"));
+            int categoryId = Integer.parseInt(request.getParameter("categoryId"));
+            String description = request.getParameter("description");
+            String image = request.getParameter("image");
+            boolean available = Boolean.parseBoolean(request.getParameter("available"));
+            int quantity = Integer.parseInt(request.getParameter("quantity"));
+
+            Food newFood = new Food();
+            newFood.setFoodName(foodName);
+            newFood.setPrice(price);
+            newFood.setCategoryID(categoryId);
+            newFood.setDescription(description);
+            newFood.setImage(image);
+            newFood.setAvailable(available);
+            newFood.setQuantity(quantity);
+
+            FoodDAO dao = new FoodDAO();
+            dao.addFood(newFood);
+            response.sendRedirect("manage-foods");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("manage-foods?error=true");
+        }
+    }
+
+    protected void editFood(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int foodId = Integer.parseInt(request.getParameter("foodId"));
+            String foodName = request.getParameter("foodName");
+            double price = Double.parseDouble(request.getParameter("price"));
+            int categoryId = Integer.parseInt(request.getParameter("categoryId"));
+            String description = request.getParameter("description");
+            String image = request.getParameter("image");
+            boolean available = Boolean.parseBoolean(request.getParameter("available"));
+            int quantity = Integer.parseInt(request.getParameter("quantity"));
+
+            Food food = new Food(foodId, foodName, price, categoryId, description,
+                    image, available, quantity);
+            FoodDAO dao = new FoodDAO();
+            dao.updateFood(food);
+
+            response.sendRedirect("manage-foods");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("manage-foods?error=true");
+        }
+    }
+
+    protected void deleteFood(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int foodId = Integer.parseInt(request.getParameter("id"));
+            FoodDAO dao = new FoodDAO();
+            dao.deleteFood(foodId);
+            response.sendRedirect("manage-foods");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("manage-foods");
+        }
+    }
+
 }

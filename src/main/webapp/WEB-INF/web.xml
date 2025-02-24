@@ -96,6 +96,10 @@
         <url-pattern>/all</url-pattern>
         <url-pattern>/view-food-detail</url-pattern>
         <url-pattern>/search-food</url-pattern>
+        <url-pattern>/manage-foods</url-pattern>
+        <url-pattern>/add-food</url-pattern>
+        <url-pattern>/edit-food</url-pattern>
+        <url-pattern>/delete-food</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>IngredientController</servlet-name>

@@ -203,7 +203,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Quantity</label>
-                                <input type="number" class="form-control" name="quantity" required>
+                                <input type="number" class="form-control" name="quantity" min="1" required>
                             </div>
                             <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input" name="available" value="true" checked>

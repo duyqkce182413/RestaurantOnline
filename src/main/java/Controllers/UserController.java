@@ -233,6 +233,7 @@ public class UserController extends HttpServlet {
             }
         }
     }
+
     private void logout(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");

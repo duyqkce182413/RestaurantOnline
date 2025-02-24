@@ -106,6 +106,15 @@
         <url-pattern>/ingredientcontrolller</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>IngredientController</servlet-name>
+        <url-pattern>/ingredientcontroller</url-pattern>
+        <url-pattern>/view-ingredients</url-pattern>
+        <url-pattern>/add-ingredient</url-pattern>
+        <url-pattern>/edit-ingredient</url-pattern>
+        <url-pattern>/delete-ingredient</url-pattern>
+    </servlet-mapping>
+
+   <servlet-mapping>
         <servlet-name>OrderApprovalController</servlet-name>
         <url-pattern>/orderapprovalcontroller</url-pattern>
     </servlet-mapping>

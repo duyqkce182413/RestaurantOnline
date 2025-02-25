@@ -13,6 +13,6 @@
     <a href="productcontrol"><i class="fas fa-box"></i> Product Management</a>
     <a href="admin-account-crud"><i class="fas fa-users"></i> Account Management</a>
     <a href="listAdminOrders"><i class="fas fa-shopping-cart"></i> Order Management</a>
-    <a href="revenue-chart"><i class="fa-solid fa-chart-simple"></i> Revenue Management</a>
+    <a href="view-statistics"><i class="fa-solid fa-chart-simple"></i> Revenue Management</a>
     <a href="view-ingredients"><i class="fa-solid fa-carrot"></i> Manage Ingredient</a>
 </div>

@@ -139,6 +139,7 @@
     <servlet-mapping>
         <servlet-name>StatisticsController</servlet-name>
         <url-pattern>/statisticscontroller</url-pattern>
+        <url-pattern>/view-statistics</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

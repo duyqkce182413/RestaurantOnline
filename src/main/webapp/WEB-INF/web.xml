@@ -48,6 +48,10 @@
         <servlet-name>StatisticsController</servlet-name>
         <servlet-class>Controllers.StatisticsController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GoogleLoginServlet</servlet-name>
+        <servlet-class>Controllers.GoogleLoginServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UserController</servlet-name>
         <url-pattern>/usercontroller</url-pattern>
@@ -55,10 +59,11 @@
         <url-pattern>/view-users</url-pattern>
         <url-pattern>/view-user-detail</url-pattern>
         <url-pattern>/add-user</url-pattern>
-        <url-pattern>/delete-user</url-pattern> 
+        <url-pattern>/delete-user</url-pattern>
         <url-pattern>/edit-user</url-pattern>
         <url-pattern>/logout</url-pattern>
         <url-pattern>/update-user</url-pattern>
+        <url-pattern>/register</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AddressController</servlet-name>
@@ -76,7 +81,6 @@
         <url-pattern>/add-to-cart</url-pattern>
         <url-pattern>/update-cart</url-pattern>
     </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>CategoryController</servlet-name>
         <url-pattern>/categorycontroller</url-pattern>
@@ -85,7 +89,6 @@
         <url-pattern>/edit-category</url-pattern>
         <url-pattern>/delete-category</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>FeedbackController</servlet-name>
         <url-pattern>/feedbackcontroller</url-pattern>
@@ -113,8 +116,7 @@
         <url-pattern>/edit-ingredient</url-pattern>
         <url-pattern>/delete-ingredient</url-pattern>
     </servlet-mapping>
-
-   <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>OrderApprovalController</servlet-name>
         <url-pattern>/orderapprovalcontroller</url-pattern>
     </servlet-mapping>
@@ -140,6 +142,10 @@
         <servlet-name>StatisticsController</servlet-name>
         <url-pattern>/statisticscontroller</url-pattern>
         <url-pattern>/view-statistics</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GoogleLoginServlet</servlet-name>
+        <url-pattern>/GoogleLoginServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

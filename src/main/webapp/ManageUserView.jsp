@@ -85,7 +85,7 @@
 
                 <!-- Main content -->
                 <div class="content col-6">
-                    <h1>Account Management</h1>
+                    <h1 class="text-center mb-5">Account Management</h1>
                     <!-- Search and Filter Form -->
                     <div class="row mb-3">
                         <div class="col-md-6">

@@ -3,6 +3,7 @@ package Controllers;
 import DAO.FoodDAO;
 import DAO.UserDAO;
 import Models.User;
+import Utils.PasswordUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
@@ -80,6 +81,8 @@ public class UserController extends HttpServlet {
                 break;
             case "/update-user":
                 updateUser(request, response);
+            case "/register":
+                Register(request, response);
         }
     }
 
@@ -292,4 +295,64 @@ public class UserController extends HttpServlet {
         response.sendRedirect("UserProfile.jsp");
 
     }
+
+    private void Register(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+
+        // Xóa thông báo lỗi trước đó
+        session.removeAttribute("errorName");
+        session.removeAttribute("errorEmail");
+        session.removeAttribute("errorPhone");
+        session.removeAttribute("errorPassword");
+        session.removeAttribute("errorConfirm");
+        session.removeAttribute("successMessage");
+
+        String username = request.getParameter("username");
+        String fullname = request.getParameter("fullName");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        String confirmPassword = request.getParameter("confirmPassword");
+        String phoneNumber = request.getParameter("phoneNumber");
+        String gender = request.getParameter("gender");
+
+        UserDAO dao = new UserDAO();
+        boolean hasError = false;
+
+        // Kiểm tra mật khẩu
+        if (password == null || password.length() < 8) {
+            session.setAttribute("errorPassword", "Password must be at least 8 characters long.");
+            hasError = true;
+        } else if (!password.equals(confirmPassword)) {
+            session.setAttribute("errorConfirm", "Passwords do not match.");
+            hasError = true;
+        }
+
+        // Kiểm tra username, email, phoneNumber đã tồn tại hay chưa
+        if (dao.isUsernameExists(username)) {
+            session.setAttribute("errorName", "Username already exists.");
+            hasError = true;
+        }
+        if (dao.isEmailExists(email)) {
+            session.setAttribute("errorEmail", "Email already exists.");
+            hasError = true;
+        }
+        if (dao.isPhoneExists(phoneNumber)) {
+            session.setAttribute("errorPhone", "Phone number already exists.");
+            hasError = true;
+        }
+
+        if (hasError) {
+            response.sendRedirect("RegisterView.jsp");
+            return;
+        }
+
+        // Đăng ký tài khoản mới
+        String hashedPassword = PasswordUtil.hashPassword(password);
+        dao.register(username, fullname, email, hashedPassword, phoneNumber, gender);
+        session.setAttribute("successMessage", "Account created successfully.");
+
+        response.sendRedirect("RegisterView.jsp");
+    }
+
 }

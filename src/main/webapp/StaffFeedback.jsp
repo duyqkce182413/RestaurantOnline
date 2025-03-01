@@ -46,17 +46,19 @@
                 <div class="sidebar">
                     <h3>Staff Dashboard</h3>
                     <a href="listAdminOrders"><i class="fas fa-shopping-cart"></i> Manage Order</a>
-                    <a href="listFeedbacks"><i class="fas fa-comments"></i> Manage Feedback</a>
+                    <a href="listStaffFeedbacks"><i class="fas fa-comments"></i> Manage Feedback</a>
                 </div>
                 <div class="content">
                     <h1>Feedback Management</h1>
+
                 <c:if test="${param.message != null}">
                     <div class="alert alert-success">${param.message}</div>
                 </c:if>
                 <c:if test="${param.error != null}">
                     <div class="alert alert-danger">${param.error}</div>
                 </c:if>
-                <form method="GET" action="filterFeedbacks" class="mb-4">
+
+                <form method="GET" action="filterStaffFeedbacks" class="mb-4">
                     <div class="input-group">
                         <select name="rating" class="form-select">
                             <option value="">All Ratings</option>
@@ -69,6 +71,8 @@
                         <button type="submit" class="btn btn-secondary">Filter</button>
                     </div>
                 </form>
+
+                <!-- Feedback Table -->
                 <table class="table table-bordered">
                     <thead class="table-dark">
                         <tr>
@@ -82,7 +86,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forEach var="feedback" items="${listFeedbacks}">
+                        <c:forEach var="feedback" items="${listStaffFeedbacks}">
                             <tr>
                                 <td>${feedback.feedbackID}</td>
                                 <td>${feedback.user.fullName}</td>
@@ -91,12 +95,10 @@
                                 <td>${feedback.comment}</td>
                                 <td>${feedback.createdAt}</td>
                                 <td>
-                                    <button type="button" class="btn btn-primary btn-sm" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#viewFeedbackModal" 
-                                            onclick="loadFeedback(${feedback.feedbackID}, '${feedback.comment}', ${feedback.rating})">
+                                    <!-- Sử dụng thẻ <a> để chuyển hướng đến trang chi tiết -->
+                                    <a href="viewFeedbackDetails?id=${feedback.feedbackID}" class="btn btn-primary btn-sm">
                                         <i class="fas fa-eye"></i> View
-                                    </button>
+                                    </a>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -104,76 +106,6 @@
                 </table>
             </div>
         </div>
-        <!-- Modal -->
-        <div class="modal fade" id="viewFeedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="feedbackModalLabel">View Feedback</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p><strong>Comment:</strong> <span id="feedbackComment"></span></p>
-                        <p><strong>Rating:</strong> <span id="feedbackRating"></span></p>
 
-                        <!-- Reply Textarea -->
-                        <div class="mb-3">
-                            <label for="replyText" class="form-label">Reply:</label>
-                            <textarea class="form-control" id="replyText" rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success" onclick="sendReply()">Reply</button>
-                        <button type="button" class="btn btn-danger" onclick="deleteFeedback()">Delete</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <script>
-            let currentFeedbackId = null;
-
-            function loadFeedback(feedbackID, comment, rating) {
-                currentFeedbackId = feedbackID; // Lưu ID feedback hiện tại
-                document.getElementById("feedbackComment").innerText = comment;
-                document.getElementById("feedbackRating").innerText = rating;
-            }
-
-            function sendReply() {
-                let replyText = document.getElementById("replyText").value;
-                if (!replyText.trim()) {
-                    alert("Reply cannot be empty!");
-                    return;
-                }
-
-                fetch("replyFeedback", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
-                    body: "feedbackID=" + currentFeedbackId + "&replyText=" + encodeURIComponent(replyText)
-                }).then(response => response.text())
-                        .then(data => {
-                            alert("Reply sent successfully!");
-                            document.getElementById("replyText").value = "";
-                            location.reload(); // Reload page
-                        }).catch(error => console.error(error));
-            }
-
-            function deleteFeedback() {
-                if (!confirm("Are you sure you want to delete this feedback?"))
-                    return;
-
-                fetch("deleteFeedback", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
-                    body: `feedbackID=${currentFeedbackId}`
-                }).then(response => response.text())
-                        .then(data => {
-                            alert("Feedback deleted successfully!");
-                            location.reload(); // Reload page
-                        }).catch(error => console.error(error));
-            }
-        </script>
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

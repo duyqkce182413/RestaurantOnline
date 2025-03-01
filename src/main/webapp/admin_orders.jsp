@@ -77,6 +77,7 @@
                 <div class="sidebar">
                     <h3>Staff Dashboard</h3>
                     <a href="listAdminOrders"><i class="fas fa-shopping-cart"></i>Manage Order</a>
+                    <a href="listFeedbacks"><i class="fas fa-comments"></i> Manage Feedback</a>
                 </div>
 
                 <!-- Main content -->

@@ -117,16 +117,75 @@ public class FeedbackDAO extends DBContext {
         return feedbacks;
     }
 
+    public Feedback getFeedbackById(int feedbackId) {
+        String query = "SELECT f.feedbackID, f.userID, f.foodID, f.orderID, f.rating, f.comment, f.createdAt, "
+                + "u.username, u.email, u.fullName, "
+                + "fd.foodName, "
+                + "o.orderID, "
+                + "fr.replyID, fr.staffID, fr.replyText, fr.replyAt "
+                + "FROM Feedback f "
+                + "JOIN Users u ON f.userID = u.userID "
+                + "JOIN Foods fd ON f.foodID = fd.foodID "
+                + "JOIN Orders o ON f.orderID = o.orderID "
+                + "LEFT JOIN FeedbackReplies fr ON f.feedbackID = fr.feedbackID "
+                + "WHERE f.feedbackID = ?";
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, feedbackId);
+            try ( ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserID(rs.getInt("userID"));
+                    user.setUsername(rs.getString("username"));
+                    user.setFullName(rs.getString("fullName"));
+                    user.setEmail(rs.getString("email"));
+
+                    Food food = new Food();
+                    food.setFoodID(rs.getInt("foodID"));
+                    food.setFoodName(rs.getString("foodName"));
+
+                    Order order = new Order();
+                    order.setOrderID(rs.getInt("orderID"));
+
+                    Feedback feedback = new Feedback(
+                            rs.getInt("feedbackID"),
+                            user,
+                            food,
+                            order,
+                            rs.getInt("rating"),
+                            rs.getString("comment"),
+                            rs.getDate("createdAt")
+                    );
+
+                    // Nếu có phản hồi từ nhân viên, thêm vào danh sách
+                    if (rs.getInt("replyID") != 0) {
+                        FeedbackReply reply = new FeedbackReply(
+                                rs.getInt("replyID"),
+                                feedback,
+                                rs.getInt("staffID"),
+                                rs.getString("replyText"),
+                                rs.getDate("replyAt")
+                        );
+                        feedback.setReply(reply);
+                    }
+                    return feedback;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // Trả lời phản hồi của khách hàng
     public boolean replyToFeedback(int feedbackID, int staffID, String replyText) {
-        String query = "INSERT INTO FeedbackReplies (feedbackID, staffID, replyText, replyAt) "
+        String query = "INSERT INTO FeedbackReplies (FeedbackID, StaffID, ReplyText, ReplyAt) "
                 + "VALUES (?, ?, ?, GETDATE())";
 
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, feedbackID);
             ps.setInt(2, staffID);
             ps.setString(3, replyText);
-            return ps.executeUpdate() > 0;
+            return ps.executeUpdate() > 0; // Kiểm tra nếu câu lệnh thực thi thành công
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -135,9 +194,11 @@ public class FeedbackDAO extends DBContext {
 
     // Xóa phản hồi (xóa luôn phản hồi của nhân viên nếu có)
     public boolean deleteFeedback(int feedbackID) {
-        String deleteReplies = "DELETE FROM FeedbackReplies WHERE feedbackID = ?";
-        String deleteFeedback = "DELETE FROM Feedback WHERE feedbackID = ?";
+        String deleteReplies = "DELETE FROM FeedbackReplies WHERE FeedbackID = ?";
+        String deleteFeedback = "DELETE FROM Feedback WHERE FeedbackID = ?";
+
         try ( Connection conn = getConnection();  PreparedStatement ps1 = conn.prepareStatement(deleteReplies);  PreparedStatement ps2 = conn.prepareStatement(deleteFeedback)) {
+
             ps1.setInt(1, feedbackID);
             ps1.executeUpdate(); // Xóa phản hồi của nhân viên trước
             ps2.setInt(1, feedbackID);
@@ -176,14 +237,11 @@ public class FeedbackDAO extends DBContext {
     public static void main(String[] args) {
         FeedbackDAO feedbackDAO = new FeedbackDAO();
 
-        // Kiểm tra thêm phản hồi
-        boolean added = feedbackDAO.replyToFeedback(1, 3, "Cảm ơn bạn đã ủng hộ quán ạ!");
-        System.out.println(added ? "Reply added successfully!" : "Failed to add reply");
-
-        // Lấy danh sách phản hồi để kiểm tra
-        List<FeedbackReply> replies = feedbackDAO.getAllFeedbackReplies();
-        for (FeedbackReply reply : replies) {
-            System.out.println(reply);
+        Feedback feedbackDetail = feedbackDAO.getFeedbackById(1);
+        if (feedbackDetail != null) {
+            System.out.println(feedbackDetail.toString());
+        } else {
+            System.out.println("No feedback found");
         }
     }
 }

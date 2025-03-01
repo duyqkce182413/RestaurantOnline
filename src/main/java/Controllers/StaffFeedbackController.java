@@ -2,6 +2,7 @@ package Controllers;
 
 import DAO.FeedbackDAO;
 import Models.Feedback;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.ServletException;
@@ -17,11 +18,17 @@ public class StaffFeedbackController extends HttpServlet {
 
         try {
             switch (action) {
-                case "/listFeedbacks":
+                case "/listStaffFeedbacks":
                     listAllFeedbacks(request, response);
                     break;
-                case "/filterFeedbacks":
+                case "/filterStaffFeedbacks":
                     filterFeedbacks(request, response);
+                    break;
+                case "/viewFeedbackDetails": // Thêm action để xử lý chi tiết feedback
+                    viewFeedbackDetails(request, response);
+                    break;
+                case "/deleteStaffFeedback": // Thêm action để xử lý chi tiết feedback
+                    deleteFeedback(request, response);
                     break;
                 default:
                     listAllFeedbacks(request, response);
@@ -36,11 +43,9 @@ public class StaffFeedbackController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getServletPath();
-        if ("/replyFeedback".equals(action)) {
+        if ("/replyStaffFeedback".equals(action)) {
             replyFeedback(request, response);
-        } else if ("/deleteFeedback".equals(action)) {
-            deleteFeedback(request, response);
-        }
+        } 
     }
 
     private void listAllFeedbacks(HttpServletRequest request, HttpServletResponse response)
@@ -50,7 +55,7 @@ public class StaffFeedbackController extends HttpServlet {
 
         feedbacks = feedbackDAO.getAllFeedbacks();
 
-        request.setAttribute("listFeedbacks", feedbacks);
+        request.setAttribute("listStaffFeedbacks", feedbacks);
         request.getRequestDispatcher("StaffFeedback.jsp").forward(request, response);
     }
 
@@ -73,8 +78,28 @@ public class StaffFeedbackController extends HttpServlet {
             }
         }
 
-        request.setAttribute("listFeedbacks", feedbacks);
+        request.setAttribute("listStaffFeedbacks", feedbacks);
         request.getRequestDispatcher("StaffFeedback.jsp").forward(request, response);
+    }
+
+    // Thêm hành động xử lý Feedback Detail
+    private void viewFeedbackDetails(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int feedbackID = Integer.parseInt(request.getParameter("id"));
+            FeedbackDAO feedbackDAO = new FeedbackDAO();
+            Feedback feedback = feedbackDAO.getFeedbackById(feedbackID);  // Lấy feedback chi tiết
+
+            if (feedback != null) {
+                request.setAttribute("feedbackDetail", feedback);  // Đưa thông tin feedback vào request
+                request.getRequestDispatcher("FeedbackDetail.jsp").forward(request, response);  // Chuyển sang trang FeedbackDetail.jsp
+            } else {
+                response.sendRedirect("listStaffFeedbacks?error=Feedback not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("listStaffFeedbacks?error=An error occurred");
+        }
     }
 
     private void replyFeedback(HttpServletRequest request, HttpServletResponse response)
@@ -96,14 +121,14 @@ public class StaffFeedbackController extends HttpServlet {
     }
 
     private void deleteFeedback(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int feedbackID = Integer.parseInt(request.getParameter("feedbackID"));
+        int feedbackID = Integer.parseInt(request.getParameter("id"));
         FeedbackDAO feedbackDAO = new FeedbackDAO();
         boolean isDeleted = feedbackDAO.deleteFeedback(feedbackID);
 
         if (isDeleted) {
-            response.sendRedirect("listFeedbacks?message=Feedback deleted successfully");
+            response.sendRedirect("listStaffFeedbacks?message=Feedback deleted successfully");
         } else {
-            response.sendRedirect("listFeedbacks?error=Feedback deletion failed");
+            response.sendRedirect("listStaffFeedbacks?error=Feedback deletion failed");
         }
     }
 

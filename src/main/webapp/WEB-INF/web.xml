@@ -129,10 +129,11 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>StaffFeedbackController</servlet-name>
-        <url-pattern>/listFeedbacks</url-pattern>
-        <url-pattern>/filterFeedbacks</url-pattern>
-        <url-pattern>/replyFeedback</url-pattern>
-        <url-pattern>/deleteFeedback</url-pattern>
+        <url-pattern>/listStaffFeedbacks</url-pattern>
+        <url-pattern>/filterStaffFeedbacks</url-pattern>
+        <url-pattern>/viewFeedbackDetails</url-pattern>
+        <url-pattern>/replyStaffFeedback</url-pattern>
+        <url-pattern>/deleteStaffFeedback</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RecipeController</servlet-name>

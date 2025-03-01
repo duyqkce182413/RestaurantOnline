@@ -74,7 +74,7 @@ public class AddressDAO extends DBContext {
             ps.executeUpdate();
         }
     }
-
+    
     public Address getAddressById(int id) throws SQLException {
         String sql = "SELECT a.*, acc.* FROM Address a JOIN Users acc ON a.UserID = acc.UserID WHERE a.AddressID = ?";
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {

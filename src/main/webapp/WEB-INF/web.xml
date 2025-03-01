@@ -134,7 +134,11 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RecipeController</servlet-name>
-        <url-pattern>/recipecontroller</url-pattern>
+        <url-pattern>/manage-recipes</url-pattern>
+        <url-pattern>/add-recipe</url-pattern>
+        <url-pattern>/edit-recipe</url-pattern>
+        <url-pattern>/delete-recipe</url-pattern>
+        <url-pattern>/filter-recipes</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>StatisticsController</servlet-name>

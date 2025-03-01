@@ -105,7 +105,7 @@
                                 <div class="col-sm-12 col-md-6 col-lg-3">
                                     <div class="card product-card">
                                         <a href="view-food-detail?foodID=${f.foodID}">
-                                            <img src="${f.image != null ? p.image : 'default-image.jpg'}" class="card-img-top" alt="${f.foodName}">
+                                            <img src="${pageContext.request.contextPath}/image/${f.image}" class="card-img-top" alt="${f.foodName}">
                                         </a>
                                         <div class="card-body">
                                             <a style="text-decoration: none" href="view-food-detail?foodID=${f.foodID}">

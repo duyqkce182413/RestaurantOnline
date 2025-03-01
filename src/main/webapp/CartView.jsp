@@ -187,7 +187,7 @@
                                     <td class="product-name" >${cartItems.getFood().foodName}</td>
 <!--                                    <input type="hidden" name="foodId" value="${cartItems.getFood().foodID}">-->
 
-                                    <td><img style="width: 100px" src="${cartItems.getFood().image}" alt="${cartItems.getFood().foodName}"/></td>
+                                    <td><img style="width: 100px" src="${pageContext.request.contextPath}/image/${cartItems.getFood().image}" alt="${cartItems.getFood().foodName}"/></td>
                                     <td>
                                         <div class="quantity-control">
                                             <button type="button" class="quantity-btn" onclick="decreaseQuantity(this)">-</button>

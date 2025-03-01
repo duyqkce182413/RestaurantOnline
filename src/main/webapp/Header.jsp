@@ -9,7 +9,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-        <a class="navbar-brand rounded-pill logo" href="home"><img src="./image/Logo_TheKoi.png" alt="Logo">TheKoi</a>
+        <a class="navbar-brand rounded-pill logo" href="all"><img src="./image/Logo_TheKoi.png" alt="Logo">TheKoi</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -17,13 +17,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="home">Trang Chủ</a>
+                    <a class="nav-link" href="all">Trang Chủ</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="introduction.jsp">Giới Thiệu</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="home">Menu Món</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Blog</a>
@@ -32,9 +29,9 @@
                     <a class="nav-link" href="#">Liên Hệ</a>
                 </li>
                 <!-- Sửa điều kiện kiểm tra isAdmin -->
-                <c:if test="${sessionScope.user != null && sessionScope.acc.isAdmin() == true}">
+                <c:if test="${sessionScope.user != null && sessionScope.user.role.equals('Admin')}">
                     <li class="nav-item">
-                        <a class="nav-link admin-btn" href="admin-account-crud">Admin Dashboard</a>
+                        <a class="nav-link admin-btn" href="view-users">Admin Dashboard</a>
                     </li>
                 </c:if>
             </ul>
@@ -64,7 +61,7 @@
                         </c:if> 
                     </div>
                 </div>
-                <a href="cart" class="nav-link">
+                <a href="view-cart" class="nav-link">
                     <i class="fa-solid fa-basket-shopping"></i>
                 </a>
             </div>

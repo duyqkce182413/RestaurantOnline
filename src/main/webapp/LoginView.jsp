@@ -43,7 +43,7 @@
 
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">Login</button>
-                        <a href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile%20openid&redirect_uri=http://localhost:8080/LoginTest/login&response_type=code&client_id=127240927862-ovg89s7bgqd52hppkv89dq7i1ch9oc9m.apps.googleusercontent.com&access_type=offline&approval_prompt=force">
+                        <a href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile%20openid&redirect_uri=http://localhost:8080/Restaurant_Online/GoogleLoginServlet&response_type=code&client_id=127240927862-ovg89s7bgqd52hppkv89dq7i1ch9oc9m.apps.googleusercontent.com&access_type=offline&approval_prompt=force">
                             Login with Google
                         </a>
                         <p class ="error"> ${messerror}</p>

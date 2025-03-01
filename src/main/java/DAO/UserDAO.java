@@ -233,12 +233,11 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
-    
+
     public boolean updateUser(int userId, String fullName, String email, String phoneNumber, String dateOfBirth, String gender, String password) {
         String sql = "UPDATE Users SET FullName = ?, Email = ?, PhoneNumber = ?, DateOfBirth = ?, Gender = ?, PasswordHash = ? WHERE UserID = ?";
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, fullName);
             ps.setString(2, email);
             ps.setString(3, phoneNumber);
@@ -246,7 +245,7 @@ public class UserDAO extends DBContext {
             ps.setString(5, gender);
             ps.setString(6, password); // Giữ nguyên mật khẩu, có thể hash nếu cần
             ps.setInt(7, userId);
-            
+
             int rowsUpdated = ps.executeUpdate();
             return rowsUpdated > 0;
         } catch (SQLException e) {
@@ -254,4 +253,101 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
+
+    // Kiểm tra username có tồn tại hay không
+    public boolean isUsernameExists(String username) {
+        String sql = "SELECT 1 FROM Users WHERE Username = ?";
+        try ( PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next(); // Nếu có kết quả -> Username đã tồn tại
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Kiểm tra email có tồn tại hay không
+    public boolean isEmailExists(String email) {
+        String sql = "SELECT 1 FROM Users WHERE Email = ?";
+        try ( PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next(); // Nếu có kết quả -> Email đã tồn tại
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Kiểm tra số điện thoại có tồn tại hay không
+    public boolean isPhoneExists(String phoneNumber) {
+        String sql = "SELECT 1 FROM Users WHERE PhoneNumber = ?";
+        try ( PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setString(1, phoneNumber);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next(); // Nếu có kết quả -> Phone đã tồn tại
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Đăng ký tài khoản mới
+    public void register(String username, String fullname, String email, String password, String phoneNumber, String gender) {
+        String sql = "INSERT INTO Users (Username, FullName, Email, PasswordHash, PhoneNumber, Gender) VALUES (?, ?, ?, ?, ?, ?)";
+        try ( PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setString(1, username);
+            stmt.setString(2, fullname);
+            stmt.setString(3, email);
+            stmt.setString(4, password); // Lưu ý: Password đã được hash trước khi gọi hàm này
+            stmt.setString(5, phoneNumber);
+            stmt.setString(6, gender);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public User getUserByEmail(String email) {
+        String query = "SELECT * FROM Users WHERE Email = ?";
+        try {
+            Connection conn = getConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new User(
+                        rs.getInt("UserID"),
+                        rs.getString("Username"),
+                        rs.getString("FullName"),
+                        rs.getString("Email"),
+                        rs.getString("PasswordHash"),
+                        rs.getString("PhoneNumber"),
+                        rs.getDate("DateOfBirth"),
+                        rs.getString("Gender"),
+                        rs.getString("Avatar"),
+                        rs.getDate("CreatedAt"),
+                        rs.getString("Status"),
+                        rs.getString("Role")
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void createGoogleUser(String email, String fullName, String avatar) {
+        String sql = "INSERT INTO Users (Email, FullName, Avatar, CreatedAt, Status, Role) VALUES (?, ?, ?, GETDATE(), 'Active', 'Customer')";
+        try ( PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setString(1, email);
+            stmt.setString(2, fullName);
+            stmt.setString(3, avatar); // Thêm avatar vào câu lệnh SQL
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

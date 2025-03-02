@@ -12,7 +12,7 @@
     <a href="view-categories"><i class="fas fa-list"></i> Category Management</a>
     <a href="manage-foods"><i class="fas fa-box"></i> Food Management</a>
     <a href="view-users"><i class="fas fa-users"></i> Account Management</a>
-    <a href="listOrders"><i class="fas fa-shopping-cart"></i> Order Management</a>
+    <a href="listOrderApproval"><i class="fas fa-shopping-cart"></i> Order Approval</a>
     <a href="view-statistics"><i class="fa-solid fa-chart-simple"></i> Revenue Management</a>
     <a href="view-ingredients"><i class="fa-solid fa-carrot"></i> Manage Ingredient</a>
     <a href="manage-recipes"><i class="fas fa-utensils"></i> Recipe Management</a>

@@ -34,6 +34,12 @@
                         <a class="nav-link admin-btn" href="view-users">Admin Dashboard</a>
                     </li>
                 </c:if>
+                <!-- Sửa điều kiện kiểm tra staff -->
+                <c:if test="${sessionScope.user != null && sessionScope.user.role.equals('Staff')}">
+                    <li class="nav-item">
+                        <a class="nav-link admin-btn" href="listAdminOrders">Staff Dashboard</a>
+                    </li>
+                </c:if>
             </ul>
             <div class="user-section">
                 <div class="position-relative">

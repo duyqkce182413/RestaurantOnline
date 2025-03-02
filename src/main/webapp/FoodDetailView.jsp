@@ -114,6 +114,17 @@
                 color: #fff;
             }
 
+            .fa-star {
+                font-size: 20px;
+                color: #ddd;
+                cursor: pointer;
+            }
+
+            .fa-star.checked {
+                color: gold;
+            }
+
+
             /* Footer Styling */
             .footer {
                 background-color: #333;
@@ -130,7 +141,7 @@
                 margin: 0;
                 font-size: 14px;
             }
-            
+
         </style>
     </head>
 
@@ -168,8 +179,8 @@
 
                         <a class="btn btn-cart mt-3 bg-gradient-secondary text-white" href="all">Trở lại</a>
                     </form>
-
                 </div>
+                <%-- Phần Feedback và Phản hồi --%>
             </div>
         </div>
 

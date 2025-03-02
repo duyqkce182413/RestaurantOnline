@@ -86,8 +86,6 @@ public class AddressController extends HttpServlet {
 
         List<Address> addresses = addressDAO.getAddressesByUsername(username);
         
-        
-        
         System.out.println(addresses);
         
         request.setAttribute("listAddresses", addresses);
@@ -112,7 +110,7 @@ public class AddressController extends HttpServlet {
 
             response.sendRedirect("listAddress");
         } else {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("LoginView.jsp");
         }
     }
 
@@ -128,7 +126,7 @@ public class AddressController extends HttpServlet {
         User user = (User) session.getAttribute("user");
 
         if (user == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("LoginView.jsp");
             return;
         }
 
@@ -157,7 +155,7 @@ public class AddressController extends HttpServlet {
         User user = (User) session.getAttribute("user");
 
         if (user == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("LoginView.jsp");
             return;
         }
 
@@ -186,7 +184,7 @@ public class AddressController extends HttpServlet {
         User user = (User) session.getAttribute("user");
 
         if (user == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("LoginView.jsp");
             return;
         }
 
@@ -216,7 +214,7 @@ public class AddressController extends HttpServlet {
         User user = (User) session.getAttribute("user");
 
         if (user == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("LoginView.jsp");
             return;
         }
 
@@ -227,7 +225,7 @@ public class AddressController extends HttpServlet {
             response.sendRedirect("listAddress");
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect("address_management.jsp?error=Unable to delete address");
+            response.sendRedirect("AddressView.jsp?error=Unable to delete address");
         }
     }
 

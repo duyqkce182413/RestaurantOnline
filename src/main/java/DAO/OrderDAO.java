@@ -26,8 +26,8 @@ public class OrderDAO extends DBContext {
 
     // Xu ly chuc nang thanh toan
     public int createOrder(Order order) {
-        String query = "INSERT INTO Orders (UserID, AddressID, OrderDate, TotalAmount, Status, PaymentMethod, Notes) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Orders (UserID, AddressID, OrderDate, Status, TotalAmount, PaymentMethod)"
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -42,12 +42,12 @@ public class OrderDAO extends DBContext {
             }
 
             // Thiết lập các giá trị cho câu lệnh SQL
-            ps.setInt(1, order.getUser().getUserID());         // user_id
-            ps.setInt(2, order.getAddress().getAddressID());      // address_id
-            ps.setDate(3, new java.sql.Date(System.currentTimeMillis()));  // order_date
-            ps.setDouble(4, order.getTotalAmount());       // total_amount
-            ps.setString(5, order.getStatus());            // status
-            ps.setString(6, order.getPaymentMethod());     // payment_method
+            ps.setInt(1, order.getUser().getUserID());
+            ps.setInt(2, order.getAddress().getAddressID());
+            ps.setDate(3, new java.sql.Date(System.currentTimeMillis()));
+            ps.setString(4, order.getStatus());
+            ps.setDouble(5, order.getTotalAmount());
+            ps.setString(6, order.getPaymentMethod());
 
             // Thực hiện truy vấn
             int affectedRows = ps.executeUpdate();
@@ -84,7 +84,7 @@ public class OrderDAO extends DBContext {
                 ps.setDouble(4, item.getPrice());
                 ps.addBatch();
             }
-            ps.executeBatch();  // Chạy lệnh batch để thêm các sản phẩm vào Order_Items
+            ps.executeBatch();  // Chạy lệnh batch để thêm các sản phẩm vào OrderDetail
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -133,22 +133,42 @@ public class OrderDAO extends DBContext {
         return items;
     }
 
-    // Cập nhật trạng thái đơn hàng
-    public boolean updateOrderStatus(int orderId, String newStatus) {
+    // Cập nhật trạng thái đơn hàng và ghi nhận thông tin nhân viên duyệt đơn hàng
+    public boolean updateOrderStatus(int orderId, String newStatus, int staffId) {
         String query = "UPDATE Orders SET Status = ? WHERE OrderID = ?";
 
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            // Cập nhật trạng thái đơn hàng
             ps.setString(1, newStatus);
             ps.setInt(2, orderId);
 
             int affectedRows = ps.executeUpdate();
-            return affectedRows > 0;
+
+            if (affectedRows > 0) {
+                // Ghi nhận vào OrderApproval
+                insertOrderApproval(orderId, staffId);
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
+    // Ghi nhận thông tin nhân viên duyệt đơn hàng
+    private void insertOrderApproval(int orderId, int staffId) {
+        String query = "INSERT INTO OrderApproval (OrderID, ApprovedBy, ApprovedAt) VALUES (?, ?, GETDATE())";
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, orderId);
+            ps.setInt(2, staffId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void updateProductQuantity(List<OrderDetail> items) {
         String query = "UPDATE Foods SET Quantity = Quantity - ? WHERE FoodID = ?";
 
@@ -188,7 +208,7 @@ public class OrderDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return order;
     }
 
@@ -268,6 +288,27 @@ public class OrderDAO extends DBContext {
         }
     }
 
+    // ======== FeedBack For Customer ==========
+    // Kiểm tra xem khách hàng đã mua món ăn này chưa
+    public boolean isFoodPurchasedByUser(int foodId, int userId) {
+        String query = "SELECT COUNT(*) FROM OrderDetails od "
+                + "JOIN Orders o ON od.OrderID = o.OrderID "
+                + "WHERE od.FoodID = ? AND o.UserID = ? AND o.Status = 'Hoàn thành'"; // Kiểm tra đơn hàng đã hoàn thành
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, foodId);
+            ps.setInt(2, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                return true; // Nếu có ít nhất 1 đơn hàng đã hoàn thành với món ăn này
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    // ========== END ===========
+
     /*
         ======================== Admin Orders  ========================
      */
@@ -340,16 +381,6 @@ public class OrderDAO extends DBContext {
     }
 
     public static void main(String[] args) {
-        OrderDAO orderDAO = new OrderDAO();
-
-        Order order = orderDAO.getOrderById(4);
-
-         System.out.println("Đang lấy Order ID: " + order.getOrderID());
-        if (order != null) {
-            System.out.println("Order lấy được: " + order.toString());
-        } else {
-            System.out.println("Không tìm thấy Order!");
-        }
     }
 
 }

@@ -4,12 +4,17 @@
  */
 package Controllers;
 
+import DAO.OrderApprovalDAO;
+import Models.OrderApproval;
+import Models.User;
+import java.util.List;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -34,7 +39,7 @@ public class OrderApprovalController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet OrderApprovalController</title>");            
+            out.println("<title>Servlet OrderApprovalController</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet OrderApprovalController at " + request.getContextPath() + "</h1>");
@@ -55,7 +60,28 @@ public class OrderApprovalController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        // Check login with role Admin
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        if (user == null || !user.getRole().equalsIgnoreCase("Admin")) {
+            response.sendRedirect("LoginView.jsp?error=You must be an admin to access this page.");
+            return;
+        }
+
+        String action = request.getServletPath();
+
+        try {
+            switch (action) {
+                case "/listOrderApproval":
+                    listAllOrderApproval(request, response);
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -69,7 +95,14 @@ public class OrderApprovalController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+    }
+
+    private void listAllOrderApproval(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        OrderApprovalDAO approvalDAO = new OrderApprovalDAO();
+        List<OrderApproval> approvals = approvalDAO.getAllApprovals();
+        request.setAttribute("approvals", approvals);
+        request.getRequestDispatcher("OrderApproval.jsp").forward(request, response);
     }
 
     /**

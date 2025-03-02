@@ -2,17 +2,31 @@ package Controllers;
 
 import DAO.OrderDAO;
 import Models.Order;
+import Models.User;
 import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 public class StaffOrderController extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Check login with role Staff
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        if (user == null || !user.getRole().equalsIgnoreCase("Staff")) {
+            response.sendRedirect("LoginView.jsp?error=You must be an admin to access this page.");
+            return;
+        }
+
+        // Luôn cập nhật staffId mỗi khi đăng nhập
+        session.setAttribute("staffId", user.getUserID());
+
         String action = request.getServletPath();
 
         try {
@@ -63,27 +77,49 @@ public class StaffOrderController extends HttpServlet {
         request.getRequestDispatcher("admin_orders.jsp").forward(request, response);
     }
 
-    // Cập nhật trạng thái đơn hàng
     private void updateOrderStatus(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        int orderId = Integer.parseInt(request.getParameter("id"));
-        String newStatus = "Hoàn thành";
+        try {
+            String orderIdStr = request.getParameter("id");
+            String staffIdStr = request.getParameter("staffId");
 
-        OrderDAO ordersDAO = new OrderDAO();
-        boolean isUpdated = ordersDAO.updateOrderStatus(orderId, newStatus);
-
-        if (isUpdated) {
-            // Nếu cập nhật trạng thái thành công, giảm số lượng sản phẩm
-            Order order = ordersDAO.getOrderById(orderId);
-            if (order != null) {
-                ordersDAO.updateProductQuantity(order.getOrderDetail());
+            // Kiểm tra null hoặc rỗng
+            if (orderIdStr == null || orderIdStr.trim().isEmpty() || staffIdStr == null || staffIdStr.trim().isEmpty()) {
+                request.setAttribute("error", "Order ID hoặc Staff ID không hợp lệ.");
+                request.getRequestDispatcher("listAdminOrders").forward(request, response);
+                return;
             }
-            request.setAttribute("message", "Status updated successfully and product quantities adjusted");
-        } else {
-            request.setAttribute("error", "Failed to update status");
-        }
 
-        request.getRequestDispatcher("listAdminOrders").forward(request, response);
+            // Kiểm tra có phải số không
+            if (!orderIdStr.matches("\\d+") || !staffIdStr.matches("\\d+")) {
+                request.setAttribute("error", "Order ID hoặc Staff ID phải là số nguyên.");
+                request.getRequestDispatcher("listAdminOrders").forward(request, response);
+                return;
+            }
+
+            int orderId = Integer.parseInt(orderIdStr);
+            int staffId = Integer.parseInt(staffIdStr);
+
+            // Gọi DAO để cập nhật trạng thái
+            OrderDAO ordersDAO = new OrderDAO();
+            boolean isUpdated = ordersDAO.updateOrderStatus(orderId, "Hoàn thành", staffId);
+
+            if (isUpdated) {
+                Order order = ordersDAO.getOrderById(orderId);
+                if (order != null) {
+                    ordersDAO.updateProductQuantity(order.getOrderDetail());
+                }
+                request.setAttribute("message", "Status updated successfully and product quantities adjusted");
+            } else {
+                request.setAttribute("error", "Failed to update status");
+            }
+
+            request.getRequestDispatcher("listAdminOrders").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
+            request.getRequestDispatcher("listAdminOrders").forward(request, response);
+        }
     }
 
     // Hiển thị chi tiết đơn hàng

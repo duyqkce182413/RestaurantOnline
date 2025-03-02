@@ -74,7 +74,9 @@
             <div class="wrapper clearfix">
                 <!-- Sidebar -->
                 <div class="sidebar">
-                    <a href="listAdminOrders"><i class="fas fa-shopping-cart"></i> Order Management</a>
+                    <h3>Staff Dashboard</h3>
+                    <a href="listAdminOrders"><i class="fas fa-shopping-cart"></i> Manage Order </a>
+                    <a href="listStaffFeedbacks"><i class="fas fa-comments"></i> Manage Feedback </a>
                 </div>
 
                 <!-- Order Details Content -->

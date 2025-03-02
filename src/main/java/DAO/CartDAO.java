@@ -3,11 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package DAO;
-        
+
 import Models.Cart;
 import Models.CartItem;
 import Models.Food;
 import Utils.DBContext;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -128,4 +129,17 @@ public class CartDAO extends DBContext {
         }
     }
 
+    // Xóa gio hàng khi user thanh toán thành công
+    public void clearCartByUserId(int userId) {
+        String query = "DELETE FROM Cart WHERE UserID = ?";
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

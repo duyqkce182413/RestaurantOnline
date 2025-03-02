@@ -13,13 +13,13 @@ import java.util.Date;
 public class OrderApproval {
     private int approvalID;
     private int orderID;
-    private int approvedBy;
+    private User approvedBy;
     private Date approvedAt;
 
     public OrderApproval() {
     }
 
-    public OrderApproval(int approvalID, int orderID, int approvedBy, Date approvedAt) {
+    public OrderApproval(int approvalID, int orderID, User approvedBy, Date approvedAt) {
         this.approvalID = approvalID;
         this.orderID = orderID;
         this.approvedBy = approvedBy;
@@ -42,11 +42,11 @@ public class OrderApproval {
         this.orderID = orderID;
     }
 
-    public int getApprovedBy() {
+    public User getApprovedBy() {
         return approvedBy;
     }
 
-    public void setApprovedBy(int approvedBy) {
+    public void setApprovedBy(User approvedBy) {
         this.approvedBy = approvedBy;
     }
 
@@ -62,6 +62,4 @@ public class OrderApproval {
     public String toString() {
         return "OrderApproval{" + "approvalID=" + approvalID + ", orderID=" + orderID + ", approvedBy=" + approvedBy + ", approvedAt=" + approvedAt + '}';
     }
-
-    
 }

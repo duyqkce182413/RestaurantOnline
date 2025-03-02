@@ -76,7 +76,8 @@
                 <!-- Sidebar -->
                 <div class="sidebar">
                     <h3>Staff Dashboard</h3>
-                    <a href="listAdminOrders"><i class="fas fa-shopping-cart"></i>Manage Order</a>
+                    <a href="listAdminOrders"><i class="fas fa-shopping-cart"></i> Manage Order </a>
+                    <a href="listStaffFeedbacks"><i class="fas fa-comments"></i> Manage Feedback </a>
                 </div>
 
                 <!-- Main content -->
@@ -150,7 +151,6 @@
                                           <c:choose>
                                               <c:when test="${order.status == 'Chưa xử lý'}">bg-warning</c:when>
                                               <c:when test="${order.status == 'Hoàn thành'}">bg-success</c:when>
-                                              <c:when test="${order.status == 'Ðã hủy'}">bg-danger</c:when>
                                           </c:choose>">${order.status}
                                     </span>
                                 </td>
@@ -160,7 +160,8 @@
                                         <i class="fas fa-eye"></i> View
                                     </a>
                                     <c:if test="${order.status == 'Chưa xử lý'}">
-                                        <a href="updateOrderStatus?id=${order.orderID}&status=Hoàn thành" class="btn btn-success btn-sm">
+                                        <a href="updateOrderStatus?id=${order.orderID}&staffId=${sessionScope.staffId}" 
+                                           class="btn btn-success btn-sm">
                                             <i class="fas fa-check"></i> Complete
                                         </a>
                                     </c:if>

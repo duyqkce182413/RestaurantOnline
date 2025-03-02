@@ -57,8 +57,12 @@ public class UserController extends HttpServlet {
                 break;
             case "/logout":
                 logout(request, response);
+                break;
             case "user-detail":
                 getUser(request, response);
+                break;
+            default:
+                viewUsers(request, response);
                 break;
         }
     }
@@ -80,6 +84,7 @@ public class UserController extends HttpServlet {
                 break;
             case "/update-user":
                 updateUser(request, response);
+                break;
         }
     }
 
@@ -226,8 +231,16 @@ public class UserController extends HttpServlet {
         } else {
             session.setAttribute("user", user);
             session.setMaxInactiveInterval(1200);
+
+            System.out.println("Session created successfully.");
+
+            // Kiểm tra xem session đã lưu đúng không
+            System.out.println("User session: " + session.getAttribute("user"));
+
             if (user.getRole().equalsIgnoreCase("Admin")) {
-                request.getRequestDispatcher("view-users").forward(request, response);
+                response.sendRedirect("view-users"); 
+            } else if (user.getRole().equalsIgnoreCase("Staff")) {
+                response.sendRedirect("listAdminOrders");
             } else {
                 response.sendRedirect("all");
             }
@@ -238,26 +251,40 @@ public class UserController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
-        session.removeAttribute("user");
+        if (session != null) {
+            session.removeAttribute("user");
+            System.out.println("User logged out successfully.");
+        } else {
+            System.out.println("Session not found.");
+        }
         response.sendRedirect("all");
     }
 
     private void getUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int userId = Integer.parseInt(request.getParameter("id"));
-        User user = userDAO.getUserById(userId);
+        String idStr = request.getParameter("id");
+        if (idStr != null && !idStr.trim().isEmpty()) {
+            try {
+                int userId = Integer.parseInt(idStr);
+                User user = userDAO.getUserById(userId);
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
 
-        // Cấu hình Gson để xử lý Date
-        Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd")
-                .create();
-
-        PrintWriter out = response.getWriter();
-        out.print(gson.toJson(user));
-        out.flush();
+                // Cấu hình Gson để xử lý Date
+                Gson gson = new GsonBuilder()
+                        .setDateFormat("yyyy-MM-dd")
+                        .create();
+                PrintWriter out = response.getWriter();
+                out.print(gson.toJson(user));
+                out.flush();
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid user ID");
+            }
+        } else {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User ID not provided");
+        }
     }
 
     private void updateUser(HttpServletRequest request, HttpServletResponse response)

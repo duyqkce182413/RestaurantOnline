@@ -26,9 +26,7 @@ public class User {
 
     public User() {
     }
-
     
-
     public User(int userID, String username, String fullName, String email, String passwordHash, String phoneNumber, Date dateOfBirth, String gender, String avatar, Date createdAt, String status, String role) {
         this.userID = userID;
         this.username = username;

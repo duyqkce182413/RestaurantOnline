@@ -149,8 +149,11 @@
                                 <td>
                                     <span class="badge
                                           <c:choose>
-                                              <c:when test="${order.status == 'Chưa xử lý'}">bg-warning</c:when>
-                                              <c:when test="${order.status == 'Hoàn thành'}">bg-success</c:when>
+                                              <c:when test="${order.status.equals('Chưa xử lý')}">bg-warning</c:when>
+                                              <c:when test="${order.status.equals('Đã tiếp nhận')}">bg-success</c:when>
+                                              <c:when test="${order.status.equals('Đang chuẩn bị')}">bg-success</c:when>
+                                              <c:when test="${order.status.equals('Đang giao')}">bg-success</c:when>
+                                              <c:when test="${order.status.equals('Hoàn thành')}">bg-success</c:when>
                                           </c:choose>">${order.status}
                                     </span>
                                 </td>
@@ -159,12 +162,32 @@
                                     <a href="viewOrderDetails?id=${order.orderID}" class="btn btn-primary btn-sm">
                                         <i class="fas fa-eye"></i> View
                                     </a>
-                                    <c:if test="${order.status == 'Chưa xử lý'}">
-                                        <a href="updateOrderStatus?id=${order.orderID}&staffId=${sessionScope.staffId}" 
-                                           class="btn btn-success btn-sm">
-                                            <i class="fas fa-check"></i> Complete
-                                        </a>
-                                    </c:if>
+                                    <c:choose>
+                                        <c:when test="${order.status == 'Chưa xử lý'}">
+                                            <a href="updateOrderStatus?id=${order.orderID}&staffId=${sessionScope.staffId}&newStatus=Đã tiếp nhận" 
+                                               class="btn btn-warning btn-sm">
+                                                <i class="fas fa-check"></i> Đã tiếp nhận
+                                            </a>
+                                        </c:when>
+                                        <c:when test="${order.status == 'Đã tiếp nhận'}">
+                                            <a href="updateOrderStatus?id=${order.orderID}&staffId=${sessionScope.staffId}&newStatus=Đang chuẩn bị" 
+                                               class="btn btn-info btn-sm">
+                                                <i class="fas fa-box"></i> Đang chuẩn bị
+                                            </a>
+                                        </c:when>
+                                        <c:when test="${order.status == 'Đang chuẩn bị'}">
+                                            <a href="updateOrderStatus?id=${order.orderID}&staffId=${sessionScope.staffId}&newStatus=Đang giao" 
+                                               class="btn btn-primary btn-sm">
+                                                <i class="fas fa-truck"></i> Đang giao
+                                            </a>
+                                        </c:when>
+                                        <c:when test="${order.status == 'Đang giao'}">
+                                            <a href="updateOrderStatus?id=${order.orderID}&staffId=${sessionScope.staffId}&newStatus=Hoàn thành" 
+                                               class="btn btn-success btn-sm">
+                                                <i class="fas fa-check-circle"></i> Hoàn thành
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
                                 </td>
                             </tr>
                         </c:forEach>

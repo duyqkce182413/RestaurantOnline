@@ -102,7 +102,7 @@
                         <thead class="table-dark">
                             <tr>
                                 <th>Approval ID</th>
-                                <th>Staff Name</th>
+                                <th>Name</th>
                                 <th>Order ID</th>
                                 <th>Approval Date</th>
                             </tr>

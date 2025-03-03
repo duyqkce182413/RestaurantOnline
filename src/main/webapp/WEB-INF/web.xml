@@ -175,6 +175,10 @@
         <servlet-name>GoogleLoginServlet</servlet-name>
         <url-pattern>/GoogleLoginServlet</url-pattern>
     </servlet-mapping>
+    
+    <welcome-file-list>
+        <welcome-file>LoginView.jsp</welcome-file>
+    </welcome-file-list>
     <session-config>
         <session-timeout>
             1200

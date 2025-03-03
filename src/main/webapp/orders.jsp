@@ -163,7 +163,7 @@
                                         </td>
                                         <td>${order.totalAmount}</td>
                                         <td>
-                                            <c:if test="${order.status == 'Chưa xử lý'}">
+                                            <c:if test="${order.status.equals('Chưa xử lý') || order.status.equals('Đã tiếp nhận')}">
                                                 <a href="cancelOrder?id=${order.orderID}" class="btn btn-danger"
                                                    onclick="return confirm('Bạn chắc chắn muốn hủy đơn hàng này?')">
                                                     Hủy Đơn Hàng

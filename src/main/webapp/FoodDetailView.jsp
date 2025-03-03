@@ -153,7 +153,7 @@
                 <div class="row">
                     <!-- Food Image -->
                     <div class="col-md-6">
-                        <img src="${food_detail.image}" alt="Tên món ăn" class="food-img">
+                        <img src="${pageContext.request.contextPath}/image/${food_detail.image}" alt="Tên món ăn" class="food-img">
                 </div>
 
                 <!-- Food Details -->

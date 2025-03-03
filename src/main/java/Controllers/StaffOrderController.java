@@ -1,5 +1,6 @@
 package Controllers;
 
+import DAO.OrderApprovalDAO;
 import DAO.OrderDAO;
 import Models.Order;
 import Models.User;
@@ -19,7 +20,7 @@ public class StaffOrderController extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
-        if (user == null ||  ( !user.getRole().equalsIgnoreCase("Admin") && !user.getRole().equalsIgnoreCase("Staff"))) {
+        if (user == null || (!user.getRole().equalsIgnoreCase("Admin") && !user.getRole().equalsIgnoreCase("Staff"))) {
             response.sendRedirect("LoginView.jsp?error=You must be an admin to access this page.");
             return;
         }
@@ -82,6 +83,7 @@ public class StaffOrderController extends HttpServlet {
         try {
             String orderIdStr = request.getParameter("id");
             String staffIdStr = request.getParameter("staffId");
+            String newStatus = request.getParameter("newStatus");
 
             // Kiểm tra null hoặc rỗng
             if (orderIdStr == null || orderIdStr.trim().isEmpty() || staffIdStr == null || staffIdStr.trim().isEmpty()) {
@@ -99,10 +101,20 @@ public class StaffOrderController extends HttpServlet {
 
             int orderId = Integer.parseInt(orderIdStr);
             int staffId = Integer.parseInt(staffIdStr);
+            
+            OrderApprovalDAO orderApprovalDAO = new OrderApprovalDAO();
+            
+            // Kiểm tra nhân viên đã duyệt trước đó
+            Integer previousStaffId = orderApprovalDAO.getApprovedByStaffId(orderId); // Giả sử có phương thức này trong Order
+            if (previousStaffId != null && previousStaffId != staffId) {
+                request.setAttribute("error", "Chỉ nhân viên đã duyệt trước đó mới có thể tiếp tục duyệt đơn.");
+                request.getRequestDispatcher("listAdminOrders").forward(request, response);
+                return;
+            }
 
             // Gọi DAO để cập nhật trạng thái
             OrderDAO ordersDAO = new OrderDAO();
-            boolean isUpdated = ordersDAO.updateOrderStatus(orderId, "Hoàn thành", staffId);
+            boolean isUpdated = ordersDAO.updateOrderStatus(orderId, newStatus, staffId);
 
             if (isUpdated) {
                 Order order = ordersDAO.getOrderById(orderId);

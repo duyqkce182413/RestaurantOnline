@@ -229,6 +229,11 @@
                     </script>
                 </c:if>
 
+                 <c:if test="${param.error == 'Cart is empty'}">
+                    <script>
+                        alert("Giỏ hàng không được trống");
+                    </script>
+                </c:if>   
                 <div class="cart-summary">
                     <p><strong>Tổng số lượng:</strong> <span id="totalItems">0</span> sản phẩm</p>
                     <p><strong>Tổng số tiền:</strong> <span id="totalAmount">0</span> VND</p>

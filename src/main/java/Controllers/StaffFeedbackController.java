@@ -20,7 +20,7 @@ public class StaffFeedbackController extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
-        if (user == null || !user.getRole().equalsIgnoreCase("Staff")) {
+        if (user == null || (!user.getRole().equalsIgnoreCase("Admin") && !user.getRole().equalsIgnoreCase("Staff"))) {
             response.sendRedirect("LoginView.jsp?error=You must be an admin to access this page.");
             return;
         }
@@ -60,7 +60,7 @@ public class StaffFeedbackController extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
-        if (user == null || !user.getRole().equalsIgnoreCase("Staff")) {
+        if (user == null || (!user.getRole().equalsIgnoreCase("Admin") && !user.getRole().equalsIgnoreCase("Staff"))) {
             response.sendRedirect("LoginView.jsp?error=You must be an admin to access this page.");
             return;
         }

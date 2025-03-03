@@ -192,29 +192,29 @@
 
                     <!-- Address Cards -->
                     <div class="col-md-6">
-                        <c:forEach var="address" items="${listAddresses}">
-                            <div class="address-card ${address.isDefault() ? 'default-address' : ''}">
-                                <div>
-                                    <h5>${address.name} <c:if test="${address.isDefault()}">(Địa chỉ mặc định)</c:if></h5>
-                                    <p>Địa chỉ: ${address.addressLine}, ${address.city}</p>
-                                    <p>Số điện thoại: ${address.phoneNumber}</p>
-                                    <c:if test="${!address.isDefault()}">
-                                        <a href="setDefaultAddress?id=${address.addressID}" class="btn btn-success">Đặt Làm Địa Chỉ Mặc Định</a>
-                                    </c:if>
-                                </div>
-                                <div class="address-actions">
-                                    <a href="updateAddress?id=${address.addressID}" class="btn btn-primary">
-                                        <i class="fa-solid fa-pen"></i> Sửa
-                                    </a>
-                                    <c:if test="${!address.isDefault()}">
-                                        <a href="deleteAddress?id=${address.addressID}" class="btn btn-danger" onclick="return confirmDelete();">
-                                            <i class="fa-solid fa-trash"></i> Xóa
-                                        </a>
-                                    </c:if>
-                                </div>
+                    <c:forEach var="address" items="${listAddresses}">
+                        <div class="address-card ${address.isDefault() ? 'default-address' : ''}">
+                            <div>
+                                <h5>${address.name} <c:if test="${address.isDefault()}">(Địa chỉ mặc định)</c:if></h5>
+                                <p>Địa chỉ: ${address.addressLine}, ${address.city}</p>
+                                <p>Số điện thoại: ${address.phoneNumber}</p>
+                                <c:if test="${!address.isDefault()}">
+                                    <a href="setDefaultAddress?id=${address.addressID}" class="btn btn-success">Đặt Làm Địa Chỉ Mặc Định</a>
+                                </c:if>
                             </div>
-                        </c:forEach>
-                    </div>
+                            <div class="address-actions">
+                                <a href="updateAddress?id=${address.addressID}" class="btn btn-primary">
+                                    <i class="fa-solid fa-pen"></i> Sửa
+                                </a>
+                                <c:if test="${!address.isDefault()}">
+                                    <a href="deleteAddress?id=${address.addressID}" class="btn btn-danger" onclick="return confirmDelete();">
+                                        <i class="fa-solid fa-trash"></i> Xóa
+                                    </a>
+                                </c:if>
+                            </div>
+                        </div>
+                    </c:forEach>
+                </div>
 
 
                 <!-- New Address Form -->
@@ -236,6 +236,12 @@
                 </div>
             </div>
         </div>
+
+        <c:if test="${param.error == 'address_not_found'}">
+            <script>
+                alert("Địa chỉ mặc định không được tìm thấy. Vui lòng thêm địa chỉ mới.");
+            </script>
+        </c:if>
 
         <jsp:include page="Footer.jsp"></jsp:include>
 

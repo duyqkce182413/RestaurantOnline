@@ -41,7 +41,7 @@ public class CheckOutCart extends HttpServlet {
         List<CartItem> cartItems = cartDAO.getcart(user.getUserID());
 
         if (cartItems.isEmpty()) {
-            response.sendRedirect("CartView.jsp?error=Cart is empty");
+            response.sendRedirect("view-cart?error=Cart is empty");
             return;
         }
 
@@ -55,7 +55,7 @@ public class CheckOutCart extends HttpServlet {
         }
 
         if (address == null) {
-            response.sendRedirect("CartView.jsp?error=address_not_found");
+            response.sendRedirect("listAddress?error=address_not_found");
             return;
         }
 

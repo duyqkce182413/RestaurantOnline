@@ -150,9 +150,9 @@
                                     <span class="badge
                                           <c:choose>
                                               <c:when test="${order.status.equals('Chưa xử lý')}">bg-warning</c:when>
-                                              <c:when test="${order.status.equals('Đã tiếp nhận')}">bg-success</c:when>
-                                              <c:when test="${order.status.equals('Đang chuẩn bị')}">bg-success</c:when>
-                                              <c:when test="${order.status.equals('Đang giao')}">bg-success</c:when>
+                                              <c:when test="${order.status.equals('Đã tiếp nhận')}">bg-warning</c:when>
+                                              <c:when test="${order.status.equals('Đang chuẩn bị')}">bg-info</c:when>
+                                              <c:when test="${order.status.equals('Đang giao')}">bg-primary</c:when>
                                               <c:when test="${order.status.equals('Hoàn thành')}">bg-success</c:when>
                                           </c:choose>">${order.status}
                                     </span>

@@ -193,26 +193,28 @@
                     <!-- Address Cards -->
                     <div class="col-md-6">
                     <c:forEach var="address" items="${listAddresses}">
-                        <div class="address-card ${address.isDefault() ? 'default-address' : ''}">
-                            <div>
-                                <h5>${address.name} <c:if test="${address.isDefault()}">(Địa chỉ mặc định)</c:if></h5>
-                                <p>Địa chỉ: ${address.addressLine}, ${address.city}</p>
-                                <p>Số điện thoại: ${address.phoneNumber}</p>
-                                <c:if test="${!address.isDefault()}">
-                                    <a href="setDefaultAddress?id=${address.addressID}" class="btn btn-success">Đặt Làm Địa Chỉ Mặc Định</a>
-                                </c:if>
-                            </div>
-                            <div class="address-actions">
-                                <a href="updateAddress?id=${address.addressID}" class="btn btn-primary">
-                                    <i class="fa-solid fa-pen"></i> Sửa
-                                </a>
-                                <c:if test="${!address.isDefault()}">
-                                    <a href="deleteAddress?id=${address.addressID}" class="btn btn-danger" onclick="return confirmDelete();">
-                                        <i class="fa-solid fa-trash"></i> Xóa
+                        <c:if test="${address.isDeleted() == 0}">
+                            <div class="address-card ${address.isDefault() ? 'default-address' : ''}">
+                                <div>
+                                    <h5>${address.name} <c:if test="${address.isDefault()}">(Địa chỉ mặc định)</c:if></h5>
+                                    <p>Địa chỉ: ${address.addressLine}, ${address.city}</p>
+                                    <p>Số điện thoại: ${address.phoneNumber}</p>
+                                    <c:if test="${!address.isDefault()}">
+                                        <a href="setDefaultAddress?id=${address.addressID}" class="btn btn-success">Đặt Làm Địa Chỉ Mặc Định</a>
+                                    </c:if>
+                                </div>
+                                <div class="address-actions">
+                                    <a href="updateAddress?id=${address.addressID}" class="btn btn-primary">
+                                        <i class="fa-solid fa-pen"></i> Sửa
                                     </a>
-                                </c:if>
+                                    <c:if test="${!address.isDefault()}">
+                                        <a href="deleteAddress?id=${address.addressID}" class="btn btn-danger" onclick="return confirmDelete();">
+                                            <i class="fa-solid fa-trash"></i> Xóa
+                                        </a>
+                                    </c:if>
+                                </div>
                             </div>
-                        </div>
+                        </c:if>
                     </c:forEach>
                 </div>
 
@@ -230,6 +232,7 @@
                                 <input type="checkbox" class="form-check-input" id="defaultAddress" name="is_default">
                                 <label class="form-check-label" for="defaultAddress">Đặt làm địa chỉ mặc định</label>
                             </div>
+                            <input type="hidden" name="isDeleted" value="0">
                             <button type="submit" class="btn btn-success mt-3">Thêm Mới</button>
                         </form>
                     </div>

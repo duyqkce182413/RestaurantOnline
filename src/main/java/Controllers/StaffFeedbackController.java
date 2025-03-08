@@ -3,7 +3,6 @@ package Controllers;
 import DAO.FeedbackDAO;
 import Models.Feedback;
 import Models.User;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.ServletException;
@@ -112,13 +111,19 @@ public class StaffFeedbackController extends HttpServlet {
     private void viewFeedbackDetails(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            int feedbackID = Integer.parseInt(request.getParameter("id"));
+            String idParam = request.getParameter("id");
+            if (idParam == null || !idParam.matches("\\d+")) {
+                response.sendRedirect("listStaffFeedbacks?error=Invalid feedback ID");
+                return;
+            }
+
+            int feedbackID = Integer.parseInt(idParam);
             FeedbackDAO feedbackDAO = new FeedbackDAO();
-            Feedback feedback = feedbackDAO.getFeedbackById(feedbackID);  // Lấy feedback chi tiết
+            Feedback feedback = feedbackDAO.getFeedbackById(feedbackID);
 
             if (feedback != null) {
-                request.setAttribute("feedbackDetail", feedback);  // Đưa thông tin feedback vào request
-                request.getRequestDispatcher("FeedbackDetail.jsp").forward(request, response);  // Chuyển sang trang FeedbackDetail.jsp
+                request.setAttribute("feedbackDetail", feedback);
+                request.getRequestDispatcher("FeedbackDetail.jsp").forward(request, response);
             } else {
                 response.sendRedirect("listStaffFeedbacks?error=Feedback not found");
             }

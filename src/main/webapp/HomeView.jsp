@@ -100,8 +100,6 @@
                     <div class="col-md-9">
                         <div class="row g-4">
                             <c:forEach items="${requestScope.foods}" var="f">
-                                
-
                                 <div class="col-sm-12 col-md-6 col-lg-3">
                                     <div class="card product-card">
                                         <a href="view-food-detail?foodID=${f.foodID}">

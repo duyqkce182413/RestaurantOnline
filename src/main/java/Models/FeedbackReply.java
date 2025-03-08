@@ -13,21 +13,21 @@ import java.util.Date;
 public class FeedbackReply {
     private int replyID;
     private Feedback feedback;
-    private int staffID;
+    private User user;
     private String replyText;
     private Date replyAt;
 
     public FeedbackReply() {
     }
 
-    public FeedbackReply(int replyID, Feedback feedback, int staffID, String replyText, Date replyAt) {
+    public FeedbackReply(int replyID, Feedback feedback, User user, String replyText, Date replyAt) {
         this.replyID = replyID;
         this.feedback = feedback;
-        this.staffID = staffID;
+        this.user = user;
         this.replyText = replyText;
         this.replyAt = replyAt;
     }
-
+    
     public int getReplyID() {
         return replyID;
     }
@@ -44,14 +44,14 @@ public class FeedbackReply {
         this.feedback = feedback;
     }
 
-    public int getStaffID() {
-        return staffID;
+    public User getUser() {
+        return user;
     }
 
-    public void setStaffID(int staffID) {
-        this.staffID = staffID;
+    public void setUser(User user) {
+        this.user = user;
     }
-
+    
     public String getReplyText() {
         return replyText;
     }
@@ -70,7 +70,12 @@ public class FeedbackReply {
 
     @Override
     public String toString() {
-        return "FeedbackReply{" + "replyID=" + replyID + ", feedback=" + feedback + ", staffID=" + staffID + ", replyText=" + replyText + ", replyAt=" + replyAt + '}';
+        return "FeedbackReply{"
+                + "replyID=" + replyID
+                + ", userID=" + user.getUserID()
+                + ", replyText='" + replyText + '\''
+                + ", replyAt=" + replyAt
+                + '}';
     }
-    
+
 }

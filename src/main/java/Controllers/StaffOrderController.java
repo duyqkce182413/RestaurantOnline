@@ -75,9 +75,9 @@ public class StaffOrderController extends HttpServlet {
         }
 
         request.setAttribute("listOrders", orders);
-        request.getRequestDispatcher("admin_orders.jsp").forward(request, response);
+        request.getRequestDispatcher("ManageOrderView.jsp").forward(request, response);
     }
-
+    
     private void updateOrderStatus(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         try {
@@ -143,7 +143,7 @@ public class StaffOrderController extends HttpServlet {
 
         if (order != null) {
             request.setAttribute("order", order);
-            request.getRequestDispatcher("admin_view_orders.jsp").forward(request, response);
+            request.getRequestDispatcher("OrderView.jsp").forward(request, response);
         } else {
             response.sendRedirect("listAdminOrders?error=Order not found");
         }
@@ -157,7 +157,7 @@ public class StaffOrderController extends HttpServlet {
         List<Order> orders = ordersDAO.getOrdersByPhoneNumber(phoneSearch);
 
         request.setAttribute("listOrders", orders);
-        request.getRequestDispatcher("admin_orders.jsp").forward(request, response);
+        request.getRequestDispatcher("ManageOrderView.jsp").forward(request, response);
     }
 
     // Xóa order

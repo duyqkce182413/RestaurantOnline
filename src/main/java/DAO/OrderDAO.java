@@ -95,7 +95,7 @@ public class OrderDAO extends DBContext {
         List<Order> orders = new ArrayList<>();
         String query = "SELECT o.*, u.Username, a.* FROM Orders o "
                 + "JOIN Users u ON o.UserID = u.UserID "
-                + "JOIN Address a ON o.AddressID = a.AddressID "
+                + "LEFT JOIN Address a ON o.AddressID = a.AddressID "
                 + "WHERE o.UserID = ? ORDER BY o.OrderDate DESC";
 
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
@@ -291,24 +291,50 @@ public class OrderDAO extends DBContext {
     // ======== FeedBack For Customer ==========
     // Kiểm tra xem khách hàng đã mua món ăn này chưa
     public boolean isFoodPurchasedByUser(int foodId, int userId) {
-        String query = "SELECT COUNT(*) FROM OrderDetails od "
-                + "JOIN Orders o ON od.OrderID = o.OrderID "
-                + "WHERE od.FoodID = ? AND o.UserID = ? AND o.Status = 'Hoàn thành'"; // Kiểm tra đơn hàng đã hoàn thành
+        String query = "SELECT COUNT(*) "
+                + "FROM Orders o "
+                + "JOIN OrderDetails od ON o.OrderID = od.OrderID "
+                + "JOIN Users u ON o.UserID = u.UserID "
+                + "WHERE od.FoodID = ? "
+                + "AND o.UserID = ? "
+                + "AND o.Status = 'Hoàn thành'"; // Kiểm tra đơn hàng đã hoàn thành
 
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setInt(1, foodId);
-            ps.setInt(2, userId);
+            ps.setInt(1, foodId); // Tham số đầu tiên là foodId
+            ps.setInt(2, userId); // Tham số thứ hai là userId
             ResultSet rs = ps.executeQuery();
-            if (rs.next() && rs.getInt(1) > 0) {
-                return true; // Nếu có ít nhất 1 đơn hàng đã hoàn thành với món ăn này
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                System.out.println("Count of orders found: " + count); // Debugging output
+                return count > 0; // Nếu có ít nhất 1 đơn hàng đã hoàn thành với món ăn này
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
-    // ========== END ===========
 
+    public int getOrderIDForFoodAndUser(int foodID, int userID) {
+        String query = "SELECT o.OrderID "
+                + "FROM Orders o "
+                + "JOIN OrderDetails od ON o.OrderID = od.OrderID "
+                + "WHERE od.FoodID = ? AND o.UserID = ? AND o.Status = 'Hoàn thành'";
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, foodID);
+            ps.setInt(2, userID);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("OrderID");  // Trả về OrderID
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;  // Trả về -1 nếu không tìm thấy đơn hàng
+    }
+
+    // ========== END ===========
     /*
         ======================== Admin Orders  ========================
      */
@@ -381,6 +407,22 @@ public class OrderDAO extends DBContext {
     }
 
     public static void main(String[] args) {
+        // Tạo một đối tượng OrderDAO
+        OrderDAO orderDAO = new OrderDAO();
+
+        // Các tham số kiểm thử (giả sử bạn đã có foodId và userId trong cơ sở dữ liệu)
+        int foodId = 2;   // Thay đổi giá trị foodId theo yêu cầu của bạn
+        int userId = 1;   // Thay đổi giá trị userId theo yêu cầu của bạn
+
+        // Kiểm tra xem người dùng đã mua món ăn này chưa
+        boolean hasPurchased = orderDAO.isFoodPurchasedByUser(foodId, userId);
+
+        // In kết quả ra màn hình
+        if (hasPurchased) {
+            System.out.println("Người dùng đã mua món ăn này.");
+        } else {
+            System.out.println("Người dùng chưa mua món ăn này.");
+        }
     }
 
 }

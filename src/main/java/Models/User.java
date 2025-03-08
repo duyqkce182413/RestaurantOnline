@@ -11,6 +11,7 @@ import java.util.Date;
  * @author admin
  */
 public class User {
+
     private int userID;
     private String username;
     private String fullName;
@@ -26,7 +27,7 @@ public class User {
 
     public User() {
     }
-    
+
     public User(int userID, String username, String fullName, String email, String passwordHash, String phoneNumber, Date dateOfBirth, String gender, String avatar, Date createdAt, String status, String role) {
         this.userID = userID;
         this.username = username;
@@ -40,6 +41,15 @@ public class User {
         this.createdAt = createdAt;
         this.status = status;
         this.role = role;
+    }
+
+    // Feedback for customer
+    public User(int userID, String username, String fullName, String email, String role) {
+        this.userID = userID;
+        this.username = username;
+        this.fullName = fullName;
+        this.email = email;
+        this.role = role;  
     }
 
     public int getUserID() {

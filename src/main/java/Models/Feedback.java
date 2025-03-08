@@ -5,13 +5,13 @@
 package Models;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
  * @author admin
  */
 public class Feedback {
-
     private int feedbackID;
     private User user;
     private Food food;
@@ -19,7 +19,7 @@ public class Feedback {
     private int rating;
     private String comment;
     private Date createdAt;
-    private FeedbackReply reply; // Thêm phản hồi từ nhân viên
+    private  List<FeedbackReply> reply; // Thêm list reply cua khach hang vaf 
 
     public Feedback() {
     }
@@ -34,7 +34,7 @@ public class Feedback {
         this.createdAt = createdAt;
     }
 
-    public Feedback(int feedbackID, User user, Food food, Order order, int rating, String comment, Date createdAt, FeedbackReply reply) {
+    public Feedback(int feedbackID, User user, Food food, Order order, int rating, String comment, Date createdAt, List<FeedbackReply> reply) {
         this.feedbackID = feedbackID;
         this.user = user;
         this.food = food;
@@ -44,7 +44,7 @@ public class Feedback {
         this.createdAt = createdAt;
         this.reply = reply;
     }
-
+    
     public int getFeedbackID() {
         return feedbackID;
     }
@@ -82,6 +82,9 @@ public class Feedback {
     }
 
     public void setRating(int rating) {
+        if (rating < 1 || rating > 5) {
+            throw new IllegalArgumentException("Rating must be between 1 and 5.");
+        }
         this.rating = rating;
     }
 
@@ -101,26 +104,17 @@ public class Feedback {
         this.createdAt = createdAt;
     }
 
-    public FeedbackReply getReply() {
+    public List<FeedbackReply> getReply() {
         return reply;
     }
 
-    public void setReply(FeedbackReply reply) {
+    public void setReply(List<FeedbackReply> reply) {
         this.reply = reply;
     }
 
     @Override
     public String toString() {
-        return "Feedback{"
-                + "feedbackID=" + feedbackID
-                + ", user=" + user
-                + ", food=" + food
-                + ", order=" + order
-                + ", rating=" + rating
-                + ", comment='" + comment + '\''
-                + ", createdAt=" + createdAt
-                + ", reply=" + (reply != null ? "FeedbackReplyID: " + reply.getReplyID() : "null")
-                + '}';
+        return "Feedback{" + "feedbackID=" + feedbackID + ", user=" + user + ", food=" + food + ", order=" + order + ", rating=" + rating + ", comment=" + comment + ", createdAt=" + createdAt + ", reply=" + reply + '}';
     }
-
+    
 }

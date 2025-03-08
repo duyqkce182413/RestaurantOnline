@@ -31,6 +31,11 @@ public class Order {
         this.orderDetail = orderDetail;
     }
 
+    // Feedback for customer
+    public Order(int orderID) {
+        this.orderID = orderID;
+    }
+
     public int getOrderID() {
         return orderID;
     }

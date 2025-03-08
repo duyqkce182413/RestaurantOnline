@@ -121,15 +121,18 @@ public class AddressController extends HttpServlet {
         String city = request.getParameter("city");
         String phoneNumber = request.getParameter("phoneNumber");
         boolean isDefault = request.getParameter("is_default") != null;
-
+        int isDeleted = 0;
+        
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
+        
+        session.setAttribute("user", user);
 
         if (user == null) {
             response.sendRedirect("LoginView.jsp");
             return;
         }
-
+        
         AddressDAO addressDAO = new AddressDAO();
 
         try {
@@ -137,13 +140,13 @@ public class AddressController extends HttpServlet {
                 addressDAO.unsetDefaultAddress(user.getUsername());
             }
 
-            addressDAO.insertAddress(user.getUserID(), name, addressLine, city, phoneNumber, isDefault);
+            addressDAO.insertAddress(user.getUserID(), name, addressLine, city, phoneNumber, isDefault, isDeleted);
 
             response.sendRedirect("listAddress");
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Error while adding the address. Please try again.");
-            request.getRequestDispatcher("address_management.jsp").forward(request, response);
+            request.getRequestDispatcher("AddressView.jsp").forward(request, response);
         }
     }
 
@@ -164,7 +167,7 @@ public class AddressController extends HttpServlet {
 
         if (address != null && address.getUser().getUserID() == user.getUserID()) {
             request.setAttribute("updateAddress", address);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("edit_address.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("EditAddress.jsp");
             dispatcher.forward(request, response);
         } else {
             response.sendRedirect("AddressView.jsp");
@@ -202,7 +205,7 @@ public class AddressController extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Error while updating the address. Please try again.");
-            request.getRequestDispatcher("edit_address.jsp").forward(request, response);
+            request.getRequestDispatcher("EditAddress.jsp").forward(request, response);
         }
     }
 

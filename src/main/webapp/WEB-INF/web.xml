@@ -97,12 +97,10 @@
         <url-pattern>/edit-category</url-pattern>
         <url-pattern>/delete-category</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>FeedbackController</servlet-name>
-        <url-pattern>/feedbackcontroller</url-pattern>
-        <url-pattern>/feedbackList</url-pattern>
         <url-pattern>/submitFeedback</url-pattern>
+        <url-pattern>/replyFeedback</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>FoodController</servlet-name>

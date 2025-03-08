@@ -91,12 +91,12 @@
                                 <td>${feedback.feedbackID}</td>
                                 <td>${feedback.user.fullName}</td>
                                 <td>${feedback.food.foodName}</td>
-                                <td>${feedback.rating} ★</td>
+                                <td>${feedback.rating} ★</td>   
                                 <td>${feedback.comment}</td>
                                 <td>${feedback.createdAt}</td>
                                 <td>
                                     <!-- Sử dụng thẻ <a> để chuyển hướng đến trang chi tiết -->
-                                    <a href="viewFeedbackDetails?id=${feedback.feedbackID}&staffId=${sessionScope.staffId}" class="btn btn-primary btn-sm">
+                                    <a href="viewFeedbackDetails?id=${feedback.feedbackID}&userId=${sessionScope.staffId}" class="btn btn-primary btn-sm">
                                         <i class="fas fa-eye"></i> View
                                     </a>
                                 </td>

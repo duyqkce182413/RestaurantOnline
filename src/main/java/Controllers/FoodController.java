@@ -5,9 +5,11 @@
 package Controllers;
 
 import DAO.CartDAO;
+import DAO.FeedbackDAO;
 import DAO.FoodDAO;
 import Models.CartItem;
 import Models.Category;
+import Models.Feedback;
 import Models.Food;
 import Models.User;
 import com.google.gson.Gson;
@@ -19,7 +21,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -187,27 +191,50 @@ public class FoodController extends HttpServlet {
 
     protected void viewFoodDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        
+        session.setAttribute("user", user);
+        
         String foodID = request.getParameter("foodID");
-        FoodDAO dao = new FoodDAO();
+        
+        if (foodID != null && !foodID.trim().isEmpty()) {
+            FoodDAO foodDAO = new FoodDAO();
+            FeedbackDAO feedbackDAO = new FeedbackDAO();
 
-        Food food = dao.getProductBYID(foodID);
+            // Lấy thông tin món ăn
+            Food food = foodDAO.getProductBYID(foodID);
 
-        // Kiểm tra xem có phải yêu cầu JSON không
-        String format = request.getParameter("format");
-        if ("json".equals(format)) {
-            // Xử lý JSON
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
+            // Lấy danh sách feedback cho món ăn
+            List<Feedback> feedbackList = feedbackDAO.getAllFeedbacksByFoodId(Integer.parseInt(foodID));
 
-            // Sử dụng Gson (import thư viện)
-            Gson gson = new Gson();
-            String jsonFood = gson.toJson(food);
+            // Kiểm tra xem có phải yêu cầu JSON không
+            String format = request.getParameter("format");
+            if ("json".equals(format)) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
 
-            response.getWriter().write(jsonFood);
+                // Tạo đối tượng JSON chứa cả food và feedbackList
+                Map<String, Object> responseData = new HashMap<>();
+                responseData.put("food", food);
+                responseData.put("feedbacks", feedbackList);
+
+                // Chuyển đổi sang JSON bằng Gson
+                Gson gson = new Gson();
+                String jsonResponse = gson.toJson(responseData);
+
+                response.getWriter().write(jsonResponse);
+            } else {
+                // Đặt dữ liệu vào request
+                request.setAttribute("food_detail", food);
+                request.setAttribute("feedbackList", feedbackList);
+
+                // Chuyển hướng đến trang FoodDetailView.jsp
+                request.getRequestDispatcher("FoodDetailView.jsp").forward(request, response);
+            }
         } else {
-
-            request.setAttribute("food_detail", food);
-            request.getRequestDispatcher("FoodDetailView.jsp").forward(request, response);
+            // Nếu không có foodID, chuyển hướng về trang lỗi hoặc danh sách món ăn
+            response.sendRedirect("FoodDetailView.jsp");
         }
     }
 

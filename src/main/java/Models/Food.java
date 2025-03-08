@@ -9,6 +9,7 @@ package Models;
  * @author admin
  */
 public class Food {
+
     private int foodID;
     private String foodName;
     private double price;
@@ -30,6 +31,12 @@ public class Food {
         this.image = image;
         this.available = available;
         this.quantity = quantity;
+    }
+
+    // Feedback for Customer
+    public Food(int foodID, String foodName) {
+        this.foodID = foodID;
+        this.foodName = foodName;
     }
 
     public int getFoodID() {
@@ -99,7 +106,6 @@ public class Food {
     @Override
     public String toString() {
         return "Food{" + "foodID=" + foodID + ", foodName=" + foodName + ", price=" + price + ", categoryID=" + categoryID + ", description=" + description + ", image=" + image + ", available=" + available + ", quantity=" + quantity + '}';
-    }   
-    
-    
+    }
+
 }

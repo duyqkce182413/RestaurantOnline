@@ -44,6 +44,12 @@ public class FeedbackController extends HttpServlet {
             case "/replyFeedback":
                 replyFeedback(request, response);
                 break;
+            case "/editFeedback":
+                editFeedback(request, response);
+                break;
+            case "/deleteFeedback":
+                deleteFeedback(request, response);
+                break;
             default:
                 throw new AssertionError();
         }
@@ -77,6 +83,12 @@ public class FeedbackController extends HttpServlet {
             rating = Integer.parseInt(ratingStr);
         } catch (NumberFormatException e) {
             response.sendRedirect("view-food-detail?error=invalid_number&foodID=" + foodIdStr);
+            return;
+        }
+
+        // Kiểm tra xem rating có hợp lệ không (từ 1 đến 5)
+        if (rating < 1 || rating > 5) {
+            response.sendRedirect("view-food-detail?error=invalid_rating&foodID=" + foodID);
             return;
         }
 
@@ -173,6 +185,77 @@ public class FeedbackController extends HttpServlet {
             response.sendRedirect("view-food-detail?foodID=" + feedback.getFood().getFoodID() + "&success=true");
         } else {
             response.sendRedirect("view-food-detail?foodID=" + feedback.getFood().getFoodID() + "&error=true");
+        }
+    }
+
+    private void editFeedback(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        // Kiểm tra đăng nhập
+        if (user == null) {
+            response.sendRedirect("LoginView.jsp");
+            return;
+        }
+
+        // Lấy thông tin từ request
+        String feedbackIdStr = request.getParameter("feedbackID");
+        String ratingStr = request.getParameter("rating");
+        String comment = request.getParameter("comment");
+
+        // Kiểm tra tham số
+        if (feedbackIdStr == null || feedbackIdStr.trim().isEmpty()
+                || ratingStr == null || ratingStr.trim().isEmpty()
+                || comment == null || comment.trim().isEmpty()) {
+            response.sendRedirect("view-food-detail?error=missing_parameters&foodID=" + request.getParameter("foodID"));
+            return;
+        }
+
+        int feedbackID;
+        int rating;
+
+        try {
+            feedbackID = Integer.parseInt(feedbackIdStr);
+            rating = Integer.parseInt(ratingStr);
+        } catch (NumberFormatException e) {
+            response.sendRedirect("view-food-detail?error=invalid_number&foodID=" + request.getParameter("foodID"));
+            return;
+        }
+
+        // Kiểm tra xem feedback có tồn tại và thuộc về người dùng hiện tại không
+        FeedbackDAO feedbackDAO = new FeedbackDAO();
+        Feedback existingFeedback = feedbackDAO.getFeedbackById(feedbackID);
+
+        if (existingFeedback == null || existingFeedback.getUser().getUserID() != user.getUserID()) {
+            response.sendRedirect("view-food-detail?error=feedback_not_found_or_unauthorized&foodID=" + request.getParameter("foodID"));
+            return;
+        }
+
+        // Cập nhật thông tin feedback
+        existingFeedback.setRating(rating);
+        existingFeedback.setComment(comment);
+
+        // Thực hiện cập nhật feedback
+        boolean success = feedbackDAO.updateFeedback(existingFeedback);
+
+        if (success) {
+            response.sendRedirect("view-food-detail?foodID=" + existingFeedback.getFood().getFoodID() + "&success=true");
+        } else {
+            response.sendRedirect("view-food-detail?foodID=" + existingFeedback.getFood().getFoodID() + "&error=true");
+        }
+    }
+
+    private void deleteFeedback(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int feedbackID = Integer.parseInt(request.getParameter("feedbackId"));
+        FeedbackDAO feedbackDAO = new FeedbackDAO();
+        boolean isDeleted = feedbackDAO.deleteFeedback(feedbackID);
+
+        System.out.println("Feedback ID to delete: " + feedbackID);
+        if (isDeleted) {
+            response.sendRedirect("view-food-detail?foodID=" + request.getParameter("foodID") + "&success=true");
+        } else {
+            response.sendRedirect("view-food-detail?foodID=" + request.getParameter("foodID") + "&error=true");
         }
     }
 

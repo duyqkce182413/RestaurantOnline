@@ -436,6 +436,20 @@ public class FeedbackDAO extends DBContext {
         return false; // Thêm phản hồi thất bại
     }
 
+    public boolean updateFeedback(Feedback feedback) {
+        String sql = "UPDATE Feedback SET rating = ?, comment = ? WHERE feedbackID = ?";
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, feedback.getRating());
+            ps.setString(2, feedback.getComment());
+            ps.setInt(3, feedback.getFeedbackID());
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static void main(String[] args) {
         FeedbackDAO feedbackDAO = new FeedbackDAO();
 

@@ -101,6 +101,8 @@
         <servlet-name>FeedbackController</servlet-name>
         <url-pattern>/submitFeedback</url-pattern>
         <url-pattern>/replyFeedback</url-pattern>
+        <url-pattern>/editFeedback</url-pattern>
+        <url-pattern>/deleteFeedback</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>FoodController</servlet-name>

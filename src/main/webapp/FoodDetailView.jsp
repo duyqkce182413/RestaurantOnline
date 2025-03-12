@@ -308,17 +308,21 @@
                                         </p>
 
                                         <!-- Chỉ hiển thị nút sửa nếu đó là phản hồi của người dùng hiện tại hoặc Admin/Staff -->
+                                        <!-- Nút sửa và xóa phản hồi -->
                                         <c:if test="${sessionScope.user.userID == r.user.userID}">
-                                            <button class="btn btn-sm btn-warning edit-reply" data-replyid="${r.replyID}">
+                                            <button class="btn btn-sm btn-warning edit-reply" 
+                                                    data-replyid="${r.replyID}" 
+                                                    data-replytext="${r.replyText}">
                                                 Sửa
                                             </button>
                                         </c:if>
 
-                                        <!-- Chỉ Admin và Staff mới có thể xóa phản hồi -->
-                                        <c:if test="${sessionScope.user.role == 'Admin' or sessionScope.user.role == 'Staff'}">
-                                            <button class="btn btn-sm btn-danger delete-reply" data-replyid="${r.replyID}">
-                                                Xóa
-                                            </button>
+                                        <c:if test="${sessionScope.user.role == 'Admin' or sessionScope.user.role == 'Staff' or sessionScope.user.userID == r.user.userID}">
+                                            <form action="delete-feedback-reply" method="POST" style="display: inline;">
+                                                <input type="hidden" name="replyID" value="${r.replyID}">
+                                                <input type="hidden" name="foodID" value="${food_detail.foodID}">
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa phản hồi này không?');">Xóa</button>
+                                            </form>
                                         </c:if>
                                     </c:forEach>
 
@@ -336,11 +340,13 @@
                             </c:if>
 
                             <!-- Hiển thị nút phản hồi nếu chưa có phản hồi -->
+                            <%--
                             <c:if test="${empty feedback.reply}">
                                 <button class="btn btn-sm btn-primary reply-feedback" data-feedbackid="${feedback.feedbackID}">
                                     Phản hồi
                                 </button>
                             </c:if>
+                            --%>
                         </div>  
                     </c:forEach>
 
@@ -373,6 +379,20 @@
                         </div>
                     </div>
 
+                    <!-- Modal để sửa phản hồi -->
+                    <div id="editReplyModal" class="modal" style="display: none;">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <h4>Chỉnh Sửa Phản Hồi</h4>
+                            <form id="editReplyForm" action="edit-feedback-reply" method="post">
+                                <input type="hidden" name="replyID" id="editReplyID">
+                                <input type="hidden" name="foodId" value="${food_detail.foodID}">
+                                <label>Nội dung phản hồi:</label>
+                                <textarea name="replyText" id="editReplyText" class="form-control" required></textarea>
+                                <button type="submit" class="btn btn-primary mt-2">Lưu</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -381,9 +401,9 @@
         <!-- Footer -->
         <jsp:include page="Footer.jsp"></jsp:include>
 
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
+            <!-- Bootstrap JS -->
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
                                             // Chon SAO khi add feedback
                                             document.addEventListener("DOMContentLoaded", function () {
                                                 const stars = document.querySelectorAll(".star-rating .fa-star");
@@ -524,6 +544,39 @@
                                             function confirmDelete() {
                                                 return confirm("Bạn có chắc chắn muốn xóa feedback này không?");
                                             }
+
+                                            // Sua phan hoi (feedback reply)
+                                            document.addEventListener("DOMContentLoaded", function () {
+                                                const editReplyButtons = document.querySelectorAll(".edit-reply");
+                                                const deleteReplyButtons = document.querySelectorAll(".delete-reply");
+                                                const editReplyModal = document.getElementById("editReplyModal");
+                                                const closeEditReplyModal = editReplyModal.querySelector(".close");
+                                                const editReplyForm = document.getElementById("editReplyForm");
+                                                const editReplyID = document.getElementById("editReplyID");
+                                                const editReplyText = document.getElementById("editReplyText");
+
+                                                // Xử lý khi click nút "Sửa" phản hồi
+                                                editReplyButtons.forEach(button => {
+                                                    button.addEventListener("click", function () {
+                                                        editReplyID.value = this.getAttribute("data-replyid");
+                                                        editReplyText.value = this.getAttribute("data-replytext");
+                                                        editReplyModal.style.display = "block";
+                                                    });
+                                                });
+
+                                                // Đóng modal sửa phản hồi
+                                                closeEditReplyModal.addEventListener("click", function () {
+                                                    editReplyModal.style.display = "none";
+                                                });
+
+                                                window.addEventListener("click", function (event) {
+                                                    if (event.target === editReplyModal) {
+                                                        editReplyModal.style.display = "none";
+                                                    }
+                                                });
+
+                                                
+                                            });
         </script>
     </body>
 

@@ -56,7 +56,7 @@
                         <c:if test="${sessionScope.user == null}">
                             <ul class="list-unstyled">
                                 <li><a href="LoginView.jsp">Đăng nhập</a></li>
-                                <li><a href="register.jsp">Đăng ký</a></li>
+                                <li><a href="RegisterView.jsp">Đăng ký</a></li>
                             </ul>
                         </c:if>
                         <c:if test="${sessionScope.user != null}">

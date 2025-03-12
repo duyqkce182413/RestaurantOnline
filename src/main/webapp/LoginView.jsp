@@ -49,7 +49,7 @@
                         <p class ="error"> ${messerror}</p>
                 </div>
                 <div class="form-text"> 
-                    Don't have an account? <a href="register.jsp">Register Here</a>
+                    Don't have an account? <a href="RegisterView.jsp">Register Here</a>
                 </div>
             </form>
         </div>

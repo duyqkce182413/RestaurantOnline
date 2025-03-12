@@ -149,7 +149,7 @@
                     <div class="alert alert-success mt-3">${sessionScope.successMessage}</div>
                 </c:if>
                 <div class="form-text">
-                    Already have an account? <a href="login.jsp">Login Here</a>
+                    Already have an account? <a href="LoginView.jsp">Login Here</a>
                 </div>
             </form>
         </div>

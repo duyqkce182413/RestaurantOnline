@@ -169,6 +169,35 @@ public class UserDAO extends DBContext {
         return null;
     }
 
+    public User getUserByUsername(String username) {
+        String query = "SELECT * FROM Users WHERE Username = ?";
+        try {
+            Connection conn = getConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new User(
+                        rs.getInt("UserID"),
+                        rs.getString("Username"),
+                        rs.getString("FullName"),
+                        rs.getString("Email"),
+                        rs.getString("PasswordHash"),
+                        rs.getString("PhoneNumber"),
+                        rs.getDate("DateOfBirth"),
+                        rs.getString("Gender"),
+                        rs.getString("Avatar"),
+                        rs.getDate("CreatedAt"),
+                        rs.getString("Status"),
+                        rs.getString("Role")
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public boolean deleteUser(int userId) {
         String query = "DELETE FROM Users WHERE UserID = ? AND Role != 'Admin'";
         try {

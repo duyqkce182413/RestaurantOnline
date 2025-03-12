@@ -3,6 +3,7 @@ package Controllers;
 import DAO.FoodDAO;
 import DAO.UserDAO;
 import Models.User;
+import Utils.PasswordUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
@@ -85,6 +86,8 @@ public class UserController extends HttpServlet {
             case "/update-user":
                 updateUser(request, response);
                 break;
+            case "/register":
+                Register(request, response);
         }
     }
 
@@ -223,26 +226,42 @@ public class UserController extends HttpServlet {
         String password = request.getParameter("password");
 
         UserDAO dao = new UserDAO();
-        User user = dao.loginWithUsername(username, password);
+        User user = dao.getUserByUsername(username); // Lấy thông tin user từ database
         HttpSession session = request.getSession();
+
         if (user == null) {
+            // Nếu không tìm thấy user
             request.setAttribute("messerror", "Wrong Username or Password");
             request.getRequestDispatcher("LoginView.jsp").forward(request, response);
         } else {
-            session.setAttribute("user", user);
-            session.setMaxInactiveInterval(1200);
+            boolean isPasswordCorrect = false;
 
-            System.out.println("Session created successfully.");
-
-            // Kiểm tra xem session đã lưu đúng không
-            System.out.println("User session: " + session.getAttribute("user"));
-
-            if (user.getRole().equalsIgnoreCase("Admin")) {
-                response.sendRedirect("view-users"); 
-            } else if (user.getRole().equalsIgnoreCase("Staff")) {
-                response.sendRedirect("listAdminOrders");
+            // Kiểm tra xem mật khẩu trong database đã được hash hay chưa
+            if (user.getPasswordHash().startsWith("$2a$")) { // Bcrypt hash bắt đầu bằng "$2a$"
+                // Nếu đã hash, sử dụng BCrypt để kiểm tra
+                isPasswordCorrect = PasswordUtil.checkPassword(password, user.getPasswordHash());
             } else {
-                response.sendRedirect("all");
+                // Nếu chưa hash, so sánh trực tiếp
+                isPasswordCorrect = password.equals(user.getPasswordHash());
+            }
+
+            if (!isPasswordCorrect) {
+                // Nếu mật khẩu không đúng
+                request.setAttribute("messerror", "Wrong Username or Password");
+                request.getRequestDispatcher("LoginView.jsp").forward(request, response);
+            } else {
+                // Nếu mật khẩu đúng
+                session.setAttribute("user", user);
+                session.setMaxInactiveInterval(1200); // Thiết lập thời gian timeout cho session
+
+                // Kiểm tra role của user
+                if (user.getRole().equalsIgnoreCase("Admin")) {
+                    System.out.println("User là Admin, chuyển hướng sang view-users");
+                    response.sendRedirect("view-users");
+                } else {
+                    System.out.println("User không phải Admin, chuyển hướng sang all");
+                    response.sendRedirect("all");
+                }
             }
         }
     }
@@ -319,4 +338,64 @@ public class UserController extends HttpServlet {
         response.sendRedirect("UserProfile.jsp");
 
     }
+
+    private void Register(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+
+        // Xóa thông báo lỗi trước đó
+        session.removeAttribute("errorName");
+        session.removeAttribute("errorEmail");
+        session.removeAttribute("errorPhone");
+        session.removeAttribute("errorPassword");
+        session.removeAttribute("errorConfirm");
+        session.removeAttribute("successMessage");
+
+        String username = request.getParameter("username");
+        String fullname = request.getParameter("fullName");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        String confirmPassword = request.getParameter("confirmPassword");
+        String phoneNumber = request.getParameter("phoneNumber");
+        String gender = request.getParameter("gender");
+
+        UserDAO dao = new UserDAO();
+        boolean hasError = false;
+
+        // Kiểm tra mật khẩu
+        if (password == null || password.length() < 8) {
+            session.setAttribute("errorPassword", "Password must be at least 8 characters long.");
+            hasError = true;
+        } else if (!password.equals(confirmPassword)) {
+            session.setAttribute("errorConfirm", "Passwords do not match.");
+            hasError = true;
+        }
+
+        // Kiểm tra username, email, phoneNumber đã tồn tại hay chưa
+        if (dao.isUsernameExists(username)) {
+            session.setAttribute("errorName", "Username already exists.");
+            hasError = true;
+        }
+        if (dao.isEmailExists(email)) {
+            session.setAttribute("errorEmail", "Email already exists.");
+            hasError = true;
+        }
+        if (dao.isPhoneExists(phoneNumber)) {
+            session.setAttribute("errorPhone", "Phone number already exists.");
+            hasError = true;
+        }
+
+        if (hasError) {
+            response.sendRedirect("RegisterView.jsp");
+            return;
+        }
+
+        // Đăng ký tài khoản mới
+        String hashedPassword = PasswordUtil.hashPassword(password);
+        dao.register(username, fullname, email, hashedPassword, phoneNumber, gender);
+        session.setAttribute("successMessage", "Account created successfully.");
+
+        response.sendRedirect("RegisterView.jsp");
+    }
+
 }

@@ -251,7 +251,6 @@ public class FeedbackController extends HttpServlet {
         FeedbackDAO feedbackDAO = new FeedbackDAO();
         boolean isDeleted = feedbackDAO.deleteFeedback(feedbackID);
 
-        System.out.println("Feedback ID to delete: " + feedbackID);
         if (isDeleted) {
             response.sendRedirect("view-food-detail?foodID=" + request.getParameter("foodID") + "&success=true");
         } else {

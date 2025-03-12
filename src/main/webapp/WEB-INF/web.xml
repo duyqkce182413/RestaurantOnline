@@ -60,6 +60,14 @@
         <servlet-name>GoogleLoginServlet</servlet-name>
         <servlet-class>Controllers.GoogleLoginServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ReplyFeedbackController</servlet-name>
+        <servlet-class>Controllers.ReplyFeedbackController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>FeedbackReplyController</servlet-name>
+        <servlet-class>Controllers.FeedbackReplyController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UserController</servlet-name>
         <url-pattern>/usercontroller</url-pattern>
@@ -67,10 +75,11 @@
         <url-pattern>/view-users</url-pattern>
         <url-pattern>/view-user-detail</url-pattern>
         <url-pattern>/add-user</url-pattern>
-        <url-pattern>/delete-user</url-pattern> 
+        <url-pattern>/delete-user</url-pattern>
         <url-pattern>/edit-user</url-pattern>
         <url-pattern>/logout</url-pattern>
         <url-pattern>/update-user</url-pattern>
+        <url-pattern>/register</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AddressController</servlet-name>
@@ -88,7 +97,6 @@
         <url-pattern>/add-to-cart</url-pattern>
         <url-pattern>/update-cart</url-pattern>
     </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>CategoryController</servlet-name>
         <url-pattern>/categorycontroller</url-pattern>
@@ -127,7 +135,6 @@
         <url-pattern>/edit-ingredient</url-pattern>
         <url-pattern>/delete-ingredient</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>OrderApprovalController</servlet-name>
         <url-pattern>/listOrderApproval</url-pattern>
@@ -175,10 +182,21 @@
         <servlet-name>GoogleLoginServlet</servlet-name>
         <url-pattern>/GoogleLoginServlet</url-pattern>
     </servlet-mapping>
-    
     <welcome-file-list>
         <welcome-file>LoginView.jsp</welcome-file>
     </welcome-file-list>
+    <servlet-mapping>
+        <servlet-name>ReplyFeedbackController</servlet-name>
+        <url-pattern>/ReplyFeedbackController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FeedbackReplyController</servlet-name>
+        <url-pattern>/FeedbackReplyController</url-pattern>
+        <url-pattern>/edit-feedback-reply</url-pattern>
+        <url-pattern>/delete-feedback-reply</url-pattern>
+        <url-pattern>/staff-edit-feedback-reply</url-pattern>
+        <url-pattern>/staff-delete-feedback-reply</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             1200

@@ -42,6 +42,34 @@
                 background-color: #f8f9fa;
                 width: calc(100% - 250px);
             }
+            /*Css cho modal*/
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.4);
+                align-items: center;
+                justify-content: center;
+            }
+
+            .modal-content {
+                background-color: white;
+                padding: 20px;
+                width: 400px;
+                margin: auto;
+                border-radius: 10px;
+                text-align: center;
+            }
+
+            .close {
+                float: right;
+                font-size: 24px;
+                cursor: pointer;
+            }
         </style>
     </head>
     <body>
@@ -82,20 +110,38 @@
                     </div>
                     <div class="mb-3">
                         <label><strong>Date:</strong> 
-                            <fmt:formatDate value="${feedbackDetail.createdAt}" pattern="dd-MM-yyyy HH:mm" />
+                            <fmt:formatDate value="${feedbackDetail.createdAt}" pattern="dd-MM-yyyy" />
                         </label>
                     </div>
 
                     <!-- Kiểm tra nếu feedback đã có phản hồi -->
                     <div class="mb-3">
                         <c:if test="${not empty feedbackDetail.reply}">
-                            <strong>Staff Replies:</strong>
+                            <strong>Replies:</strong>
                             <ul>
                                 <c:forEach var="r" items="${feedbackDetail.reply}">
                                     <li>
                                         <strong>${r.user.fullName}:</strong> ${r.replyText} 
                                         <br>
-                                        <fmt:formatDate value="${r.replyAt}" pattern="dd-MM-yyyy HH:mm" />
+                                        <fmt:formatDate value="${r.replyAt}" pattern="dd-MM-yyyy" />
+                                        <!-- Nút sửa và xóa phản hồi -->
+                                        <c:if test="${sessionScope.user.userID == r.user.userID}">
+                                            <button class="btn btn-sm btn-warning edit-reply" 
+                                                    data-replyid="${r.replyID}" 
+                                                    data-replytext="${r.replyText}">
+                                                Sửa
+                                            </button>
+                                        </c:if>
+
+                                        <c:if test="${sessionScope.user.role == 'Admin' or sessionScope.user.role == 'Staff' or sessionScope.user.userID == r.user.userID}">
+                                            <form action="staff-delete-feedback-reply" method="POST" style="display: inline;">
+                                                <input type="hidden" name="replyID" value="${r.replyID}">
+                                                <input type="hidden" name="foodID" value="${food_detail.foodID}">
+                                                <input type="hidden" name="feedbackID" value="${feedbackDetail.feedbackID}" />
+                                                <input type="hidden" name="staffID" value="${sessionScope.staffId}" />
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa phản hồi này không?');">Xóa</button>
+                                            </form>
+                                        </c:if>
                                     </li>
                                 </c:forEach>
                             </ul>
@@ -131,6 +177,21 @@
                     <div class="alert alert-warning">No feedback details found.</div>
                 </c:if>
 
+                <!-- Modal để sửa phản hồi -->
+                <div id="editReplyModal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h4>Chỉnh Sửa Phản Hồi</h4>
+                        <form id="editReplyForm" action="staff-edit-feedback-reply" method="post">
+                            <input type="hidden" name="replyID" id="editReplyID">
+                            <input type="hidden" name="feedbackID" value="${feedbackDetail.feedbackID}" />
+                            <input type="hidden" name="staffID" value="${sessionScope.staffId}" />
+                            <label>Nội dung phản hồi:</label>
+                            <textarea name="replyText" id="editReplyText" class="form-control" required></textarea>
+                            <button type="submit" class="btn btn-primary mt-2">Lưu</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -148,6 +209,38 @@
                                    }
                                    return true;
                                }
+
+                               document.addEventListener("DOMContentLoaded", function () {
+                                   const editReplyButtons = document.querySelectorAll(".edit-reply");
+                                   const deleteReplyButtons = document.querySelectorAll(".delete-reply");
+                                   const editReplyModal = document.getElementById("editReplyModal");
+                                   const closeEditReplyModal = editReplyModal.querySelector(".close");
+                                   const editReplyForm = document.getElementById("editReplyForm");
+                                   const editReplyID = document.getElementById("editReplyID");
+                                   const editReplyText = document.getElementById("editReplyText");
+
+                                   // Xử lý khi click nút "Sửa" phản hồi
+                                   editReplyButtons.forEach(button => {
+                                       button.addEventListener("click", function () {
+                                           editReplyID.value = this.getAttribute("data-replyid");
+                                           editReplyText.value = this.getAttribute("data-replytext");
+                                           editReplyModal.style.display = "block";
+                                       });
+                                   });
+
+                                   // Đóng modal sửa phản hồi
+                                   closeEditReplyModal.addEventListener("click", function () {
+                                       editReplyModal.style.display = "none";
+                                   });
+
+                                   window.addEventListener("click", function (event) {
+                                       if (event.target === editReplyModal) {
+                                           editReplyModal.style.display = "none";
+                                       }
+                                   });
+
+
+                               });
         </script>
     </body>
 </html>

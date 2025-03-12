@@ -379,4 +379,44 @@ public class UserDAO extends DBContext {
         }
     }
 
+    public void updateResetPasswordToken(String email, String token, java.sql.Timestamp expiryDate) {
+        // Cập nhật token và thời gian hết hạn
+        String query = "UPDATE Users SET ResetPasswordToken = ?, ResetPasswordTokenExpiry = ? WHERE Email = ?";
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, token);
+            ps.setTimestamp(2, expiryDate);
+            ps.setString(3, email);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isResetTokenValid(String token) {
+        // Kiểm tra token và thời gian hết hạn
+        String query = "SELECT COUNT(*) FROM Users WHERE ResetPasswordToken = ? AND ResetPasswordTokenExpiry > GETDATE()";
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, token);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void updatePasswordByToken(String token, String hashedPassword) {
+        // Cập nhật mật khẩu và xóa token
+        String query = "UPDATE Users SET PasswordHash = ?, ResetPasswordToken = NULL, ResetPasswordTokenExpiry = NULL WHERE ResetPasswordToken = ?";
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, hashedPassword);
+            ps.setString(2, token);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

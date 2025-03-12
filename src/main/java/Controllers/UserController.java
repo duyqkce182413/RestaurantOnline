@@ -256,10 +256,8 @@ public class UserController extends HttpServlet {
 
                 // Kiểm tra role của user
                 if (user.getRole().equalsIgnoreCase("Admin")) {
-                    System.out.println("User là Admin, chuyển hướng sang view-users");
                     response.sendRedirect("view-users");
                 } else {
-                    System.out.println("User không phải Admin, chuyển hướng sang all");
                     response.sendRedirect("all");
                 }
             }

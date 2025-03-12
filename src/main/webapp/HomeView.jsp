@@ -44,7 +44,7 @@
                 </form>
 
                 <!-- Product Section + Cart -->
-                <div class="container my-5">
+                <div class="container shadow-sm">
                     <!-- Categories -->
                     <div class="menu-nav">
                         <a href="all" class="col-md">Tất cả</a>

@@ -49,7 +49,10 @@
                         <p class ="error"> ${messerror}</p>
                 </div>
                 <div class="form-text"> 
-                    Don't have an account? <a href="RegisterView.jsp">Register Here</a>
+                    Don't have an account? <a href="RegisterView.jsp">Đăng ký ở đây</a>
+                </div>
+                <div class="form-text"> 
+                    <a href="ForgotPasswordView.jsp">Quên mật khẩu?</a>
                 </div>
             </form>
         </div>

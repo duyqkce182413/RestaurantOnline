@@ -301,7 +301,8 @@
                             function editFood(foodId) {
                                 fetch('view-food-detail?foodID=' + foodId + '&format=json')
                                         .then(response => response.json())
-                                        .then(food => {
+                                        .then(data => {
+                                            const food = data.food; // Lấy đối tượng food từ dữ liệu trả về
                                             document.getElementById('editFoodId').value = food.foodID;
                                             document.getElementById('editFoodName').value = food.foodName;
                                             document.getElementById('editPrice').value = food.price;

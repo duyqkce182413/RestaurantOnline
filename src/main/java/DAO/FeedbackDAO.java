@@ -303,20 +303,20 @@ public class FeedbackDAO extends DBContext {
     // ======================== MANAGE FEEDBACK FOR CUSTOMER ===================================
     public List<Feedback> getAllFeedbacksByFoodId(int foodId) {
         List<Feedback> feedbacks = new ArrayList<>();
-        String query = "SELECT f.feedbackID, f.userID AS feedbackUserID, f.foodID, f.orderID, \n"
+        String query = "SELECT f.feedbackID, f.UserID AS feedbackUserID, f.foodID, f.orderID, \n"
                 + "       f.rating, f.comment, f.createdAt, \n"
                 + "       u.username AS feedbackUsername, u.email AS feedbackEmail, u.fullName AS feedbackFullName, u.role AS feedbackRole, \n"
                 + "       fd.foodName, \n"
                 + "       o.orderID, \n"
-                + "       fr.replyID, fr.userID AS replyUserID, \n"
+                + "       fr.replyID, fr.UserID AS replyUserID, \n"
                 + "       ur.username AS replyUsername, ur.email AS replyEmail, ur.fullName AS replyFullName, ur.role AS replyRole, \n"
                 + "       fr.replyText, fr.replyAt \n"
                 + "FROM Feedback f \n"
-                + "JOIN Users u ON f.userID = u.userID \n"
+                + "JOIN Users u ON f.UserID = u.UserID \n"
                 + "JOIN Foods fd ON f.foodID = fd.foodID \n"
                 + "LEFT JOIN Orders o ON f.orderID = o.orderID \n"
                 + "LEFT JOIN FeedbackReplies fr ON f.feedbackID = fr.feedbackID \n"
-                + "LEFT JOIN Users ur ON fr.userID = ur.userID \n"
+                + "LEFT JOIN Users ur ON fr.UserID = ur.UserID \n"
                 + "WHERE f.foodID = ? \n"
                 + "ORDER BY f.feedbackID, fr.replyAt;";
 

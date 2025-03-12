@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 @WebServlet(name = "UserController", urlPatterns = {
     "/view-users",
@@ -121,9 +122,8 @@ public class UserController extends HttpServlet {
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd")
                 .create();
-        PrintWriter out = response.getWriter();
-        out.print(gson.toJson(user));
-        out.flush();
+        response.getWriter().print(gson.toJson(user));
+        response.getWriter().flush();
     }
 
     private void deleteUser(HttpServletRequest request, HttpServletResponse response)
@@ -146,26 +146,73 @@ public class UserController extends HttpServlet {
     private void addUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            // Lấy thông tin từ form
             String username = request.getParameter("username");
             String fullName = request.getParameter("fullName");
             String email = request.getParameter("email");
-            String password = request.getParameter("password"); // Nên mã hóa password
+            String password = request.getParameter("password");
             String phoneNumber = request.getParameter("phoneNumber");
+            String dobString = request.getParameter("dateOfBirth");
             String gender = request.getParameter("gender");
             String role = request.getParameter("role");
 
-            // Parse date
-            String dobString = request.getParameter("dateOfBirth");
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date dateOfBirth = sdf.parse(dobString);
+            List<String> errors = new ArrayList<>();
 
-            // Tạo user mới
+            // Kiểm tra trùng lặp
+            if (userDAO.isUsernameExists(username)) {
+                errors.add("Username already exists.");
+            }
+            if (userDAO.isEmailExists(email)) {
+                errors.add("Email already exists.");
+            }
+            if (userDAO.isPhoneExists(phoneNumber)) {
+                errors.add("Phone number already exists.");
+            }
+
+            // Kiểm tra định dạng
+            if (username.contains(" ")) {
+                errors.add("Username must not contain spaces.");
+            }
+            if (!fullName.matches("^[a-zA-Z\\s]+$")) {
+                errors.add("Full Name must not contain numbers or special characters.");
+            }
+            if (!phoneNumber.matches("^[0-9]{10}$")) {
+                errors.add("Phone Number must start with 0 and must be 10 digits with no letters or spaces.");
+            }
+            if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+                errors.add("Invalid Email format.");
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setLenient(false);
+            Date dateOfBirth = null;
+            try {
+                dateOfBirth = sdf.parse(dobString);
+            } catch (ParseException e) {
+                errors.add("Invalid Date of Birth format (use yyyy-MM-dd).");
+            }
+
+            if (!errors.isEmpty()) {
+                // Lưu thông tin đã nhập vào session để hiển thị lại
+                HttpSession session = request.getSession();
+                session.setAttribute("addUserErrors", errors);
+                session.setAttribute("addUserUsername", username);
+                session.setAttribute("addUserFullName", fullName);
+                session.setAttribute("addUserEmail", email);
+                session.setAttribute("addUserPhoneNumber", phoneNumber);
+                session.setAttribute("addUserDateOfBirth", dobString);
+                session.setAttribute("addUserGender", gender);
+                session.setAttribute("addUserRole", role);
+
+                // Chuyển hướng về view-users
+                response.sendRedirect("view-users");
+                return;
+            }
+
+            // Tạo user mới nếu không có lỗi
             User newUser = new User();
             newUser.setUsername(username);
             newUser.setFullName(fullName);
             newUser.setEmail(email);
-            newUser.setPasswordHash(password); // Nên mã hóa password
+            newUser.setPasswordHash(password);
             newUser.setPhoneNumber(phoneNumber);
             newUser.setDateOfBirth(dateOfBirth);
             newUser.setGender(gender);
@@ -173,11 +220,9 @@ public class UserController extends HttpServlet {
             newUser.setStatus("Active");
             newUser.setCreatedAt(new Date());
 
-            // Thêm user vào database
             userDAO.addUser(newUser);
-
             response.sendRedirect("view-users");
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("view-users?error=true");
         }
@@ -187,36 +232,100 @@ public class UserController extends HttpServlet {
             throws ServletException, IOException {
         try {
             String idStr = request.getParameter("userId");
-            System.out.println("Received userId: " + idStr); // Debug log
-            System.out.println("UserID received: " + idStr);
-
-            if (idStr != null && !idStr.trim().isEmpty()) {
-                int userId = Integer.parseInt(idStr.trim());
-                User user = userDAO.getUserById(userId);
-                if (user != null) {
-                    user.setUsername(request.getParameter("username"));
-                    user.setFullName(request.getParameter("fullName"));
-                    user.setEmail(request.getParameter("email"));
-                    user.setPhoneNumber(request.getParameter("phoneNumber"));
-
-                    String dobString = request.getParameter("dateOfBirth");
-                    if (dobString != null && !dobString.isEmpty()) {
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        user.setDateOfBirth(sdf.parse(dobString));
-                    }
-
-                    user.setGender(request.getParameter("gender"));
-                    user.setRole(request.getParameter("role"));
-                    user.setStatus(request.getParameter("status"));
-
-                    boolean updated = userDAO.updateUser(user);
-                    System.out.println("Update result: " + updated); // Debug log
-                }
+            if (idStr == null || idStr.trim().isEmpty()) {
+                response.sendRedirect("view-users?error=true");
+                return;
             }
+
+            int userId = Integer.parseInt(idStr.trim());
+            User existingUser = userDAO.getUserById(userId);
+            if (existingUser == null) {
+                response.sendRedirect("view-users?error=true");
+                return;
+            }
+
+            String username = request.getParameter("username");
+            String fullName = request.getParameter("fullName");
+            String email = request.getParameter("email");
+            String phoneNumber = request.getParameter("phoneNumber");
+            String dobString = request.getParameter("dateOfBirth");
+            String gender = request.getParameter("gender");
+            String role = request.getParameter("role");
+            String status = request.getParameter("status");
+
+            List<String> errors = new ArrayList<>();
+
+            // Kiểm tra trùng lặp (loại trừ chính user hiện tại)
+            if (!username.equals(existingUser.getUsername()) && userDAO.isUsernameExists(username)) {
+                errors.add("Username already exists.");
+            }
+            if (!email.equals(existingUser.getEmail()) && userDAO.isEmailExists(email)) {
+                errors.add("Email already exists.");
+            }
+            if (!phoneNumber.equals(existingUser.getPhoneNumber()) && userDAO.isPhoneExists(phoneNumber)) {
+                errors.add("Phone number already exists.");
+            }
+
+            // Kiểm tra định dạng
+            if (username.contains(" ")) {
+                errors.add("Username must not contain spaces.");
+            }
+            if (!fullName.matches("^[a-zA-Z\\s]+$")) {
+                errors.add("Full Name must not contain numbers or special characters.");
+            }
+            if (!phoneNumber.matches("^[0-9]{10}$")) {
+                errors.add("Phone Number must start with 0 and must be 10 digits with no letters or spaces.");
+            }
+            if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+                errors.add("Invalid Email format.");
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setLenient(false);
+            Date dateOfBirth = null;
+            try {
+                if (dobString != null && !dobString.isEmpty()) {
+                    dateOfBirth = sdf.parse(dobString);
+                } else {
+                    dateOfBirth = existingUser.getDateOfBirth();
+                }
+            } catch (ParseException e) {
+                errors.add("Invalid Date of Birth format (use yyyy-MM-dd).");
+            }
+
+            if (!errors.isEmpty()) {
+                // Lưu thông tin đã nhập vào session để hiển thị lại
+                HttpSession session = request.getSession();
+                session.setAttribute("editUserErrors", errors);
+                session.setAttribute("editUserId", userId);
+                session.setAttribute("editUserUsername", username);
+                session.setAttribute("editUserFullName", fullName);
+                session.setAttribute("editUserEmail", email);
+                session.setAttribute("editUserPhoneNumber", phoneNumber);
+                session.setAttribute("editUserDateOfBirth", dobString);
+                session.setAttribute("editUserGender", gender);
+                session.setAttribute("editUserRole", role);
+                session.setAttribute("editUserStatus", status);
+
+                // Chuyển hướng về view-users
+                response.sendRedirect("view-users");
+                return;
+            }
+
+            // Cập nhật user nếu không có lỗi
+            existingUser.setUsername(username);
+            existingUser.setFullName(fullName);
+            existingUser.setEmail(email);
+            existingUser.setPhoneNumber(phoneNumber);
+            existingUser.setDateOfBirth(dateOfBirth);
+            existingUser.setGender(gender);
+            existingUser.setRole(role);
+            existingUser.setStatus(status);
+
+            userDAO.updateUser(existingUser);
             response.sendRedirect("view-users");
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("view-users");
+            response.sendRedirect("view-users?error=true");
         }
     }
 

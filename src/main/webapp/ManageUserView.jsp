@@ -167,18 +167,28 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
+                        <c:if test="${not empty sessionScope.addUserErrors}">
+                            <div class="error-messages">
+                                <c:forEach var="error" items="${sessionScope.addUserErrors}">
+                                    <div class="alert alert-danger">${error}</div>
+                                </c:forEach>
+                            </div>
+                        </c:if>
                         <form id="addUserForm" action="add-user" method="POST">
                             <div class="mb-3">
                                 <label class="form-label">Username</label>
-                                <input type="text" class="form-control" name="username" required>
+                                <input type="text" class="form-control" name="username" required
+                                       value="${sessionScope.addUserUsername}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Full Name</label>
-                                <input type="text" class="form-control" name="fullName" required>
+                                <input type="text" class="form-control" name="fullName" required
+                                       value="${sessionScope.addUserFullName}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" required>
+                                <input type="email" class="form-control" name="email" required
+                                       value="${sessionScope.addUserEmail}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Password</label>
@@ -186,26 +196,28 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" name="phoneNumber">
+                                <input type="tel" class="form-control" name="phoneNumber"
+                                       value="${sessionScope.addUserPhoneNumber}">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Date of Birth (yyyy-mm-dd)</label>
-                                <input type="" class ="form-control" name ="dateOfBirth">
+                                <label class="form-label">Date of Birth (dd-MM-yyyy)</label>
+                                <input type="date" class="form-control" name="dateOfBirth"
+                                       value="${sessionScope.addUserDateOfBirth}" max="2025-03-12" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Gender</label>
                                 <select class="form-control" name="gender">
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
+                                    <option value="Male" ${sessionScope.addUserGender == 'Male' ? 'selected' : ''}>Male</option>
+                                    <option value="Female" ${sessionScope.addUserGender == 'Female' ? 'selected' : ''}>Female</option>
+                                    <option value="Other" ${sessionScope.addUserGender == 'Other' ? 'selected' : ''}>Other</option>
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Role</label>
                                 <select class="form-control" name="role">
-                                    <option value="Customer">Customer</option>
-                                    <option value="Staff">Staff</option>
-                                    <option value="Admin">Admin</option>
+                                    <option value="Customer" ${sessionScope.addUserRole == 'Customer' ? 'selected' : ''}>Customer</option>
+                                    <option value="Staff" ${sessionScope.addUserRole == 'Staff' ? 'selected' : ''}>Staff</option>
+                                    <option value="Admin" ${sessionScope.addUserRole == 'Admin' ? 'selected' : ''}>Admin</option>
                                 </select>
                             </div>
                         </form>
@@ -245,50 +257,63 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
+                        <c:if test="${not empty sessionScope.editUserErrors}">
+                            <div class="error-messages">
+                                <c:forEach var="error" items="${sessionScope.editUserErrors}">
+                                    <div class="alert alert-danger">${error}</div>
+                                </c:forEach>
+                            </div>
+                        </c:if>
                         <form id="editUserForm" action="${pageContext.request.contextPath}/edit-user" method="POST">
-                            <input type="hidden" name="userId" id="editUserId">
+                            <input type="hidden" name="userId" id="editUserId"
+                                   value="${sessionScope.editUserId}">
                             <div class="mb-3">
                                 <label class="form-label">Username</label>
-                                <input type="text" class="form-control" name="username" id="editUsername" required>
+                                <input type="text" class="form-control" name="username" id="editUsername" required
+                                       value="${sessionScope.editUserUsername}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Full Name</label>
-                                <input type="text" class="form-control" name="fullName" id="editFullName" required>
+                                <input type="text" class="form-control" name="fullName" id="editFullName" required
+                                       value="${sessionScope.editUserFullName}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" id="editEmail" required>
+                                <input type="email" class="form-control" name="email" id="editEmail" required
+                                       value="${sessionScope.editUserEmail}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" name="phoneNumber" id="editPhoneNumber">
+                                <input type="tel" class="form-control" name="phoneNumber" id="editPhoneNumber"
+                                       value="${sessionScope.editUserPhoneNumber}">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Date of Birth (yyyy-mm-dd)</label>
-                                <input type="" class="form-control" name="dateOfBirth" id="editDateOfBirth">
+                                <label class="form-label">Date of Birth (dd-MM-yyyy)</label>
+                                <input type="date" class="form-control" name="dateOfBirth" id="editDateOfBirth"
+                                       value="${sessionScope.editUserDateOfBirth}" max="2025-03-12" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Gender</label>
                                 <select class="form-control" name="gender" id="editGender">
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
+                                    <option value="Male" ${sessionScope.editUserGender == 'Male' ? 'selected' : ''}>Male</option>
+                                    <option value="Female" ${sessionScope.editUserGender == 'Female' ? 'selected' : ''}>Female</option>
+                                    <option value="Other" ${sessionScope.editUserGender == 'Other' ? 'selected' : ''}>Other</option>
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Role</label>
                                 <select class="form-control" name="role" id="editRole">
-                                    <option value="Customer">Customer</option>
-                                    <option value="Staff">Staff</option>
-                                    <option value="Admin">Admin</option>
+                                    <option value="Customer" ${sessionScope.editUserRole == 'Customer' ? 'selected' : ''}>Customer</option>
+                                    <option value="Staff" ${sessionScope.editUserRole == 'Staff' ? 'selected' : ''}>Staff</option>
+                                    <option value="Admin" ${sessionScope.editUserRole == 'Admin' ? 'selected' : ''}>Admin</option>
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Status</label>
                                 <select class="form-control" name="status" id="editStatus">
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                    <option value="Banned">Banned</option>
+                                    <option value="Active" ${sessionScope.editUserStatus == 'Active' ? 'selected' : ''}>Active</option>
+                                    <option value="Inactive" ${sessionScope.editUserStatus == 'Inactive' ? 'selected' : ''}>Inactive</option>
+                                    <option value="Banned" ${sessionScope.editUserStatus == 'Banned' ? 'selected' : ''}>Banned</option>
                                 </select>
                             </div>
                         </form>
@@ -324,6 +349,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
         <!-- JavaScript for handling modal operations -->
+        <!-- Cập nhật lại JavaScript -->
         <script>
                             let userToDelete = null;
 
@@ -331,21 +357,34 @@
                                 fetch('view-user-detail?id=' + userId)
                                         .then(response => response.json())
                                         .then(user => {
+                                            console.log("Avatar value:", user.avatar); // Kiểm tra giá trị
+                                            const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1)) || '/Restaurant_Online';
+                                            const avatarUrl = contextPath + '/image/' + (user.avatar || 'default-avatar.jpg');
+                                            console.log("Avatar URL:", avatarUrl); // Log đường dẫn để kiểm tra
+
                                             const modalBody = document.getElementById('viewDetailModal').querySelector('.modal-body');
                                             modalBody.innerHTML = `
-                            <p><strong>Avatar:</strong> \${user.avatar || 'No Avatar'}</p>                
-                            <p><strong>ID:</strong> \${user.userID}</p>                
-                            <p><strong>Username:</strong> \${user.username}</p>
-                            <p><strong>Password:</strong> \${user.passwordHash}</p>
-                            <p><strong>Full Name:</strong> \${user.fullName}</p>
-                            <p><strong>Email:</strong> \${user.email}</p>
-                            <p><strong>Phone Number:</strong> \${user.phoneNumber}</p>
-                            <p><strong>Date of Birth:</strong> \${user.dateOfBirth}</p>
-                            <p><strong>Gender:</strong> \${user.gender}</p>
-                            <p><strong>Role:</strong> \${user.role}</p>
-                            <p><strong>Status:</strong> \${user.status}</p>
-                            <p><strong>Created At:</strong> \${user.createdAt}</p>
-                        `;
+                                            <p><strong>Avatar:</strong></p>
+                                            <img id="avatarImage" alt="User Avatar" style="max-width: 120px; max-height: 150px; border-radius: 5px; margin-bottom: 10px;">
+                                            <p><strong>ID:</strong> \${user.userID}</p>                
+                                            <p><strong>Username:</strong> \${user.username}</p>
+                                            <p><strong>Password:</strong> \${user.passwordHash}</p>
+                                            <p><strong>Full Name:</strong> \${user.fullName}</p>
+                                            <p><strong>Email:</strong> \${user.email}</p>
+                                            <p><strong>Phone Number:</strong> \${user.phoneNumber}</p>
+                                            <p><strong>Date of Birth:</strong> \${user.dateOfBirth}</p>
+                                            <p><strong>Gender:</strong> \${user.gender}</p>
+                                            <p><strong>Role:</strong> \${user.role}</p>
+                                            <p><strong>Status:</strong> \${user.status}</p>
+                                            <p><strong>Created At:</strong> \${user.createdAt}</p>
+                                        `;
+                                            // Gán src sau khi render
+                                            const imgElement = document.getElementById('avatarImage');
+                                            imgElement.src = avatarUrl;
+                                            imgElement.onerror = function () {
+                                                console.log('Error loading image:', avatarUrl);
+                                                this.src = '/Restaurant_Online/image/default-avatar.jpg'; // Fallback
+                                            };
                                             new bootstrap.Modal(document.getElementById('viewDetailModal')).show();
                                         })
                                         .catch(error => console.error('Error:', error));
@@ -356,27 +395,22 @@
                                         .then(response => response.json())
                                         .then(user => {
                                             if (user) {
-                                                // Điền dữ liệu vào form
                                                 document.getElementById('editUserId').value = userId;
                                                 document.getElementById('editUsername').value = user.username || '';
                                                 document.getElementById('editFullName').value = user.fullName || '';
                                                 document.getElementById('editEmail').value = user.email || '';
                                                 document.getElementById('editPhoneNumber').value = user.phoneNumber || '';
-                                                // Xử lý ngày tháng
                                                 if (user.dateOfBirth) {
                                                     const date = new Date(user.dateOfBirth);
                                                     const formattedDate = date.toISOString().split('T')[0];
                                                     document.getElementById('editDateOfBirth').value = formattedDate;
-
-                                                    // Loại bỏ bất kỳ placeholder nào
-                                                    document.getElementById('editDateOfBirth').placeholder = '';
                                                 }
                                                 document.getElementById('editGender').value = user.gender || 'Male';
                                                 document.getElementById('editRole').value = user.role || 'Customer';
                                                 document.getElementById('editStatus').value = user.status || 'Active';
 
-                                                // Show modal
-                                                new bootstrap.Modal(document.getElementById('editUserModal')).show();
+                                                let editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                                                editModal.show();
                                             }
                                         })
                                         .catch(error => {
@@ -385,6 +419,16 @@
                                         });
                             }
 
+                            // Thêm kiểm tra khi mở addUserModal
+                            document.querySelector('[data-bs-target="#addUserModal"]').addEventListener('click', function () {
+                                const dateInput = document.querySelector('#addUserForm input[name="dateOfBirth"]');
+                                const currentDate = new Date('2025-03-12').toISOString().split('T')[0];
+                                if (dateInput.value && dateInput.value > currentDate) {
+                                    alert("Date of Birth cannot be greater than current date (2025-03-12).");
+                                    event.preventDefault(); // Ngăn không mở modal
+                                }
+                            });
+
                             function confirmDelete(userId) {
                                 userToDelete = userId;
                                 new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
@@ -392,9 +436,39 @@
 
                             function deleteUser() {
                                 if (userToDelete) {
-                                    window.location.href = 'delete-user?id=' + userToDelete;  // Sử dụng cộng chuỗi
+                                    window.location.href = 'delete-user?id=' + userToDelete;
                                 }
                             }
+
+                            // Hiển thị modal nếu có lỗi
+                            document.addEventListener('DOMContentLoaded', function () {
+                        <c:if test="${not empty sessionScope.addUserErrors}">
+                                let addModal = new bootstrap.Modal(document.getElementById('addUserModal'));
+                                addModal.show();
+                            <% session.removeAttribute("addUserErrors"); %>
+                            <% session.removeAttribute("addUserUsername"); %>
+                            <% session.removeAttribute("addUserFullName"); %>
+                            <% session.removeAttribute("addUserEmail"); %>
+                            <% session.removeAttribute("addUserPhoneNumber"); %>
+                            <% session.removeAttribute("addUserDateOfBirth"); %>
+                            <% session.removeAttribute("addUserGender"); %>
+                            <% session.removeAttribute("addUserRole"); %>
+                        </c:if>
+                        <c:if test="${not empty sessionScope.editUserErrors}">
+                                let editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                                editModal.show();
+                            <% session.removeAttribute("editUserErrors"); %>
+                            <% session.removeAttribute("editUserId"); %>
+                            <% session.removeAttribute("editUserUsername"); %>
+                            <% session.removeAttribute("editUserFullName"); %>
+                            <% session.removeAttribute("editUserEmail"); %>
+                            <% session.removeAttribute("editUserPhoneNumber"); %>
+                            <% session.removeAttribute("editUserDateOfBirth"); %>
+                            <% session.removeAttribute("editUserGender"); %>
+                            <% session.removeAttribute("editUserRole"); %>
+                            <% session.removeAttribute("editUserStatus"); %>
+                        </c:if>
+                            });
         </script>
     </body>
 </html>

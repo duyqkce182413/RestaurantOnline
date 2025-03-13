@@ -15,8 +15,8 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Header and Footer CSS -->
         <link rel="stylesheet" href="./CSS/HeaderAndFooter_CSS.css">
-        <link rel="stylesheet" href="./CSS/home.css">
-        <script src="./Script/header-script.js"></script>
+        <!-- <link rel="stylesheet" href="./CSS/home.css">-->
+        <script src="./JS/header-script.js"></script>
 
         <style>
             /* Variables */
@@ -152,7 +152,7 @@
                                         <td>
                                             <ul>
                                                 <c:forEach items="${order.orderDetail}" var="item">
-                                                   <li>${item.foodID.foodName} - Số lượng: ${item.quantity} - Giá: ${item.price}</li>
+                                                    <li>${item.foodID.foodName} - Số lượng: ${item.quantity} - Giá: ${item.price}</li>
                                                     </c:forEach>
                                             </ul>
                                         </td>
@@ -185,3 +185,4 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
+    

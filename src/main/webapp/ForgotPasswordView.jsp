@@ -13,6 +13,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="./CSS/HeaderAndFooter_CSS.css">
+        <link rel="stylesheet" href="./CSS/HomeView.css">
         <link rel="stylesheet" href="./CSS/Login_CSS.css">
     </head>
     <body>
@@ -20,18 +21,18 @@
         <jsp:include page="Header.jsp"></jsp:include>
 
         <div class="login-form">
-            <h2>Forgot Password</h2>
+            <h2>Quên mật khẩu</h2>
             <form action="forgot-password" method="post">
                 <div class="mb-3">
-                    <label for="email" class="form-label">Enter your email</label>
+                    <label for="email" class="form-label">Nhập email của bạn</label>
                     <input type="email" class="form-control" id="email" name="email" required>
                 </div>
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">Reset Password</button>
+                    <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
                 </div>
             </form>
             <div class="form-text"> 
-                Remember your password? <a href="LoginView.jsp">Login Here</a>
+                Bạn nhớ mật khẩu? <a href="LoginView.jsp">Đăng nhập ở đây</a>
             </div>
         </div>
 

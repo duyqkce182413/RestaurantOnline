@@ -18,6 +18,7 @@
               rel="stylesheet">
         <!-- Header and Footer CSS -->
         <link rel="stylesheet" href="./CSS/HeaderAndFooter_CSS.css">
+        <link rel="stylesheet" href="./CSS/HomeView.css">
         <script src="./JS/header-script.js"></script>
 
         <style>
@@ -279,12 +280,7 @@ if (message != null) {
                                             icon.classList.add('fa-eye');
                                         }
                                     });
-                                    window.onload = function () {
-                                        var message = "<%= message %>";
-                                        if (message) {
-                                            alert(message);
-                                        }
-                                    };
+                                    
 </script>
 </body>
 

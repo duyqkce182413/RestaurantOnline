@@ -81,7 +81,7 @@
         <jsp:include page="Header.jsp"></jsp:include>
 
             <div class="register-form">
-                <h2>Register</h2>               
+                <h2>Đăng ký</h2>               
                 <form action="register" method="post">
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
@@ -98,7 +98,7 @@
                     </c:if>
                 </div>
                 <div class="mb-3 position-relative">
-                    <label for="password" class="form-label">Password</label>
+                    <label for="password" class="form-label">Mật khẩu</label>
                     <input type="password" class="form-control" id="password" name="password" required>
                     <span toggle="#password" class="fa fa-fw fa-eye toggle-password position-absolute" 
                           style="top: 50%; right: 10px; cursor: pointer; transform: translateY(60%); color: #FC6E51;"></span>
@@ -107,7 +107,7 @@
                     </c:if>
                 </div>
                 <div class="mb-3 position-relative">
-                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
                     <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                     <span toggle="#confirmPassword" class="fa fa-fw fa-eye toggle-password position-absolute" 
                           style="top: 50%; right: 10px; cursor: pointer; transform: translateY(60%); color: #FC6E51;"></span>
@@ -117,12 +117,12 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="fullName" class="form-label">Full Name</label>
+                    <label for="fullName" class="form-label">Họ tên đầy đủ</label>
                     <input type="text" class="form-control" id="fullName" name="fullName" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                    <label for="phoneNumber" class="form-label">Số điện thoại</label>
                     <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" required>
                     <c:if test="${not empty sessionScope.errorPhone}">
                         <p class="error"><c:out value="${sessionScope.errorPhone}" /></p>
@@ -130,7 +130,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Gender</label>
+                    <label class="form-label">Giới tính</label>
                     <div>
                         <input type="radio" id="male" name="gender" value="Male" required>
                         <label for="male">Male</label>
@@ -143,13 +143,13 @@
 
 
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">Register</button>
+                    <button type="submit" class="btn btn-primary">Đăng ký</button>
                 </div>
                 <c:if test="${not empty sessionScope.successMessage}">
                     <div class="alert alert-success mt-3">${sessionScope.successMessage}</div>
                 </c:if>
                 <div class="form-text">
-                    Already have an account? <a href="LoginView.jsp">Login Here</a>
+                    Đã có tài khoản? <a href="LoginView.jsp">Đăng nhập ở đây</a>
                 </div>
             </form>
         </div>

@@ -111,10 +111,17 @@
                                             </a>
                                             <p class="card-text">${f.price}</p>
 
-                                            <button type="button" class="btn btn-primary" 
-                                                    onclick="openAddToCartModal('${f.foodID}', '${f.foodName}', '${f.image}', '${f.price}', '${f.quantity}')">
-                                                Thêm vào giỏ
-                                            </button>
+                                            <c:choose>
+                                                <c:when test="${f.quantity > 0}">
+                                                    <button type="button" class="btn btn-primary" 
+                                                            onclick="openAddToCartModal('${f.foodID}', '${f.foodName}', '${f.image}', '${f.price}', '${f.quantity}')">
+                                                        Thêm vào giỏ
+                                                    </button>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <p class="text-danger fw-bold">Hết hàng</p>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </div>
                                 </div>
@@ -174,8 +181,8 @@
                     // Gán thông tin món ăn vào modal
                     document.getElementById('modalFoodID').value = foodID;
                     document.getElementById('modalFoodName').innerText = foodName;
-                    document.getElementById('modalFoodImage').src = foodImage !== 'null' ? foodImage : 'default-image.jpg';
-                    document.getElementById('modalFoodPrice').innerText = `Giá: ${foodPrice} VND`;
+                    document.getElementById('modalFoodImage').src = '${pageContext.request.contextPath}/image/' + foodImage;
+                    document.getElementById('modalFoodPrice').innerText = `Giá: ` + foodPrice + ` VND`;
                     document.getElementById('modalFoodQuantity').innerText = foodQuantity; // Cập nhật số lượng còn lại
                     document.getElementById('quantityInput').max = foodQuantity; // Đặt max cho input số lượng
 

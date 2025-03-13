@@ -19,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,13 +40,12 @@ public class GoogleLoginServlet extends HttpServlet {
             String code = request.getParameter("code");
 
             if (code == null || code.isEmpty()) {
-                // Nếu không có mã xác thực, chuyển hướng người dùng đến trang xác thực Google
                 GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                         GoogleNetHttpTransport.newTrustedTransport(),
                         JSON_FACTORY,
                         CLIENT_ID,
                         CLIENT_SECRET,
-                        Arrays.asList("openid", "email", "profile")) // Thêm scope "openid"
+                        Arrays.asList("openid", "email", "profile"))
                         .setDataStoreFactory(new MemoryDataStoreFactory())
                         .setAccessType("offline")
                         .build();
@@ -53,18 +53,16 @@ public class GoogleLoginServlet extends HttpServlet {
                 String authUrl = flow.newAuthorizationUrl()
                         .setRedirectUri(REDIRECT_URI)
                         .build();
-
                 response.sendRedirect(authUrl);
                 return;
             }
 
-            // Nếu có mã xác thực, yêu cầu token từ Google
             GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                     GoogleNetHttpTransport.newTrustedTransport(),
                     JSON_FACTORY,
                     CLIENT_ID,
                     CLIENT_SECRET,
-                    Arrays.asList("openid", "email", "profile")) // Thêm scope "openid"
+                    Arrays.asList("openid", "email", "profile"))
                     .setDataStoreFactory(new MemoryDataStoreFactory())
                     .setAccessType("offline")
                     .build();
@@ -73,15 +71,12 @@ public class GoogleLoginServlet extends HttpServlet {
                     .setRedirectUri(REDIRECT_URI)
                     .execute();
 
-            // Lấy access token từ tokenResponse
             String accessToken = tokenResponse.getAccessToken();
 
-            // Gọi Google API để lấy thông tin người dùng
             URL url = new URL("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + accessToken);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
 
-            // Đọc phản hồi từ Google API
             Scanner scanner = new Scanner(conn.getInputStream());
             StringBuilder jsonResponse = new StringBuilder();
             while (scanner.hasNext()) {
@@ -89,37 +84,28 @@ public class GoogleLoginServlet extends HttpServlet {
             }
             scanner.close();
 
-            // Parse JSON để lấy thông tin người dùng
             JSONObject jsonObject = new JSONObject(jsonResponse.toString());
             String email = jsonObject.getString("email");
             String name = jsonObject.getString("name");
-            String avatar = jsonObject.getString("picture"); // Lấy URL hình ảnh đại diện
+            String avatar = jsonObject.getString("picture");
 
-            // Xử lý đăng nhập hoặc tạo người dùng mới
             UserDAO userDAO = new UserDAO();
             User user = userDAO.getUserByEmail(email);
 
-            // In ra jsonObject để debug
-            System.out.println("Parsed JSON Object: " + jsonObject.toString());
-
-            // In ra các trường cụ thể
-            System.out.println("Email: " + jsonObject.getString("email"));
-            System.out.println("Name: " + jsonObject.getString("name"));
-            System.out.println("Avatar: " + jsonObject.getString("picture"));
-
             if (user == null) {
-                userDAO.createGoogleUser(email, name, avatar); // Truyền thêm avatar
+                String username = email.split("@")[0];
+                User existingUser = userDAO.getUserByUsername(username);
+                if (existingUser != null) {
+                    username += new Random().nextInt(10000);
+                }
+                userDAO.createGoogleUser(email, name, avatar, username);
                 user = userDAO.getUserByEmail(email);
             }
 
-            // Đăng nhập người dùng và chuyển hướng đến trang chủ
             request.getSession().setAttribute("user", user);
             response.sendRedirect("all");
 
-        } catch (GeneralSecurityException e) {
-            LOGGER.log(Level.SEVERE, "Google Login error", e);
-            response.sendRedirect("LoginView.jsp?error=" + e.getClass().getSimpleName() + ": " + e.getMessage());
-        } catch (IOException e) {
+        } catch (GeneralSecurityException | IOException e) {
             LOGGER.log(Level.SEVERE, "Google Login error", e);
             response.sendRedirect("LoginView.jsp?error=" + e.getClass().getSimpleName() + ": " + e.getMessage());
         }

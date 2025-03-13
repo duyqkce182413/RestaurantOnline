@@ -17,19 +17,55 @@
         <!-- Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-        <!--        <link rel="stylesheet" href="./CSS/Style.css">-->
+
         <link rel="stylesheet" href="./CSS/HeaderAndFooter_CSS.css">
+        <link rel="stylesheet" href="./CSS/HomeView.css">
         <script src="./JS/header-script.js"></script>
 
         <!--CSS rieng-->
         <link rel="stylesheet" href="./CSS/Login_CSS.css">
+        <style>
+            /* CSS cho nút đăng nhập bằng Google */
+            .google-login-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #ffffff;
+                color: #757575;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 10px 20px;
+                font-size: 16px;
+                font-weight: 500;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s ease, box-shadow 0.3s ease;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .google-login-btn:hover {
+                background-color: #f8f8f8;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .google-login-btn:active {
+                background-color: #f1f1f1;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .google-login-btn img {
+                width: 20px;
+                height: 20px;
+                margin-right: 10px;
+            }
+        </style>
     </head>
     <body>
         <!-- Header -->
         <jsp:include page="Header.jsp"></jsp:include>
 
             <div class="login-form">
-                <h2>Login</h2>
+                <h2>Đăng nhập</h2>
                 <form action="login-with-username" method="post">
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
@@ -42,14 +78,14 @@
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Login</button>
-                        <a href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile%20openid&redirect_uri=http://localhost:8080/Restaurant_Online/GoogleLoginServlet&response_type=code&client_id=127240927862-ovg89s7bgqd52hppkv89dq7i1ch9oc9m.apps.googleusercontent.com&access_type=offline&approval_prompt=force">
-                            Login with Google
+                        <button type="submit" class="btn btn-primary">Đăng nhập</button>
+                        <a class="google-login-btn" href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile%20openid&redirect_uri=http://localhost:8080/Restaurant_Online/GoogleLoginServlet&response_type=code&client_id=127240927862-ovg89s7bgqd52hppkv89dq7i1ch9oc9m.apps.googleusercontent.com&access_type=offline&approval_prompt=force">
+                            Đăng nhập với Google
                         </a>
                         <p class ="error"> ${messerror}</p>
                 </div>
                 <div class="form-text"> 
-                    Don't have an account? <a href="RegisterView.jsp">Đăng ký ở đây</a>
+                    Bạn không có tài khoản? <a href="RegisterView.jsp">Đăng ký ở đây</a>
                 </div>
                 <div class="form-text"> 
                     <a href="ForgotPasswordView.jsp">Quên mật khẩu?</a>

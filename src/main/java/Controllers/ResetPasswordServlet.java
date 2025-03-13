@@ -40,12 +40,12 @@ public class ResetPasswordServlet extends HttpServlet {
             if (userDAO.isResetTokenValid(token)) {
                 String hashedPassword = PasswordUtil.hashPassword(newPassword);
                 userDAO.updatePasswordByToken(token, hashedPassword);
-                request.setAttribute("message", "Password reset successfully.");
+                request.setAttribute("message", "Đặt lại mật khẩu thành công.");
             } else {
-                request.setAttribute("error", "Invalid or expired token.");
+                request.setAttribute("error", "Mã token không hợp lệ hoặc đã hết hạn.");
             }
         } else {
-            request.setAttribute("error", "Passwords do not match.");
+            request.setAttribute("error", "Mật khẩu không khớp.");
         }
 
         request.getRequestDispatcher("ResetPasswordView.jsp").forward(request, response);

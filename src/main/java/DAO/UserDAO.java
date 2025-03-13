@@ -367,12 +367,13 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-    public void createGoogleUser(String email, String fullName, String avatar) {
-        String sql = "INSERT INTO Users (Email, FullName, Avatar, CreatedAt, Status, Role) VALUES (?, ?, ?, GETDATE(), 'Active', 'Customer')";
+    public void createGoogleUser(String email, String fullName, String avatar, String username) {
+        String sql = "INSERT INTO Users (Email, FullName, Avatar, CreatedAt, Status, Role, Username) VALUES (?, ?, ?, GETDATE(), 'Active', 'Customer', ?)";
         try ( PreparedStatement stmt = getConnection().prepareStatement(sql)) {
             stmt.setString(1, email);
             stmt.setString(2, fullName);
-            stmt.setString(3, avatar); // Thêm avatar vào câu lệnh SQL
+            stmt.setString(3, avatar);
+            stmt.setString(4, username);
             stmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

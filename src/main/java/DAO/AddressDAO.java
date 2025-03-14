@@ -101,22 +101,60 @@ public class AddressDAO extends DBContext {
         return null;
     }
 
-    public void updateAddress(int id, String name, String addressLine, String city, String phoneNumber, boolean isDefault, int userId) throws SQLException {
-        String sql = "UPDATE Address SET Name = ?, AddressLine = ?, City = ?, PhoneNumber = ?, IsDefault = ? "
-                + "WHERE AddressID = ? AND UserID = ?";
+    public void insertNewAddress(int oldAddressId, String name, String addressLine, String city, String phoneNumber, boolean isDefault, int userId) throws SQLException {
+        Connection conn = null;
+        PreparedStatement ps = null;
 
-        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, name);
-            ps.setString(2, addressLine);
-            ps.setString(3, city);
-            ps.setString(4, phoneNumber);
-            ps.setBoolean(5, isDefault);
-            ps.setInt(6, id);
-            ps.setInt(7, userId);
+        try {
+            conn = getConnection();
+            conn.setAutoCommit(false); // Bắt đầu transaction
+
+            // 1. Đánh dấu địa chỉ cũ là đã xóa
+            String softDeleteSql = "UPDATE Address SET ISDeleted = 1 WHERE AddressID = ? AND UserID = ?";
+            ps = conn.prepareStatement(softDeleteSql);
+            ps.setInt(1, oldAddressId);
+            ps.setInt(2, userId);
             ps.executeUpdate();
+            ps.close();
+
+            // 2. Nếu địa chỉ mới là mặc định, bỏ đánh dấu mặc định của các địa chỉ khác
+            if (isDefault) {
+                String unsetDefaultSql = "UPDATE Address SET IsDefault = 0 WHERE UserID = ? AND ISDeleted = 0";
+                ps = conn.prepareStatement(unsetDefaultSql);
+                ps.setInt(1, userId);
+                ps.executeUpdate();
+                ps.close();
+            }
+
+            // 3. Chèn địa chỉ mới
+            String insertSql = "INSERT INTO Address (UserID, Name, AddressLine, City, PhoneNumber, IsDefault, ISDeleted) VALUES (?, ?, ?, ?, ?, ?, 0)";
+            ps = conn.prepareStatement(insertSql);
+            ps.setInt(1, userId);
+            ps.setString(2, name);
+            ps.setString(3, addressLine);
+            ps.setString(4, city);
+            ps.setString(5, phoneNumber);
+            ps.setBoolean(6, isDefault);
+            ps.executeUpdate();
+            ps.close();
+
+            conn.commit(); // Xác nhận thay đổi
         } catch (SQLException e) {
+            if (conn != null) {
+                conn.rollback(); // Rollback nếu có lỗi
+            }
             e.printStackTrace();
             throw e;
+        } finally {
+            if (ps != null) {
+                ps.close();
+            }
+            if (conn != null) {
+                conn.setAutoCommit(true);
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
     }
 

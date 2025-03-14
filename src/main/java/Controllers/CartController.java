@@ -123,6 +123,12 @@ public class CartController extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
+        if (user == null) {
+            // Nếu acc là null, chuyển hướng đến trang đăng nhập hoặc trang lỗi
+            response.sendRedirect("LoginView.jsp"); // hoặc trang khác phù hợp
+            return;
+        }
+        
         int userId = user.getUserID();
         int productId = Integer.parseInt(request.getParameter("foodId"));
         int quantity = Integer.parseInt(request.getParameter("quantity"));

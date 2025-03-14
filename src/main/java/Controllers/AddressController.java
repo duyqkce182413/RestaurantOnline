@@ -85,9 +85,9 @@ public class AddressController extends HttpServlet {
         }
 
         List<Address> addresses = addressDAO.getAddressesByUsername(username);
-        
+
         System.out.println(addresses);
-        
+
         request.setAttribute("listAddresses", addresses);
         RequestDispatcher dispatcher = request.getRequestDispatcher("AddressView.jsp");
         dispatcher.forward(request, response);
@@ -122,17 +122,17 @@ public class AddressController extends HttpServlet {
         String phoneNumber = request.getParameter("phoneNumber");
         boolean isDefault = request.getParameter("is_default") != null;
         int isDeleted = 0;
-        
+
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        
+
         session.setAttribute("user", user);
 
         if (user == null) {
             response.sendRedirect("LoginView.jsp");
             return;
         }
-        
+
         AddressDAO addressDAO = new AddressDAO();
 
         try {
@@ -176,7 +176,7 @@ public class AddressController extends HttpServlet {
 
     private void updateAddress(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
-        int id = Integer.parseInt(request.getParameter("id"));
+        int oldAddressId = Integer.parseInt(request.getParameter("id"));
         String name = request.getParameter("name");
         String addressLine = request.getParameter("addressLine");
         String city = request.getParameter("city");
@@ -195,16 +195,13 @@ public class AddressController extends HttpServlet {
         AddressDAO addressDAO = new AddressDAO();
 
         try {
-            if (isDefault) {
-                addressDAO.unsetDefaultAddress(user.getUsername());
-            }
-
-            addressDAO.updateAddress(id, name, addressLine, city, phoneNumber, isDefault, userId);
+            // Gọi phương thức chèn địa chỉ mới thay vì update
+            addressDAO.insertNewAddress(oldAddressId, name, addressLine, city, phoneNumber, isDefault, userId);
 
             response.sendRedirect("listAddress");
         } catch (SQLException e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "Error while updating the address. Please try again.");
+            request.setAttribute("errorMessage", "Lỗi khi cập nhật địa chỉ. Vui lòng thử lại.");
             request.getRequestDispatcher("EditAddress.jsp").forward(request, response);
         }
     }

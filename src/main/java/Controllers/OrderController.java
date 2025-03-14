@@ -14,10 +14,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
- *  
+ *
  * @author admin
  */
 public class OrderController extends HttpServlet {
@@ -39,7 +41,7 @@ public class OrderController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet OrderController</title>");            
+            out.println("<title>Servlet OrderController</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet OrderController at " + request.getContextPath() + "</h1>");
@@ -94,7 +96,6 @@ public class OrderController extends HttpServlet {
         processRequest(request, response);
     }
 
-    
     // Hiển thị danh sách đơn hàng
     private void listOrders(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -104,7 +105,7 @@ public class OrderController extends HttpServlet {
             response.sendRedirect("LoginView.jsp");
             return;
         }
-        
+
         OrderDAO ordersDAO = new OrderDAO();
         List<Order> orders = ordersDAO.getOrdersByUserId(user.getUserID());
         request.setAttribute("listOrders", orders);
@@ -114,9 +115,10 @@ public class OrderController extends HttpServlet {
     // Hủy đơn hàng
     private void cancelOrder(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        int orderId         = Integer.parseInt(request.getParameter("id"));
+        int orderId = Integer.parseInt(request.getParameter("id"));
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
+
         if (user == null) {
             response.sendRedirect("LoginView.jsp");
             return;
@@ -125,19 +127,17 @@ public class OrderController extends HttpServlet {
         OrderDAO ordersDAO = new OrderDAO();
         Order order = ordersDAO.getOrderById(orderId);
 
-        if (order != null && "Chưa xử lý".equalsIgnoreCase(order.getStatus())) {
-            // Gọi phương thức deleteOrder để xóa đơn hàng
+        if (order != null && ("Chưa xử lý".equalsIgnoreCase(order.getStatus()) || "Đã tiếp nhận".equalsIgnoreCase(order.getStatus()))) {
             boolean isDeleted = ordersDAO.deleteOrder(orderId);
-            if (isDeleted) {
-                response.sendRedirect("listOrders?message=Order has been canceled successfully");
-            } else {
-                response.sendRedirect("listOrders?error=Order cannot be cancelled.");
-            }
+            String message = isDeleted ? "Đơn hàng đã được hủy thành công." : "Không thể hủy đơn hàng.";
+            String encodedMessage = URLEncoder.encode(message, StandardCharsets.UTF_8);
+            response.sendRedirect("listOrders?message=" + encodedMessage);
         } else {
-            response.sendRedirect("listOrders?error=Order cannot be cancelled.");
+            String encodedError = URLEncoder.encode("Không thể hủy đơn hàng.", StandardCharsets.UTF_8);
+            response.sendRedirect("listOrders?error=" + encodedError);
         }
     }
-    
+
     /**
      * Returns a short description of the servlet.
      *

@@ -19,6 +19,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class CheckOutCart extends HttpServlet {
 
@@ -73,24 +75,25 @@ public class CheckOutCart extends HttpServlet {
             List<OrderDetail> orderDetails = new ArrayList<>();
             for (CartItem item : cartItems) {
                 OrderDetail orderDetail = new OrderDetail();
-                // Gán đối tượng Order vào OrderDetail
                 orderDetail.setOrderID(order);
-                // Lấy đối tượng Food từ CartItem
                 orderDetail.setFoodID(item.getFood());
-                // Lấy số lượng từ đối tượng Cart nằm trong CartItem
                 orderDetail.setQuantity(item.getCart().getQuantity());
                 orderDetail.setPrice(item.getFood().getPrice());
                 orderDetails.add(orderDetail);
             }
+
             // Thêm chi tiết đơn hàng
             orderDAO.createOrderItems(orderDetails, orderId);
 
-            // Xóa giỏ hàng của người dùng sau khi đặt hàng thành công
+            // Xóa giỏ hàng sau khi đặt hàng thành công
             cartDAO.clearCartByUserId(user.getUserID());
 
-            response.sendRedirect("listOrders?message=Order has been placed successfully");
+            // Encode thông báo tiếng Việt
+            String message = URLEncoder.encode("Đơn hàng đã được đặt thành công!", StandardCharsets.UTF_8);
+            response.sendRedirect("listOrders?message=" + message);
         } else {
-            response.sendRedirect("CartView.jsp?error=Unable to place order");
+            String errorMessage = URLEncoder.encode("Không thể đặt hàng!", StandardCharsets.UTF_8);
+            response.sendRedirect("CartView.jsp?error=" + errorMessage);
         }
     }
 

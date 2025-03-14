@@ -113,6 +113,13 @@
                 margin-right: 10px;
             }
 
+            .error {
+                color: red;
+                font-size: 14px;
+                display: none;
+            }
+
+
             .btn-primary,
             .btn-danger,
             .btn-success {
@@ -178,20 +185,27 @@
             <div class="container content">
                 <h3 class="text-center mb-4">Thông Tin Địa Chỉ</h3>
 
-                <div class="row">
-                    <!-- Sidebar -->
-                    <div class="col-md-3">
-                        <ul>
-                            <h3>Tài Khoản</h3>
-                            <li><a href="UserProfile.jsp">Thông tin tài khoản</a></li>
-                            <li><a href="listAddress">Danh sách địa chỉ</a></li>
-                            <li><a href="listOrders">Lịch sử mua hàng</a></li>
-                            <li><a href="logout">Đăng xuất</a></li>
-                        </ul>
-                    </div>
+            <c:if test="${empty listAddresses}">
+                <div class="alert alert-warning text-center" role="alert">
+                    Bạn chưa có địa chỉ mặc định, vui lòng nhập địa chỉ mới.
+                </div>
+            </c:if>
 
-                    <!-- Address Cards -->
-                    <div class="col-md-6">
+
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-md-3">
+                    <ul>
+                        <h3>Tài Khoản</h3>
+                        <li><a href="UserProfile.jsp">Thông tin tài khoản</a></li>
+                        <li><a href="listAddress">Danh sách địa chỉ</a></li>
+                        <li><a href="listOrders">Lịch sử mua hàng</a></li>
+                        <li><a href="logout">Đăng xuất</a></li>
+                    </ul>
+                </div>
+
+                <!-- Address Cards -->
+                <div class="col-md-6">
                     <c:forEach var="address" items="${listAddresses}">
                         <c:if test="${address.isDeleted() == 0}">
                             <div class="address-card ${address.isDefault() ? 'default-address' : ''}">
@@ -223,11 +237,19 @@
                 <div class="col-md-3">
                     <button class="btn btn-success mb-3" onclick="toggleAddressForm()">Nhập địa chỉ mới</button>
                     <div id="newAddressForm" style="display:none;">
-                        <form action="insertAddress" method="POST">
-                            <input type="text" class="form-control" placeholder="Họ và Tên" name="name" required>
-                            <input type="text" class="form-control" placeholder="Địa chỉ" name="addressLine" required>
-                            <input type="text" class="form-control" placeholder="Thành phố" name="city" required>
-                            <input type="text" class="form-control" placeholder="Số điện thoại" name="phoneNumber" required>
+                        <form name="addressForm" action="insertAddress" method="POST" onsubmit="return validateAddressForm()">
+                            <input type="text" class="form-control" id="name" placeholder="Họ và Tên" name="name">
+                            <span id="nameError" class="error">Vui lòng nhập họ và tên</span>
+
+                            <input type="text" class="form-control" id="addressLine" placeholder="Địa chỉ" name="addressLine">
+                            <span id="addressError" class="error">Vui lòng nhập địa chỉ</span>
+
+                            <input type="text" class="form-control" id="city" placeholder="Thành phố" name="city">
+                            <span id="cityError" class="error">Vui lòng nhập thành phố</span>
+
+                            <input type="text" class="form-control" id="phoneNumber" placeholder="Số điện thoại" name="phoneNumber">
+                            <span id="phoneError" class="error">Số điện thoại phải có đúng 10 chữ số</span>
+
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="defaultAddress" name="is_default">
                                 <label class="form-check-label" for="defaultAddress">Đặt làm địa chỉ mặc định</label>
@@ -237,6 +259,7 @@
                         </form>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -249,6 +272,39 @@
         <jsp:include page="Footer.jsp"></jsp:include>
 
         <script>
+            function validateAddressForm() {
+                let isValid = true;
+
+                let name = document.getElementById("name").value.trim();
+                let addressLine = document.getElementById("addressLine").value.trim();
+                let city = document.getElementById("city").value.trim();
+                let phoneNumber = document.getElementById("phoneNumber").value.trim();
+
+                let phonePattern = /^[0-9]{10}$/; // Chỉ chấp nhận 10 số
+
+                // Xóa thông báo lỗi trước đó
+                document.querySelectorAll(".error").forEach(e => e.style.display = "none");
+
+                if (name === "") {
+                    document.getElementById("nameError").style.display = "block";
+                    isValid = false;
+                }
+                if (addressLine === "") {
+                    document.getElementById("addressError").style.display = "block";
+                    isValid = false;
+                }
+                if (city === "") {
+                    document.getElementById("cityError").style.display = "block";
+                    isValid = false;
+                }
+                if (!phonePattern.test(phoneNumber)) {
+                    document.getElementById("phoneError").style.display = "block";
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
             function toggleAddressForm() {
                 var form = document.getElementById("newAddressForm");
                 if (form.style.display === "none") {

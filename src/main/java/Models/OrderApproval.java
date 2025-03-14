@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Models;
 
 import java.util.Date;
@@ -11,17 +7,18 @@ import java.util.Date;
  * @author admin
  */
 public class OrderApproval {
+
     private int approvalID;
-    private int orderID;
+    private Order order;  // Đổi tên từ orderID thành order (Order object)
     private User approvedBy;
     private Date approvedAt;
 
     public OrderApproval() {
     }
 
-    public OrderApproval(int approvalID, int orderID, User approvedBy, Date approvedAt) {
+    public OrderApproval(int approvalID, Order order, User approvedBy, Date approvedAt) {
         this.approvalID = approvalID;
-        this.orderID = orderID;
+        this.order = order;
         this.approvedBy = approvedBy;
         this.approvedAt = approvedAt;
     }
@@ -34,12 +31,12 @@ public class OrderApproval {
         this.approvalID = approvalID;
     }
 
-    public int getOrderID() {
-        return orderID;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setOrderID(int orderID) {
-        this.orderID = orderID;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public User getApprovedBy() {
@@ -60,6 +57,6 @@ public class OrderApproval {
 
     @Override
     public String toString() {
-        return "OrderApproval{" + "approvalID=" + approvalID + ", orderID=" + orderID + ", approvedBy=" + approvedBy + ", approvedAt=" + approvedAt + '}';
+        return "OrderApproval{" + "approvalID=" + approvalID + ", order=" + order + ", approvedBy=" + approvedBy + ", approvedAt=" + approvedAt + '}';
     }
 }

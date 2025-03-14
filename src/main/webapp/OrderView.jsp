@@ -139,9 +139,18 @@
                         <input type="text" class="form-control" id="totalAmount" value="${order.totalAmount}" readonly>
                     </div>
 
-                    <a href="listAdminOrders" class="btn btn-secondary mt-3">Back to Orders</a>
-                    <a href="deleteOrder?id=${order.orderID}" class="btn btn-danger mt-3" onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?');">Delete</a>
+                    <div class="mb-3">
+                        <label for="paymentMethod" class="form-label">Payment Method</label>
+                        <input type="text" class="form-control" id="totalAmount" value="${order.paymentMethod}" readonly>
+                    </div>
 
+                    <a href="listAdminOrders" class="btn btn-secondary mt-3">Back to Orders</a>
+                    <c:if test="${not empty order.orderID}">
+                        <a href="deleteOrder?id=${order.orderID}" class="btn btn-danger mt-3"
+                           onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?');">
+                            Xóa
+                        </a>
+                    </c:if>
                 </div>
             </div>
         </div>

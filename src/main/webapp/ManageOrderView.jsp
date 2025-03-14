@@ -16,7 +16,7 @@
         <link rel="stylesheet" href="./CSS/HeaderAndFooter_CSS.css" />
 
         <link rel="stylesheet" href="./CSS/Style.css" />
-        
+
         <style>
             /* Sidebar Styles */
             .sidebar {
@@ -95,10 +95,11 @@
                 </c:if>
 
                 <!-- Form lọc đơn hàng theo số điện thoại  -->
-                <form method="GET" action="searchByPhone" class="mb-3">
+                <form method="GET" action="searchByPhone" class="mb-3" onsubmit="return validatePhone()">
                     <div class="row">
                         <div class="col-md-6">
-                            <input type="text" name="phone" class="form-control" placeholder="Search by phone number" value="${param.phone}">
+                            <input type="text" id="phone" name="phone" class="form-control" placeholder="Search by phone number" value="${param.phone}">
+                            <small id="phoneError" class="text-danger"></small>
                         </div>
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-primary">Search</button>
@@ -112,6 +113,9 @@
                         <select name="status" class="form-select">
                             <option value="">All</option>
                             <option value="Chưa xử lý" ${param.status == 'Chưa xử lý' ? 'selected' : ''}>Chưa xử lý</option>
+                            <option value="Đã tiếp nhận" ${param.status == 'Đã tiếp nhận' ? 'selected' : ''}>Đã tiếp nhận</option>
+                            <option value="Đang chuẩn bị" ${param.status == 'Đang chuẩn bị' ? 'selected' : ''}>Đang chuẩn bị</option>
+                            <option value="Đang giao" ${param.status == 'Đang giao' ? 'selected' : ''}>Đang giao</option>
                             <option value="Hoàn thành" ${param.status == 'Hoàn thành' ? 'selected' : ''}>Hoàn thành</option>
                         </select>
                         <button type="submit" class="btn btn-secondary">Filter</button>
@@ -156,6 +160,7 @@
                                               <c:when test="${order.status.equals('Đang chuẩn bị')}">bg-info</c:when>
                                               <c:when test="${order.status.equals('Đang giao')}">bg-primary</c:when>
                                               <c:when test="${order.status.equals('Hoàn thành')}">bg-success</c:when>
+                                              <c:when test="${order.status.equals('Đã hủy')}">bg-danger</c:when>
                                           </c:choose>">${order.status}
                                     </span>
                                 </td>
@@ -200,5 +205,24 @@
 
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+                    function validatePhone() {
+                        let phoneInput = document.getElementById("phone");
+                        let phoneError = document.getElementById("phoneError");
+                        let phoneNumber = phoneInput.value.trim();
+                        let phoneRegex = /^[0-9]{10,}$/; // Chỉ chứa số, ít nhất 10 số
+
+                        if (phoneNumber === "") {
+                            phoneError.textContent = "Vui lòng nhập số điện thoại.";
+                            return false;
+                        } else if (!phoneRegex.test(phoneNumber)) {
+                            phoneError.textContent = "Số điện thoại không hợp lệ (chỉ nhập số, ít nhất 10 số).";
+                            return false;
+                        } else {
+                            phoneError.textContent = ""; // Xóa lỗi nếu hợp lệ
+                            return true;
+                        }
+                    }
+        </script>
     </body>
 </html>

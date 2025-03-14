@@ -92,24 +92,31 @@ public class FeedbackController extends HttpServlet {
             return;
         }
 
-        // Kiểm tra xem người dùng có mua món ăn này hay không
+        // Kiểm tra xem người dùng đã mua món ăn chưa
         OrderDAO orderDAO = new OrderDAO();
-        System.out.println(user.getUserID() + " " + foodID);
-        boolean hasOrdered = orderDAO.isFoodPurchasedByUser(foodID, user.getUserID()); // Lấy userID từ session
-        System.out.println(hasOrdered);
+        boolean hasOrdered = orderDAO.isFoodPurchasedByUser(foodID, user.getUserID());
         if (!hasOrdered) {
             response.sendRedirect("view-food-detail?error=no_purchase&foodID=" + foodID);
             return;
         }
 
+        // Kiểm tra xem người dùng đã đánh giá món ăn này chưa
+        FeedbackDAO feedbackDAO = new FeedbackDAO();
+        boolean alreadyReviewed = feedbackDAO.hasUserReviewedFood(user.getUserID(), foodID);
+        if (alreadyReviewed) {
+            response.sendRedirect("view-food-detail?error=already_reviewed&foodID=" + foodID);
+            return;
+        }
+
+        // Lấy thông tin món ăn
         FoodDAO foodDAO = new FoodDAO();
         Food food = foodDAO.getProductBYID(String.valueOf(foodID));
-
         if (food == null) {
             response.sendRedirect("view-food-detail?error=food_not_found&foodID=" + foodIdStr);
             return;
         }
 
+        // Tạo và lưu feedback mới
         Feedback feedback = new Feedback();
         feedback.setUser(user);
         feedback.setFood(food);
@@ -117,11 +124,9 @@ public class FeedbackController extends HttpServlet {
         feedback.setComment(comment);
         feedback.setCreatedAt(new Date());
 
-        FeedbackDAO feedbackDAO = new FeedbackDAO();
         boolean success = feedbackDAO.addFeedback(feedback);
-
         if (success) {
-            response.sendRedirect("view-food-detail?foodID=" + foodID + "&success=true");
+            response.sendRedirect("view-food-detail?foodID=" + foodID + "&success=comment_added");
         } else {
             response.sendRedirect("view-food-detail?foodID=" + foodID + "&error=true");
         }

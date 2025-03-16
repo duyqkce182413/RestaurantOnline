@@ -23,7 +23,7 @@ public class ResetPasswordServlet extends HttpServlet {
             request.getRequestDispatcher("ResetPasswordView.jsp").forward(request, response);
         } else {
             request.setAttribute("error", "Invalid or expired token.");
-            request.getRequestDispatcher("error.jsp").forward(request, response);
+            request.getRequestDispatcher("Error.jsp").forward(request, response);
         }
     }
 
@@ -42,6 +42,7 @@ public class ResetPasswordServlet extends HttpServlet {
                 userDAO.updatePasswordByToken(token, hashedPassword);
                 request.setAttribute("message", "Đặt lại mật khẩu thành công.");
             } else {
+                
                 request.setAttribute("error", "Mã token không hợp lệ hoặc đã hết hạn.");
             }
         } else {

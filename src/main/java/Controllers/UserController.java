@@ -477,7 +477,7 @@ public class UserController extends HttpServlet {
             session.setAttribute("errorConfirm", "Passwords do not match.");
             hasError = true;
         }
-
+        
         // Kiểm tra username, email, phoneNumber đã tồn tại hay chưa
         if (dao.isUsernameExists(username)) {
             session.setAttribute("errorName", "Username already exists.");

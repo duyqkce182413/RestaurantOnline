@@ -2,6 +2,7 @@ package Controllers;
 
 import DAO.OrderApprovalDAO;
 import DAO.OrderDAO;
+import DAO.UserDAO;
 import Models.Order;
 import Models.User;
 import java.io.IOException;
@@ -77,7 +78,7 @@ public class StaffOrderController extends HttpServlet {
         request.setAttribute("listOrders", orders);
         request.getRequestDispatcher("ManageOrderView.jsp").forward(request, response);
     }
-    
+
     private void updateOrderStatus(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         try {
@@ -101,29 +102,39 @@ public class StaffOrderController extends HttpServlet {
 
             int orderId = Integer.parseInt(orderIdStr);
             int staffId = Integer.parseInt(staffIdStr);
-            
+
             OrderApprovalDAO orderApprovalDAO = new OrderApprovalDAO();
-            
+
             // Kiểm tra nhân viên đã duyệt trước đó
-            Integer previousStaffId = orderApprovalDAO.getApprovedByStaffId(orderId); // Giả sử có phương thức này trong Order
+            Integer previousStaffId = orderApprovalDAO.getApprovedByStaffId(orderId);
             if (previousStaffId != null && previousStaffId != staffId) {
                 request.setAttribute("error", "Chỉ nhân viên đã duyệt trước đó mới có thể tiếp tục duyệt đơn.");
                 request.getRequestDispatcher("listAdminOrders").forward(request, response);
                 return;
             }
 
-            // Gọi DAO để cập nhật trạng thái
+            // Lấy trạng thái hiện tại của đơn hàng trước khi cập nhật
             OrderDAO ordersDAO = new OrderDAO();
+            Order order = ordersDAO.getOrderById(orderId);
+            if (order == null) {
+                request.setAttribute("error", "Không tìm thấy đơn hàng.");
+                request.getRequestDispatcher("listAdminOrders").forward(request, response);
+                return;
+            }
+
+            String currentStatus = order.getStatus();
+
+            // Gọi DAO để cập nhật trạng thái
             boolean isUpdated = ordersDAO.updateOrderStatus(orderId, newStatus, staffId);
 
             if (isUpdated) {
-                Order order = ordersDAO.getOrderById(orderId);
-                if (order != null) {
-                    ordersDAO.updateProductQuantity(order.getOrderDetail());
+                // Kiểm tra nếu trạng thái chuyển từ "Đã tiếp nhận" sang "Đang chuẩn bị" thì cập nhật số lượng
+                if ("Đã tiếp nhận".equalsIgnoreCase(currentStatus) && "Đang chuẩn bị".equalsIgnoreCase(newStatus)) {
+                    ordersDAO.updateProductQuantity(order.getOrderDetail()); // Cập nhật số lượng sản phẩm
                 }
-                request.setAttribute("message", "Status updated successfully and product quantities adjusted");
+                request.setAttribute("message", "Trạng thái đã được cập nhật thành công");
             } else {
-                request.setAttribute("error", "Failed to update status");
+                request.setAttribute("error", "Không cập nhật được trạng thái");
             }
 
             request.getRequestDispatcher("listAdminOrders").forward(request, response);
@@ -161,15 +172,65 @@ public class StaffOrderController extends HttpServlet {
     }
 
     // Xóa order
-    private void deleteOrder(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int orderId = Integer.parseInt(request.getParameter("id"));
-        OrderDAO ordersDAO = new OrderDAO();
-        boolean isDeleted = ordersDAO.deleteOrder(orderId);
+    private void deleteOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            String orderIdStr = request.getParameter("id");
 
-        if (isDeleted) {
-            response.sendRedirect("listAdminOrders?message=Order deleted successfully");
-        } else {
-            response.sendRedirect("listAdminOrders?error=Order deletion failed");
+            if (orderIdStr == null || orderIdStr.trim().isEmpty()) {
+                request.setAttribute("error", "Lỗi: Không tìm thấy ID đơn hàng.");
+                request.getRequestDispatcher("listAdminOrders").forward(request, response);
+                return;
+            }
+
+            int orderId = Integer.parseInt(orderIdStr);
+            OrderDAO ordersDAO = new OrderDAO();
+            Order order = ordersDAO.getOrderById(orderId);
+
+            if (order == null) {
+                request.setAttribute("error", "Lỗi: Đơn hàng không tồn tại.");
+                request.getRequestDispatcher("listAdminOrders").forward(request, response);
+                return;
+            }
+
+            String currentStatus = order.getStatus();
+            User user = (User) request.getSession().getAttribute("user");
+
+            if (user == null) {
+                request.setAttribute("error", "Bạn chưa đăng nhập.");
+                request.getRequestDispatcher("listAdminOrders").forward(request, response);
+                return;
+            }
+
+            boolean isAdmin = "Admin".equalsIgnoreCase(user.getRole());
+            int adminId = user.getUserID(); // Lấy ID của admin
+
+            if ("Chưa xử lý".equalsIgnoreCase(currentStatus) || "Đã tiếp nhận".equalsIgnoreCase(currentStatus)) {
+                boolean isDeleted = ordersDAO.deleteOrder(orderId);
+                request.setAttribute("message", isDeleted ? "Đơn hàng đã được xóa thành công." : "Xóa đơn hàng thất bại.");
+                request.getRequestDispatcher("listAdminOrders").forward(request, response);
+                return;
+            }
+
+            if ("Đang giao".equalsIgnoreCase(currentStatus)) {
+                if (isAdmin) {
+                    boolean isUpdated = ordersDAO.updateOrderStatus(orderId, "Đã hủy", adminId);
+                    request.setAttribute("message", isUpdated ? "Admin đã hủy đơn hàng." : "Không thể hủy đơn hàng.");
+                } else {
+                    request.setAttribute("error", "Chỉ Admin mới có thể hủy đơn hàng đang giao.");
+                }
+                request.getRequestDispatcher("listAdminOrders").forward(request, response);
+                return;
+            }
+
+            request.setAttribute("error", "Không thể xóa đơn hàng ở trạng thái hiện tại.");
+            request.getRequestDispatcher("listAdminOrders").forward(request, response);
+
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Lỗi: ID đơn hàng không hợp lệ.");
+            request.getRequestDispatcher("listAdminOrders").forward(request, response);
+        } catch (Exception e) {
+            request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
+            request.getRequestDispatcher("listAdminOrders").forward(request, response);
         }
     }
 

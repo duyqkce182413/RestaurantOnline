@@ -18,16 +18,16 @@ public class FeedbackDAO extends DBContext {
     // Lấy danh sách tất cả phản hồi (có thông tin User, Food, Order, Reply)
     public List<Feedback> getAllFeedbacks() {
         Map<Integer, Feedback> feedbackMap = new HashMap<>();
-        String query = "SELECT f.feedbackID, f.userID, f.foodID, f.orderID, f.rating, f.comment, f.createdAt, "
-                + "u.username, u.email, u.fullName, "
-                + "fd.foodName, "
-                + "o.orderID, "
-                + "fr.replyID, fr.userID, fr.replyText, fr.replyAt "
-                + "FROM Feedback f "
-                + "JOIN Users u ON f.userID = u.userID "
-                + "JOIN Foods fd ON f.foodID = fd.foodID "
-                + "JOIN Orders o ON f.orderID = o.orderID "
-                + "LEFT JOIN FeedbackReplies fr ON f.feedbackID = fr.feedbackID";
+        String query = "SELECT f.feedbackID, f.userID, f.foodID, f.orderID, f.rating, f.comment, f.createdAt, \n"
+                + "       u.username, u.email, u.fullName, \n"
+                + "       fd.foodName, \n"
+                + "       o.orderID, \n"
+                + "       fr.replyID, fr.staffID, fr.replyText, fr.replyAt \n"
+                + "FROM Feedback f \n"
+                + "JOIN Users u ON f.userID = u.userID \n"
+                + "JOIN Foods fd ON f.foodID = fd.foodID \n"
+                + "JOIN Orders o ON f.orderID = o.orderID \n"
+                + "LEFT JOIN FeedbackReplies fr ON f.feedbackID = fr.feedbackID;";
 
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query);  ResultSet rs = ps.executeQuery()) {
 
@@ -173,11 +173,11 @@ public class FeedbackDAO extends DBContext {
                 + "LEFT JOIN Orders o ON f.orderID = o.orderID "
                 + "WHERE f.feedbackID = ?";
 
-        String replyQuery = "SELECT fr.replyID, fr.feedbackID, fr.userID AS replyUserID, "
+        String replyQuery = "SELECT fr.replyID, fr.feedbackID, fr.staffID AS replyUserID, "
                 + "ur.username AS replyUsername, ur.email AS replyEmail, ur.fullName AS replyFullName, "
                 + "ur.role AS replyRole, fr.replyText, fr.replyAt "
                 + "FROM FeedbackReplies fr "
-                + "LEFT JOIN Users ur ON fr.userID = ur.userID "
+                + "LEFT JOIN Users ur ON fr.staffID = ur.userID "
                 + "WHERE fr.feedbackID = ? "
                 + "ORDER BY fr.replyAt";
 
@@ -257,7 +257,7 @@ public class FeedbackDAO extends DBContext {
     public boolean replyToFeedback(int feedbackID, int userID, String replyText) {
         // Kiểm tra feedback có tồn tại không
         String checkQuery = "SELECT COUNT(*) FROM Feedback WHERE feedbackID = ?";
-        String insertQuery = "INSERT INTO FeedbackReplies (feedbackID, userID, replyText, replyAt) VALUES (?, ?, ?, GETDATE())";
+        String insertQuery = "INSERT INTO FeedbackReplies (feedbackID, staffID, replyText, replyAt) VALUES (?, ?, ?, GETDATE())";
 
         try ( Connection conn = getConnection();  PreparedStatement checkPs = conn.prepareStatement(checkQuery)) {
 
@@ -308,17 +308,17 @@ public class FeedbackDAO extends DBContext {
                 + "       u.username AS feedbackUsername, u.email AS feedbackEmail, u.fullName AS feedbackFullName, u.role AS feedbackRole, \n"
                 + "       fd.foodName, \n"
                 + "       o.orderID, \n"
-                + "       fr.replyID, fr.UserID AS replyUserID, \n"
+                + "       fr.replyID, fr.StaffID AS replyStaffID, \n" // Đổi từ UserID -> StaffID
                 + "       ur.username AS replyUsername, ur.email AS replyEmail, ur.fullName AS replyFullName, ur.role AS replyRole, \n"
                 + "       fr.replyText, fr.replyAt \n"
                 + "FROM Feedback f \n"
                 + "JOIN Users u ON f.UserID = u.UserID \n"
-                + "JOIN Foods fd ON f.foodID = fd.foodID \n"
-                + "LEFT JOIN Orders o ON f.orderID = o.orderID \n"
-                + "LEFT JOIN FeedbackReplies fr ON f.feedbackID = fr.feedbackID \n"
-                + "LEFT JOIN Users ur ON fr.UserID = ur.UserID \n"
-                + "WHERE f.foodID = ? \n"
-                + "ORDER BY f.feedbackID, fr.replyAt;";
+                + "JOIN Foods fd ON f.FoodID = fd.FoodID \n"
+                + "LEFT JOIN Orders o ON f.OrderID = o.OrderID \n"
+                + "LEFT JOIN FeedbackReplies fr ON f.FeedbackID = fr.FeedbackID \n"
+                + "LEFT JOIN Users ur ON fr.StaffID = ur.UserID \n" // Sửa UserID thành StaffID
+                + "WHERE f.FoodID = ? \n"
+                + "ORDER BY f.FeedbackID, fr.ReplyAt;";
 
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, foodId);
@@ -413,6 +413,22 @@ public class FeedbackDAO extends DBContext {
                 return false;
             }
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Check xem customer da danh gia chua
+    public boolean hasUserReviewedFood(int userID, int foodID) {
+        String query = "SELECT COUNT(*) FROM Feedback WHERE UserID = ? AND FoodID = ?";
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, userID);
+            ps.setInt(2, foodID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Nếu có ít nhất 1 bản ghi, nghĩa là đã đánh giá
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

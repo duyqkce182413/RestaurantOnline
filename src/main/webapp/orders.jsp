@@ -153,7 +153,7 @@
                                             <ul>
                                                 <c:forEach items="${order.orderDetail}" var="item">
                                                     <li>${item.foodID.foodName} - Số lượng: ${item.quantity} - Giá: ${item.price}</li>
-                                                    </c:forEach>
+                                                </c:forEach>
                                             </ul>
                                         </td>
                                         <td>

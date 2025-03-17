@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -16,6 +17,7 @@
         <!-- Custom CSS -->
         <link rel="stylesheet" href="./CSS/HeaderAndFooter_CSS.css" />
         <style>
+            /* Sidebar Styles */
             .sidebar {
                 width: 250px;
                 background-color: #343a40;
@@ -50,70 +52,65 @@
                 background-color: #495057;
                 transition: background-color 0.3s;
             }
+
+            /* Main content */
             .content {
-                margin-left: 250px;
+                margin-left: 250px; /* Space for the sidebar */
                 padding: 20px;
                 background-color: #f8f9fa;
                 width: calc(100% - 250px);
                 float: left;
             }
+            /* Prevent floating issues */
             .clearfix::after {
                 content: "";
                 display: table;
                 clear: both;
             }
             .table-responsive {
-                margin-top: 20px;
+                max-width: 100%;
+                overflow-x: auto;
             }
-
-            .search-filter-form {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 20px;
+            .table td, .table th {
+                word-wrap: break-word;
+                white-space: normal;
+                min-width: 100px;
             }
-            .search-filter-form input,
-            .search-filter-form select {
-                margin-right: 10px;
-            }
-
-            .btn-add {
-                margin-top: 20px;
-            }
-
-            .modal-header h5 {
-                font-weight: bold;
+            td {
+                max-width: 200px;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         </style>
     </head>
     <body>
         <jsp:include page="Dashboard_Header.jsp"></jsp:include>
-
-        <div class="wrapper clearfix row">
-            <!-- Sidebar -->
+            <div class="wrapper clearfix row">
             <jsp:include page="Dashboard_Sidebar.jsp"></jsp:include>
-
-            <!-- Main content -->
-            <div class="content col-12">
-                <h1 class="text-center mb-4">Order Approval</h1>
-
-                <!-- Order Table -->
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped text-center">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Approval ID</th>
-                                <th>Name</th>
-                                <th>Order ID</th>
-                                <th>Approval Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                <div class="content">
+                    <h1 class="text-center mb-4">Order Approval</h1>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover text-center align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Approval ID</th>
+                                    <th>Người Duyệt</th>
+                                    <th>Thông Tin Đơn Hàng</th>
+                                    <th>Ngày Duyệt</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                             <c:forEach var="approval" items="${approvals}">
                                 <tr>
                                     <td>${approval.approvalID}</td>
-                                    <td>${approval.approvedBy.fullName}</td>
-                                    <td>${approval.orderID}</td>
-                                    <td>${approval.approvedAt}</td>
+                                    <td><strong>${approval.approvedBy.fullName}</strong></td>
+                                    <td>
+                                        <strong>Người Mua:</strong> ${approval.order.address.name} <br>
+                                        <strong>SĐT:</strong> ${approval.order.user.phoneNumber} <br>
+                                        <strong>Địa Chỉ:</strong> ${approval.order.address.addressLine}, ${approval.order.address.city} <br>
+                                        <strong>Tổng Tiền:</strong> <fmt:formatNumber value="${approval.order.totalAmount}" type="currency" maxFractionDigits="0" currencySymbol="₫" />
+                                    </td>
+                                    <td><fmt:formatDate value="${approval.approvedAt}" pattern="dd/MM/yyyy HH:mm" /></td>
                                 </tr>
                             </c:forEach>
                         </tbody>
@@ -121,9 +118,6 @@
                 </div>
             </div>
         </div>
-
-
-        <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

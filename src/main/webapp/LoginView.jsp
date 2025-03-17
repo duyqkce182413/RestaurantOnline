@@ -25,6 +25,13 @@
         <!--CSS rieng-->
         <link rel="stylesheet" href="./CSS/Login_CSS.css">
         <style>
+            body {
+                background: url('https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg') no-repeat center center fixed;
+                background-size: cover;
+            }
+
+
+
             /* CSS cho nút đăng nhập bằng Google */
             .google-login-btn {
                 display: inline-flex;

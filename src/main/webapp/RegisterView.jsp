@@ -30,6 +30,10 @@
                 min-height: 100vh;
                 margin: 0;
             }
+            body {
+                background: url('https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg') no-repeat center center fixed;
+                background-size: cover;
+            }
 
             .register-form {
                 flex: 1;

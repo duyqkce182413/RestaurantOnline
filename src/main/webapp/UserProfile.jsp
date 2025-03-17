@@ -155,7 +155,16 @@ if (message != null) {
                                 <div class="col-4 d-flex flex-column align-items-center justify-content-center">
                                     <div class="info-item text-center">
                                         <label>Ảnh đại diện:</label><br>
-                                        <img src="${sessionScope.user.avatar}" alt="Avatar" width="100" class="rounded-circle">
+                                        <c:choose>
+                                            <c:when test="${sessionScope.user.avatar.startsWith('http')}">
+                                                <!-- Nếu avatar là URL (ví dụ: ảnh từ Google) -->
+                                                <img src="${sessionScope.user.avatar}" alt="Avatar" width="100" class="rounded-circle">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <!-- Nếu avatar là ảnh lưu trong project -->
+                                                <img src="${pageContext.request.contextPath}/image/${sessionScope.user.avatar}" alt="Avatar" width="100" class="rounded-circle">
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                 </div>
 
@@ -255,32 +264,32 @@ if (message != null) {
 
 <jsp:include page="Footer.jsp"></jsp:include>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-                                    function myFunction() {
-                                        var x = document.getElementById("password");
-                                        if (x.type === "password") {
-                                            x.type = "text";
-                                        } else {
-                                            x.type = "password";
-                                        }
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+                                function myFunction() {
+                                    var x = document.getElementById("password");
+                                    if (x.type === "password") {
+                                        x.type = "text";
+                                    } else {
+                                        x.type = "password";
                                     }
+                                }
 
-                                    document.getElementById('togglePassword').addEventListener('click', function () {
-                                        let passwordField = document.getElementById('editPassword');
-                                        let icon = this.querySelector('i');
-                                        if (passwordField.type === 'password') {
-                                            passwordField.type = 'text';
-                                            icon.classList.remove('fa-eye');
-                                            icon.classList.add('fa-eye-slash');
-                                        } else {
-                                            passwordField.type = 'password';
-                                            icon.classList.remove('fa-eye-slash');
-                                            icon.classList.add('fa-eye');
-                                        }
-                                    });
-                                    
+                                document.getElementById('togglePassword').addEventListener('click', function () {
+                                    let passwordField = document.getElementById('editPassword');
+                                    let icon = this.querySelector('i');
+                                    if (passwordField.type === 'password') {
+                                        passwordField.type = 'text';
+                                        icon.classList.remove('fa-eye');
+                                        icon.classList.add('fa-eye-slash');
+                                    } else {
+                                        passwordField.type = 'password';
+                                        icon.classList.remove('fa-eye-slash');
+                                        icon.classList.add('fa-eye');
+                                    }
+                                });
+
 </script>
 </body>
 

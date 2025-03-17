@@ -15,28 +15,34 @@
         <link rel="stylesheet" href="./CSS/HeaderAndFooter_CSS.css">
         <link rel="stylesheet" href="./CSS/HomeView.css">
         <link rel="stylesheet" href="./CSS/Login_CSS.css">
+        <style>
+            body {
+                background: url('https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg') no-repeat center center fixed;
+                background-size: cover;
+            }
+        </style>
     </head>
     <body>
         <!-- Header -->
         <jsp:include page="Header.jsp"></jsp:include>
 
-        <div class="login-form">
-            <h2>Quên mật khẩu</h2>
-            <form action="forgot-password" method="post">
-                <div class="mb-3">
-                    <label for="email" class="form-label">Nhập email của bạn</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
+            <div class="login-form">
+                <h2>Quên mật khẩu</h2>
+                <form action="forgot-password" method="post">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Nhập email của bạn</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+                    </div>
+                </form>
+                <div class="form-text"> 
+                    Bạn nhớ mật khẩu? <a href="LoginView.jsp">Đăng nhập ở đây</a>
                 </div>
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
-                </div>
-            </form>
-            <div class="form-text"> 
-                Bạn nhớ mật khẩu? <a href="LoginView.jsp">Đăng nhập ở đây</a>
             </div>
-        </div>
 
-        <!-- Footer -->
+            <!-- Footer -->
         <jsp:include page="Footer.jsp"></jsp:include>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

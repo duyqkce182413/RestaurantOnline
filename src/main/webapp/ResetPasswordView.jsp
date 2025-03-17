@@ -14,6 +14,12 @@
         <link rel="stylesheet" href="./CSS/HeaderAndFooter_CSS.css">
         <link rel="stylesheet" href="./CSS/HomeView.css">
         <link rel="stylesheet" href="./CSS/Login_CSS.css">
+        <style>
+            body {
+                background: url('https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg') no-repeat center center fixed;
+                background-size: cover;
+            }
+        </style>
     </head>
     <body>
         <!-- Header -->

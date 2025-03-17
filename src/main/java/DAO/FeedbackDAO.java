@@ -93,7 +93,7 @@ public class FeedbackDAO extends DBContext {
                 + "u.username, u.email, u.fullName, "
                 + "fd.foodName, "
                 + "o.orderID, "
-                + "fr.replyID, fr.userID, fr.replyText, fr.replyAt "
+                + "fr.replyID, fr.staffID, fr.replyText, fr.replyAt "
                 + "FROM Feedback f "
                 + "JOIN Users u ON f.userID = u.userID "
                 + "JOIN Foods fd ON f.foodID = fd.foodID "
@@ -364,7 +364,7 @@ public class FeedbackDAO extends DBContext {
                 int replyID = rs.getInt("replyID");
                 if (!rs.wasNull()) {
                     User replyUser = new User(
-                            rs.getInt("replyUserID"),
+                            rs.getInt("replyStaffID"),
                             rs.getString("replyUsername"),
                             rs.getString("replyFullName"),
                             rs.getString("replyEmail"),
@@ -437,7 +437,7 @@ public class FeedbackDAO extends DBContext {
 
     // Thêm reply cho feedback
     public boolean addReply(FeedbackReply reply) {
-        String query = "INSERT INTO FeedbackReplies (feedbackID, userID, replyText, replyAt) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO FeedbackReplies (feedbackID, staffID, replyText, replyAt) VALUES (?, ?, ?, ?)";
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, reply.getFeedback().getFeedbackID()); // feedbackID
             ps.setInt(2, reply.getUser().getUserID()); // userID, sử dụng getUser().getUserID()

@@ -237,7 +237,7 @@
                         <c:if test="${param.error == 'food_not_found'}">
                             <div class="alert alert-danger">Không tìm thấy món ăn!</div>
                         </c:if>
-                            
+
                         <form action="submitFeedback" method="POST" onsubmit="return validateFeedbackForm();">
                             <input type="hidden" name="foodId" value="${food_detail.foodID}">
                             <input type="hidden" id="ratingValue" name="rating" value="0"> <!-- Giá trị mặc định là 0 sao -->
@@ -293,8 +293,8 @@
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirmDelete();">Xóa</button>
                                 </form>
                             </c:if>
-                             
-                             
+
+
                             <!-- Hiển thị phản hồi của shop nếu có -->
                             <c:if test="${not empty feedback.reply}">
                                 <div class="ms-4 p-2 border-start border-warning">
@@ -337,10 +337,12 @@
                                     </c:forEach>
 
                                     <div class="feedback">
-                                        <button class="btn btn-sm btn-primary" onclick="toggleReplyForm(${feedback.feedbackID})">Trả lời</button>
-                                        
-                                        <!-- Form phản hồi, ẩn khi chưa nhấn nút phản hồi -->
-                                        <form id="reply-form-${feedback.feedbackID}" class="reply-form" style="display:none;" method="POST" action="replyFeedback">
+                                        <!-- Nút Trả lời -->
+                                        <button class="btn btn-sm btn-primary reply-feedback" data-feedbackid="${feedback.feedbackID}">
+                                            Trả lời
+                                        </button>
+
+                                        <form id="reply-form-${feedback.feedbackID}" class="reply-form" style="display:none;"  method="POST" action="replyFeedback">
                                             <textarea id="replyText-${feedback.feedbackID}" name="replyText" rows="4" class="form-control" placeholder="Nhập phản hồi của bạn..."></textarea>
                                             <button type="submit" class="btn btn-sm btn-success mt-2">Gửi phản hồi</button>
                                             <input type="hidden" name="feedbackId" value="${feedback.feedbackID}">
@@ -350,13 +352,17 @@
                             </c:if>
 
                             <!-- Hiển thị nút phản hồi nếu chưa có phản hồi -->
-                            
                             <c:if test="${empty feedback.reply}">
                                 <button class="btn btn-sm btn-primary reply-feedback" data-feedbackid="${feedback.feedbackID}">
                                     Phản hồi
                                 </button>
                             </c:if>
-                            
+                            <!-- Luôn có form để JS tìm thấy -->
+                            <form id="reply-form-${feedback.feedbackID}" class="reply-form" style="display:none;" method="POST" action="replyFeedback">
+                                <textarea id="replyText-${feedback.feedbackID}" name="replyText" rows="4" class="form-control" placeholder="Nhập phản hồi của bạn..."></textarea>
+                                <button type="submit" class="btn btn-sm btn-success mt-2">Gửi phản hồi</button>
+                                <input type="hidden" name="feedbackId" value="${feedback.feedbackID}">
+                            </form>
                         </div>  
                     </c:forEach>
 
@@ -414,179 +420,202 @@
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                                        // Chon SAO khi add feedback
-                                        document.addEventListener("DOMContentLoaded", function () {
-                                            const stars = document.querySelectorAll(".star-rating .fa-star");
-                                            const ratingValue = document.getElementById("ratingValue");
+                                                    // Chon SAO khi add feedback
+                                                    document.addEventListener("DOMContentLoaded", function () {
+                                                        const stars = document.querySelectorAll(".star-rating .fa-star");
+                                                        const ratingValue = document.getElementById("ratingValue");
 
-                                            let selectedRating = 0; // Lưu giá trị rating đã chọn
+                                                        let selectedRating = 0; // Lưu giá trị rating đã chọn
 
-                                            // Xử lý hover
-                                            stars.forEach(star => {
-                                                star.addEventListener("mouseover", function () {
-                                                    const value = this.getAttribute("data-value");
+                                                        // Xử lý hover
+                                                        stars.forEach(star => {
+                                                            star.addEventListener("mouseover", function () {
+                                                                const value = this.getAttribute("data-value");
 
-                                                    // Highlight tạm thời các sao khi hover
-                                                    stars.forEach(s => s.classList.remove("fas", "checked"));
-                                                    stars.forEach(s => s.classList.add("far"));
+                                                                // Highlight tạm thời các sao khi hover
+                                                                stars.forEach(s => s.classList.remove("fas", "checked"));
+                                                                stars.forEach(s => s.classList.add("far"));
 
-                                                    for (let i = 0; i < value; i++) {
-                                                        stars[i].classList.remove("far");
-                                                        stars[i].classList.add("fas", "checked");
+                                                                for (let i = 0; i < value; i++) {
+                                                                    stars[i].classList.remove("far");
+                                                                    stars[i].classList.add("fas", "checked");
+                                                                }
+                                                            });
+
+                                                            // Khi rời chuột khỏi vùng sao, khôi phục trạng thái đã chọn
+                                                            star.addEventListener("mouseout", function () {
+                                                                stars.forEach(s => s.classList.remove("fas", "checked"));
+                                                                stars.forEach(s => s.classList.add("far"));
+
+                                                                for (let i = 0; i < selectedRating; i++) {
+                                                                    stars[i].classList.remove("far");
+                                                                    stars[i].classList.add("fas", "checked");
+                                                                }
+                                                            });
+
+                                                            // Xử lý khi click vào sao
+                                                            star.addEventListener("click", function () {
+                                                                selectedRating = this.getAttribute("data-value");
+                                                                ratingValue.value = selectedRating;
+
+                                                                // Cập nhật trạng thái chính thức
+                                                                stars.forEach(s => s.classList.remove("fas", "checked"));
+                                                                stars.forEach(s => s.classList.add("far"));
+
+                                                                for (let i = 0; i < selectedRating; i++) {
+                                                                    stars[i].classList.remove("far");
+                                                                    stars[i].classList.add("fas", "checked");
+                                                                }
+                                                            });
+                                                        });
+                                                    });
+                                                    //Thong bao chua rating
+                                                    function alidateFeedbackForm() {
+                                                        const ratingValue = document.getElementById("ratingValue").value;
+                                                        if (ratingValue == 0) {
+                                                            alert("Vui lòng chọn số sao trước khi gửi đánh giá!");
+                                                            return false; // Ngăn form gửi đi
+                                                        }
+                                                        return true; // Cho phép form gửi đi
                                                     }
-                                                });
 
-                                                // Khi rời chuột khỏi vùng sao, khôi phục trạng thái đã chọn
-                                                star.addEventListener("mouseout", function () {
-                                                    stars.forEach(s => s.classList.remove("fas", "checked"));
-                                                    stars.forEach(s => s.classList.add("far"));
+                                                    document.addEventListener("DOMContentLoaded", function () {
+                                                        var replyButtons = document.querySelectorAll(".reply-feedback");
 
-                                                    for (let i = 0; i < selectedRating; i++) {
-                                                        stars[i].classList.remove("far");
-                                                        stars[i].classList.add("fas", "checked");
+                                                        replyButtons.forEach(function (button) {
+                                                            button.addEventListener("click", function () {
+                                                                var feedbackId = button.getAttribute("data-feedbackid");
+
+                                                                console.log("🔍 Nút được nhấn:", button); // Xem nút có tồn tại không
+                                                                console.log("🔍 Giá trị feedbackId nhận được:", feedbackId); // Kiểm tra giá trị
+
+                                                                if (feedbackId) {
+                                                                    toggleReplyForm(feedbackId);
+                                                                } else {
+                                                                    console.error("❌ Không lấy được feedbackID từ nút phản hồi.");
+                                                                }
+                                                            });
+                                                        });
+                                                    });
+
+                                                    function toggleReplyForm(feedbackId) {
+                                                        var form = document.getElementById("reply-form-" + feedbackId);
+                                                        console.log("🔍 Tìm kiếm form ID: reply-form-" + feedbackId, form); // Kiểm tra form có tồn tại không
+
+                                                        if (form) {
+                                                            form.style.display = (form.style.display === "none" || form.style.display === "") ? "block" : "none";
+                                                        } else {
+                                                            console.error("❌ Không tìm thấy form phản hồi với ID:", feedbackId);
+                                                        }
                                                     }
-                                                });
 
-                                                // Xử lý khi click vào sao
-                                                star.addEventListener("click", function () {
-                                                    selectedRating = this.getAttribute("data-value");
-                                                    ratingValue.value = selectedRating;
 
-                                                    // Cập nhật trạng thái chính thức
-                                                    stars.forEach(s => s.classList.remove("fas", "checked"));
-                                                    stars.forEach(s => s.classList.add("far"));
 
-                                                    for (let i = 0; i < selectedRating; i++) {
-                                                        stars[i].classList.remove("far");
-                                                        stars[i].classList.add("fas", "checked");
+
+                                                    // Sua Feedback
+                                                    document.addEventListener("DOMContentLoaded", function () {
+                                                        const editButtons = document.querySelectorAll(".edit-feedback");
+                                                        const modal = document.getElementById("editFeedbackModal");
+                                                        const closeBtn = modal.querySelector(".close");
+                                                        const editForm = document.getElementById("editFeedbackForm");
+                                                        const editFeedbackID = document.getElementById("editFeedbackID");
+                                                        const editComment = document.getElementById("editComment");
+                                                        const editRatingValue = document.getElementById("editRatingValue");
+                                                        const stars = document.querySelectorAll("#editStarRating .fa-star");
+
+                                                        let selectedRating = 0;
+
+                                                        // Xử lý khi click nút "Sửa"
+                                                        editButtons.forEach(button => {
+                                                            button.addEventListener("click", function () {
+                                                                editFeedbackID.value = this.getAttribute("data-feedbackid");
+                                                                editComment.value = this.getAttribute("data-comment");
+                                                                selectedRating = this.getAttribute("data-rating");
+                                                                editRatingValue.value = selectedRating;
+
+                                                                // Cập nhật sao cho đúng với rating hiện tại
+                                                                updateStarDisplay(selectedRating);
+
+                                                                modal.style.display = "block";
+                                                            });
+                                                        });
+
+                                                        // Đóng modal
+                                                        closeBtn.addEventListener("click", function () {
+                                                            modal.style.display = "none";
+                                                        });
+
+                                                        window.addEventListener("click", function (event) {
+                                                            if (event.target === modal) {
+                                                                modal.style.display = "none";
+                                                            }
+                                                        });
+
+                                                        // Xử lý chọn sao trong form chỉnh sửa
+                                                        stars.forEach(star => {
+                                                            star.addEventListener("mouseover", function () {
+                                                                const value = this.getAttribute("data-value");
+                                                                updateStarDisplay(value);
+                                                            });
+
+                                                            star.addEventListener("mouseout", function () {
+                                                                updateStarDisplay(selectedRating);
+                                                            });
+
+                                                            star.addEventListener("click", function () {
+                                                                selectedRating = this.getAttribute("data-value");
+                                                                editRatingValue.value = selectedRating;
+                                                                updateStarDisplay(selectedRating);
+                                                            });
+                                                        });
+
+                                                        function updateStarDisplay(value) {
+                                                            stars.forEach(s => s.classList.remove("fas", "checked"));
+                                                            stars.forEach(s => s.classList.add("far"));
+
+                                                            for (let i = 0; i < value; i++) {
+                                                                stars[i].classList.remove("far");
+                                                                stars[i].classList.add("fas", "checked");
+                                                            }
+                                                        }
+                                                    });
+
+                                                    function confirmDelete() {
+                                                        return confirm("Bạn có chắc chắn muốn xóa feedback này không?");
                                                     }
-                                                });
-                                            });
-                                        });
-                                        //Thong bao chua rating
-                                        function alidateFeedbackForm() {
-                                            const ratingValue = document.getElementById("ratingValue").value;
-                                            if (ratingValue == 0) {
-                                                alert("Vui lòng chọn số sao trước khi gửi đánh giá!");
-                                                return false; // Ngăn form gửi đi
-                                            }
-                                            return true; // Cho phép form gửi đi
-                                        }
 
-                                        // Phan Hoi
-                                        function toggleReplyForm(feedbackId) {
-                                            var form = document.getElementById("reply-form-" + feedbackId);
-                                            if (form.style.display === "none") {
-                                                form.style.display = "block";
-                                            } else {
-                                                form.style.display = "none";
-                                            }
-                                        }
+                                                    // Sua phan hoi (feedback reply)
+                                                    document.addEventListener("DOMContentLoaded", function () {
+                                                        const editReplyButtons = document.querySelectorAll(".edit-reply");
+                                                        const deleteReplyButtons = document.querySelectorAll(".delete-reply");
+                                                        const editReplyModal = document.getElementById("editReplyModal");
+                                                        const closeEditReplyModal = editReplyModal.querySelector(".close");
+                                                        const editReplyForm = document.getElementById("editReplyForm");
+                                                        const editReplyID = document.getElementById("editReplyID");
+                                                        const editReplyText = document.getElementById("editReplyText");
 
-                                        // Sua Feedback
-                                        document.addEventListener("DOMContentLoaded", function () {
-                                            const editButtons = document.querySelectorAll(".edit-feedback");
-                                            const modal = document.getElementById("editFeedbackModal");
-                                            const closeBtn = modal.querySelector(".close");
-                                            const editForm = document.getElementById("editFeedbackForm");
-                                            const editFeedbackID = document.getElementById("editFeedbackID");
-                                            const editComment = document.getElementById("editComment");
-                                            const editRatingValue = document.getElementById("editRatingValue");
-                                            const stars = document.querySelectorAll("#editStarRating .fa-star");
+                                                        // Xử lý khi click nút "Sửa" phản hồi
+                                                        editReplyButtons.forEach(button => {
+                                                            button.addEventListener("click", function () {
+                                                                editReplyID.value = this.getAttribute("data-replyid");
+                                                                editReplyText.value = this.getAttribute("data-replytext");
+                                                                editReplyModal.style.display = "block";
+                                                            });
+                                                        });
 
-                                            let selectedRating = 0;
+                                                        // Đóng modal sửa phản hồi
+                                                        closeEditReplyModal.addEventListener("click", function () {
+                                                            editReplyModal.style.display = "none";
+                                                        });
 
-                                            // Xử lý khi click nút "Sửa"
-                                            editButtons.forEach(button => {
-                                                button.addEventListener("click", function () {
-                                                    editFeedbackID.value = this.getAttribute("data-feedbackid");
-                                                    editComment.value = this.getAttribute("data-comment");
-                                                    selectedRating = this.getAttribute("data-rating");
-                                                    editRatingValue.value = selectedRating;
-
-                                                    // Cập nhật sao cho đúng với rating hiện tại
-                                                    updateStarDisplay(selectedRating);
-
-                                                    modal.style.display = "block";
-                                                });
-                                            });
-
-                                            // Đóng modal
-                                            closeBtn.addEventListener("click", function () {
-                                                modal.style.display = "none";
-                                            });
-
-                                            window.addEventListener("click", function (event) {
-                                                if (event.target === modal) {
-                                                    modal.style.display = "none";
-                                                }
-                                            });
-
-                                            // Xử lý chọn sao trong form chỉnh sửa
-                                            stars.forEach(star => {
-                                                star.addEventListener("mouseover", function () {
-                                                    const value = this.getAttribute("data-value");
-                                                    updateStarDisplay(value);
-                                                });
-
-                                                star.addEventListener("mouseout", function () {
-                                                    updateStarDisplay(selectedRating);
-                                                });
-
-                                                star.addEventListener("click", function () {
-                                                    selectedRating = this.getAttribute("data-value");
-                                                    editRatingValue.value = selectedRating;
-                                                    updateStarDisplay(selectedRating);
-                                                });
-                                            });
-
-                                            function updateStarDisplay(value) {
-                                                stars.forEach(s => s.classList.remove("fas", "checked"));
-                                                stars.forEach(s => s.classList.add("far"));
-
-                                                for (let i = 0; i < value; i++) {
-                                                    stars[i].classList.remove("far");
-                                                    stars[i].classList.add("fas", "checked");
-                                                }
-                                            }
-                                        });
-
-                                        function confirmDelete() {
-                                            return confirm("Bạn có chắc chắn muốn xóa feedback này không?");
-                                        }
-
-                                        // Sua phan hoi (feedback reply)
-                                        document.addEventListener("DOMContentLoaded", function () {
-                                            const editReplyButtons = document.querySelectorAll(".edit-reply");
-                                            const deleteReplyButtons = document.querySelectorAll(".delete-reply");
-                                            const editReplyModal = document.getElementById("editReplyModal");
-                                            const closeEditReplyModal = editReplyModal.querySelector(".close");
-                                            const editReplyForm = document.getElementById("editReplyForm");
-                                            const editReplyID = document.getElementById("editReplyID");
-                                            const editReplyText = document.getElementById("editReplyText");
-
-                                            // Xử lý khi click nút "Sửa" phản hồi
-                                            editReplyButtons.forEach(button => {
-                                                button.addEventListener("click", function () {
-                                                    editReplyID.value = this.getAttribute("data-replyid");
-                                                    editReplyText.value = this.getAttribute("data-replytext");
-                                                    editReplyModal.style.display = "block";
-                                                });
-                                            });
-
-                                            // Đóng modal sửa phản hồi
-                                            closeEditReplyModal.addEventListener("click", function () {
-                                                editReplyModal.style.display = "none";
-                                            });
-
-                                            window.addEventListener("click", function (event) {
-                                                if (event.target === editReplyModal) {
-                                                    editReplyModal.style.display = "none";
-                                                }
-                                            });
+                                                        window.addEventListener("click", function (event) {
+                                                            if (event.target === editReplyModal) {
+                                                                editReplyModal.style.display = "none";
+                                                            }
+                                                        });
 
 
-                                        });
+                                                    });
         </script>
     </body>
 

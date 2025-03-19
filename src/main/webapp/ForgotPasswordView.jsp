@@ -33,16 +33,27 @@
                         <label for="email" class="form-label">Nhập email của bạn</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
-                    </div>
-                </form>
-                <div class="form-text"> 
-                    Bạn nhớ mật khẩu? <a href="LoginView.jsp">Đăng nhập ở đây</a>
+                <% 
+                String error = (String) request.getAttribute("error");
+                String message = (String) request.getAttribute("message");
+                if (error != null) {
+                %>
+                <div class="text-danger mt-2"><%= error %></div>
+                <% } %>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
                 </div>
+            </form>
+            <% if (message != null) { %>
+            <div class="alert alert-success mt-3"><%= message %></div>
+            <% } %>
+            <div class="form-text"> 
+                Bạn nhớ mật khẩu? <a href="LoginView.jsp">Đăng nhập ở đây</a>
             </div>
 
-            <!-- Footer -->
+        </div>
+
+        <!-- Footer -->
         <jsp:include page="Footer.jsp"></jsp:include>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

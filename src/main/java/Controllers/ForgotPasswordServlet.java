@@ -35,14 +35,14 @@ public class ForgotPasswordServlet extends HttpServlet {
             // Gửi email chứa liên kết đặt lại mật khẩu
             try {
                 EmailUtil.sendResetPasswordEmail(email, resetLink);
-                request.setAttribute("message", "A password reset link has been sent to your email.");
+                request.setAttribute("message", "Link đổi mật khẩu đã được gửi qua email của bạn.");
             } catch (Exception e) {
                 e.printStackTrace();
-                request.setAttribute("error", "Failed to send email. Please try again.");
+                request.setAttribute("error", "Lỗi gửi email. Hãy thử lại.");
             }
         } else {
             // Hiển thị thông báo lỗi
-            request.setAttribute("error", "Email not found.");
+            request.setAttribute("error", "Không tìm thấy email.");
         }
 
         request.getRequestDispatcher("ForgotPasswordView.jsp").forward(request, response);

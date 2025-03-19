@@ -94,9 +94,9 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th>Approval ID</th>
-                                    <th>Người Duyệt</th>
-                                    <th>Thông Tin Đơn Hàng</th>
-                                    <th>Ngày Duyệt</th>
+                                    <th>Approver</th>
+                                    <th>Order information</th>
+                                    <th>Approval date</th>
                                 </tr>
                             </thead>
                             <tbody>

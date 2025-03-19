@@ -14,7 +14,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         
-        <link rel="stylesheet" href="./CSS/Style.css" />
+<!--        <link rel="stylesheet" href="./CSS/Style.css" />-->
         <link rel="stylesheet" href="./CSS/HeaderAndFooter_CSS.css" />
 
         <style>
@@ -83,19 +83,19 @@
                 <jsp:include page="Dashboard_Sidebar.jsp"/>
                 <div class="card">
                     <div class="card-body">
-                        <h1 class="card-title">Biểu đồ Doanh thu</h1>
+                        <h1 class="card-title">Revenue Chart</h1>
 
                         <!-- Date Range Picker -->
                         <form id="dateForm" class="mb-4">
                             <div class="form-row mb-3">
                                 <div class="form-group col-md-6">
-                                    <label for="startDate">Từ ngày:</label>
+                                    <label for="startDate">From date:</label>
                                     <input type="date" id="startDate" name="startDate" 
                                            value="${startDate}"
                                     class="form-control">
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="endDate">Đến ngày:</label>
+                                <label for="endDate">To date:</label>
                                 <input type="date" id="endDate" name="endDate" 
                                        value="${endDate}"
                                        class="form-control">
@@ -103,13 +103,13 @@
                         </div>
                         <button type="button" onclick="updateChart()" 
                                 class="btn btn-primary">
-                            Cập nhật
+                            Update
                         </button>
                     </form>
 
                     <!-- Loading Indicator -->
                     <div id="loadingIndicator" class="d-none">
-                        <p class="text-center text-secondary">Đang tải dữ liệu...</p>
+                        <p class="text-center text-secondary">Data loading...</p>
                     </div>
 
                     <!-- Combo Chart -->
@@ -120,7 +120,7 @@
                     <!-- Total Revenue -->
                     <div class="alert alert-light">
                         <p class="font-weight-bold">
-                            Tổng doanh thu: 
+                            Total revenue:
                             <span id="totalRevenue">
                                 <fmt:formatNumber value="${totalRevenue}" type="currency" currencySymbol="₫"/>
                             </span>
@@ -147,7 +147,7 @@
                     datasets: [
                     {
                     type: 'bar',
-                            label: 'Doanh thu',
+                            label: 'Revenue',
                             data: [
             <c:forEach items="${revenueData}" var="item" varStatus="status">
                 ${item.revenue}${!status.last ? ',' : ''}
@@ -159,7 +159,7 @@
                     },
                     {
                     type: 'line',
-                            label: 'Doanh thu',
+                            label: 'Revenue',
                             data: [
             <c:forEach items="${revenueData}" var="item" varStatus="status">
                 ${item.revenue}${!status.last ? ',' : ''}
@@ -222,9 +222,10 @@
             // Show loading indicator
             document.getElementById('loadingIndicator').classList.remove('d-none');
             // Build URL with parameters
-            const url = new URL('view-statistics', window.location.origin);
+            const url = new URL('/Restaurant_Online/view-statistics', window.location.origin);
             url.searchParams.append('startDate', startDate);
             url.searchParams.append('endDate', endDate);
+            
             // Make AJAX request
             fetch(url, {
             method: 'GET',

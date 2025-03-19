@@ -45,11 +45,12 @@
                 max-width: 100%;
                 border-radius: 15px;
                 box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-                transition: transform 0.3s ease;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
             }
 
             .food-img:hover {
                 transform: scale(1.05);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             }
 
             .food-name {
@@ -57,6 +58,7 @@
                 font-weight: bold;
                 color: #FC6E51;
                 text-transform: uppercase;
+                margin-bottom: 15px;
             }
 
             .food-price {
@@ -64,13 +66,18 @@
                 font-weight: bold;
                 color: #d9534f;
                 margin-top: 10px;
+                margin-bottom: 20px;
             }
 
-            .food-desc {
+            .food-description {
                 font-size: 16px;
                 color: #777;
                 line-height: 1.7;
                 margin: 20px 0;
+                padding: 15px;
+                background-color: #f9f9f9;
+                border-radius: 10px;
+                border: 1px solid #eee;
             }
 
             .quantity {
@@ -166,12 +173,25 @@
                 margin: auto;
                 border-radius: 10px;
                 text-align: center;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             }
 
-            .close {
+            .modal-content h4 {
+                font-size: 20px;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 20px;
+            }
+
+            .modal-content .close {
                 float: right;
                 font-size: 24px;
                 cursor: pointer;
+                color: #333;
+            }
+
+            .modal-content .close:hover {
+                color: #000;
             }
 
         </style>
@@ -192,6 +212,7 @@
                 <div class="col-md-6 margin-left">
                     <h2 class="food-name">${food_detail.foodName}</h2>
                     <p class="food-price">${food_detail.price} VND</p>
+                    <p class="food-description">Mô tả: ${food_detail.description} </p>
 
                     <!-- Quantity and Add to Cart -->
                     <form action="add-to-cart" method="get"> <!-- Đổi action thành 'cart' để gửi đến CartController -->

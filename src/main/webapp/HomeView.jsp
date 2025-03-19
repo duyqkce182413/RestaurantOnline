@@ -109,8 +109,8 @@
                                             <a style="text-decoration: none" href="view-food-detail?foodID=${f.foodID}">
                                                 <h5 class="card-title">${f.foodName}</h5>
                                             </a>
-                                            <p class="card-text">${f.price}</p>
-
+                                            <p class="card-text">${f.price} VND</p>
+                                            
                                             <c:choose>
                                                 <c:when test="${f.quantity > 0}">
                                                     <button type="button" class="btn btn-primary" 

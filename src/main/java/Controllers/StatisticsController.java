@@ -45,7 +45,7 @@ public class StatisticsController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet StatisticsController</title>");            
+            out.println("<title>Servlet StatisticsController</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet StatisticsController at " + request.getContextPath() + "</h1>");
@@ -105,6 +105,7 @@ public class StatisticsController extends HttpServlet {
             for (Revenue item : revenueData) {
                 totalRevenue += item.getRevenue();
             }
+
 
             // Return JSON response
             if (request.getHeader("X-Requested-With") != null) {

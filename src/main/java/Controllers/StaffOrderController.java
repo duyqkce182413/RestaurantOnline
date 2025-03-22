@@ -202,27 +202,34 @@ public class StaffOrderController extends HttpServlet {
             }
 
             boolean isAdmin = "Admin".equalsIgnoreCase(user.getRole());
-            int adminId = user.getUserID(); // Lấy ID của admin
+            int userId = user.getUserID(); // ID của người thực hiện thao tác
 
+            OrderApprovalDAO orderApprovalDAO = new OrderApprovalDAO();
+            Integer previousStaffId = orderApprovalDAO.getApprovedByStaffId(orderId);
+
+            // Nếu không phải admin, kiểm tra xem nhân viên có phải là người đã duyệt trước đó không
+            if (!isAdmin && previousStaffId != null && !previousStaffId.equals(userId)) {
+                request.setAttribute("error", "Chỉ nhân viên đã duyệt trước đó mới có thể hủy đơn.");
+                request.getRequestDispatcher("listAdminOrders").forward(request, response);
+                return;
+            }
+
+            // Nếu là Admin, cho phép hủy đơn hàng "Đang giao" bất kể ai đã duyệt trước đó
+            if (isAdmin && "Đang giao".equalsIgnoreCase(currentStatus)) {
+                boolean isUpdated = ordersDAO.updateOrderStatus(orderId, "Đã hủy", userId);
+                request.setAttribute("message", isUpdated ? "Admin đã hủy đơn hàng thành công." : "Không thể hủy đơn hàng.");
+                request.getRequestDispatcher("listAdminOrders").forward(request, response);
+                return;
+            }
+
+            // Nhân viên hoặc Admin hủy đơn hàng ở trạng thái "Chưa xử lý" hoặc "Đã tiếp nhận"
             if ("Chưa xử lý".equalsIgnoreCase(currentStatus) || "Đã tiếp nhận".equalsIgnoreCase(currentStatus)) {
-                boolean isDeleted = ordersDAO.deleteOrder(orderId);
-                request.setAttribute("message", isDeleted ? "Đơn hàng đã được xóa thành công." : "Xóa đơn hàng thất bại.");
-                request.getRequestDispatcher("listAdminOrders").forward(request, response);
-                return;
+                boolean isUpdated = ordersDAO.updateOrderStatus(orderId, "Đã hủy", userId);
+                request.setAttribute("message", isUpdated ? "Đơn hàng đã được hủy thành công." : "Hủy đơn hàng thất bại.");
+            } else {
+                request.setAttribute("error", "Không thể hủy đơn hàng ở trạng thái hiện tại.");
             }
-
-            if ("Đang giao".equalsIgnoreCase(currentStatus)) {
-                if (isAdmin) {
-                    boolean isUpdated = ordersDAO.updateOrderStatus(orderId, "Đã hủy", adminId);
-                    request.setAttribute("message", isUpdated ? "Admin đã hủy đơn hàng." : "Không thể hủy đơn hàng.");
-                } else {
-                    request.setAttribute("error", "Chỉ Admin mới có thể hủy đơn hàng đang giao.");
-                }
-                request.getRequestDispatcher("listAdminOrders").forward(request, response);
-                return;
-            }
-
-            request.setAttribute("error", "Không thể xóa đơn hàng ở trạng thái hiện tại.");
+            
             request.getRequestDispatcher("listAdminOrders").forward(request, response);
 
         } catch (NumberFormatException e) {

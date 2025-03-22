@@ -128,8 +128,9 @@ public class OrderController extends HttpServlet {
         Order order = ordersDAO.getOrderById(orderId);
 
         if (order != null && ("Chưa xử lý".equalsIgnoreCase(order.getStatus()) || "Đã tiếp nhận".equalsIgnoreCase(order.getStatus()))) {
-            boolean isDeleted = ordersDAO.deleteOrder(orderId);
-            String message = isDeleted ? "Đơn hàng đã được hủy thành công." : "Không thể hủy đơn hàng.";
+            // Cập nhật trạng thái đơn hàng thành "Đã hủy"
+            boolean isUpdated = ordersDAO.updateOrderStatus(orderId, "Đã hủy", user.getUserID());
+            String message = isUpdated ? "Đơn hàng đã được hủy thành công." : "Không thể hủy đơn hàng.";
             String encodedMessage = URLEncoder.encode(message, StandardCharsets.UTF_8);
             response.sendRedirect("listOrders?message=" + encodedMessage);
         } else {

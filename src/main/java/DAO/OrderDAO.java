@@ -169,6 +169,7 @@ public class OrderDAO extends DBContext {
         }
     }
 
+    // Thay doi trang thai don hang thanh Da Huy neu customer huy don hang
     public boolean updateOrderStatusCustomer(int orderId, String newStatus, int staffId) {
         String query = "UPDATE Orders SET Status = ? WHERE OrderID = ?";
 

@@ -169,6 +169,26 @@ public class OrderDAO extends DBContext {
         }
     }
 
+    public boolean updateOrderStatusCustomer(int orderId, String newStatus, int staffId) {
+        String query = "UPDATE Orders SET Status = ? WHERE OrderID = ?";
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            // Cập nhật trạng thái đơn hàng
+            ps.setString(1, newStatus);
+            ps.setInt(2, orderId);
+
+            int affectedRows = ps.executeUpdate();
+
+            if (affectedRows > 0) {
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
     public void updateProductQuantity(List<OrderDetail> items) {
         String query = "UPDATE Foods SET Quantity = Quantity - ? WHERE FoodID = ?";
 

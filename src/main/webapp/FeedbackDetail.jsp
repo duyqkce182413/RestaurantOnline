@@ -123,7 +123,7 @@
                                     <li>
                                         <strong>${r.user.fullName}:</strong> ${r.replyText} 
                                         <br>
-                                        <fmt:formatDate value="${r.replyAt}" pattern="dd-MM-yyyy" />
+                                        Date: <fmt:formatDate value="${r.replyAt}" pattern="dd-MM-yyyy" />
                                         <!-- Nút sửa và xóa phản hồi -->
                                         <c:if test="${sessionScope.user.userID == r.user.userID}">
                                             <button class="btn btn-sm btn-warning edit-reply" 
@@ -139,7 +139,7 @@
                                                 <input type="hidden" name="foodID" value="${food_detail.foodID}">
                                                 <input type="hidden" name="feedbackID" value="${feedbackDetail.feedbackID}" />
                                                 <input type="hidden" name="staffID" value="${sessionScope.staffId}" />
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa phản hồi này không?');">Delete</button>
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this reply?');">Delete</button>
                                             </form>
                                         </c:if>
                                     </li>
@@ -181,14 +181,14 @@
                 <div id="editReplyModal" class="modal" style="display: none;">
                     <div class="modal-content">
                         <span class="close">&times;</span>
-                        <h4>Chỉnh Sửa Phản Hồi</h4>
+                        <h4>Edit Reply</h4>
                         <form id="editReplyForm" action="staff-edit-feedback-reply" method="post">
                             <input type="hidden" name="replyID" id="editReplyID">
                             <input type="hidden" name="feedbackID" value="${feedbackDetail.feedbackID}" />
                             <input type="hidden" name="staffID" value="${sessionScope.staffId}" />
-                            <label>Nội dung phản hồi:</label>
+                            <label>Replies content:</label>
                             <textarea name="replyText" id="editReplyText" class="form-control" required></textarea>
-                            <button type="submit" class="btn btn-primary mt-2">Lưu</button>
+                            <button type="submit" class="btn btn-primary mt-2">Save</button>
                         </form>
                     </div>
                 </div>
@@ -198,13 +198,13 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
         <script>
                                function confirmDelete() {
-                                   return confirm("Bạn có chắc chắn muốn xóa feedback này không?");
+                                   return confirm("Are you sure you want to delete this feedback?");
                                }
 
                                function validateReplyForm() {
                                    let replyText = document.getElementById("replyText").value.trim();
                                    if (replyText === "") {
-                                       alert("Phản hồi không được để trống!");
+                                       alert("Feedback cannot be empty!");
                                        return false;
                                    }
                                    return true;

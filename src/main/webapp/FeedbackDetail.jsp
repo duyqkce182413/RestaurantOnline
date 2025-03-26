@@ -129,7 +129,7 @@
                                             <button class="btn btn-sm btn-warning edit-reply" 
                                                     data-replyid="${r.replyID}" 
                                                     data-replytext="${r.replyText}">
-                                                Sửa
+                                                Edit
                                             </button>
                                         </c:if>
 
@@ -139,7 +139,7 @@
                                                 <input type="hidden" name="foodID" value="${food_detail.foodID}">
                                                 <input type="hidden" name="feedbackID" value="${feedbackDetail.feedbackID}" />
                                                 <input type="hidden" name="staffID" value="${sessionScope.staffId}" />
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa phản hồi này không?');">Xóa</button>
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa phản hồi này không?');">Delete</button>
                                             </form>
                                         </c:if>
                                     </li>

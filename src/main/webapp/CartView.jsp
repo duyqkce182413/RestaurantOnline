@@ -217,7 +217,7 @@
                         </tbody>
 
                     </table>
-                    <c:if test="${empty cartlists}">
+                    <c:if test="${empty cartItems}">
                         <p class="cart-empty-message">Giỏ hàng trống</p>
                     </c:if>
                     <button style="border-radius: 20px" type="submit" class="btn btn-warning float-end">Cập nhật giỏ hàng</button>

@@ -112,11 +112,12 @@
                     <div class="input-group">
                         <select name="status" class="form-select">
                             <option value="">All</option>
-                            <option value="Chưa xử lý" ${param.status == 'Chưa xử lý' ? 'selected' : ''}>Chưa xử lý</option>
-                            <option value="Đã tiếp nhận" ${param.status == 'Đã tiếp nhận' ? 'selected' : ''}>Đã tiếp nhận</option>
-                            <option value="Đang chuẩn bị" ${param.status == 'Đang chuẩn bị' ? 'selected' : ''}>Đang chuẩn bị</option>
-                            <option value="Đang giao" ${param.status == 'Đang giao' ? 'selected' : ''}>Đang giao</option>
-                            <option value="Hoàn thành" ${param.status == 'Hoàn thành' ? 'selected' : ''}>Hoàn thành</option>
+                            <option value="Chưa xử lý" ${param.status == 'Chưa xử lý' ? 'selected' : ''}>Pending</option>
+                            <option value="Đã tiếp nhận" ${param.status == 'Đã tiếp nhận' ? 'selected' : ''}>Received</option>
+                            <option value="Đang chuẩn bị" ${param.status == 'Đang chuẩn bị' ? 'selected' : ''}>Preparing</option>
+                            <option value="Đang giao" ${param.status == 'Đang giao' ? 'selected' : ''}>On Delivery</option>
+                            <option value="Hoàn thành" ${param.status == 'Hoàn thành' ? 'selected' : ''}>Completed</option>
+                            <option value="Đã hủy" ${param.status == 'Đã Hủy' ? 'selected' : ''}>Canceled</option>
                         </select>
                         <button type="submit" class="btn btn-secondary">Filter</button>
                     </div>
@@ -173,25 +174,25 @@
                                         <c:when test="${order.status == 'Chưa xử lý'}">
                                             <a href="updateOrderStatus?id=${order.orderID}&staffId=${sessionScope.staffId}&newStatus=Đã tiếp nhận" 
                                                class="btn btn-warning btn-sm">
-                                                <i class="fas fa-check"></i> Đã tiếp nhận
+                                                <i class="fas fa-check"></i> Received
                                             </a>
                                         </c:when>
                                         <c:when test="${order.status == 'Đã tiếp nhận'}">
                                             <a href="updateOrderStatus?id=${order.orderID}&staffId=${sessionScope.staffId}&newStatus=Đang chuẩn bị" 
                                                class="btn btn-info btn-sm">
-                                                <i class="fas fa-box"></i> Đang chuẩn bị
+                                                <i class="fas fa-box"></i> Preparing
                                             </a>
                                         </c:when>
                                         <c:when test="${order.status == 'Đang chuẩn bị'}">
                                             <a href="updateOrderStatus?id=${order.orderID}&staffId=${sessionScope.staffId}&newStatus=Đang giao" 
                                                class="btn btn-primary btn-sm">
-                                                <i class="fas fa-truck"></i> Đang giao
+                                                <i class="fas fa-truck"></i> On Delivery
                                             </a>
                                         </c:when>
                                         <c:when test="${order.status == 'Đang giao'}">
                                             <a href="updateOrderStatus?id=${order.orderID}&staffId=${sessionScope.staffId}&newStatus=Hoàn thành" 
                                                class="btn btn-success btn-sm">
-                                                <i class="fas fa-check-circle"></i> Hoàn thành
+                                                <i class="fas fa-check-circle"></i> Completed
                                             </a>
                                         </c:when>
                                     </c:choose>

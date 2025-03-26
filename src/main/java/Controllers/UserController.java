@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 @WebServlet(name = "UserController", urlPatterns = {
     "/view-users",
@@ -430,6 +431,31 @@ public class UserController extends HttpServlet {
         String formattedDate = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
 
         UserDAO userDAO = new UserDAO();
+        // Kiểm tra email có hợp lệ không
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+        Pattern emailPattern = Pattern.compile(emailRegex);
+        if (!emailPattern.matcher(email).matches()) {
+            session.setAttribute("updateMessage", "Email không hợp lệ. Vui lòng nhập đúng định dạng.");
+            response.sendRedirect("UserProfile.jsp");
+            return;
+        }
+
+        // Kiểm tra số điện thoại hợp lệ (chỉ chứa số và đúng 10 chữ số)
+        String phoneRegex = "^\\d{10}$";
+        if (!phoneNumber.matches(phoneRegex)) {
+            session.setAttribute("updateMessage", "Số điện thoại không hợp lệ. Vui lòng nhập đúng 10 chữ số.");
+            response.sendRedirect("UserProfile.jsp");
+            return;
+        }
+
+        // Kiểm tra email có bị trùng hay không (ngoại trừ email của chính user hiện tại)
+        User existingUser = userDAO.getUserByEmail(email);
+        if (existingUser != null && existingUser.getUserID() != userId) {
+            request.getSession().setAttribute("updateMessage", "Email đã tồn tại. Vui lòng chọn email khác.");
+            response.sendRedirect("UserProfile.jsp");
+            return;
+        }
+        
         boolean success = userDAO.updateUser(userId, fullName, email, phoneNumber, formattedDate, gender, password);
 
         if (success) {
@@ -477,7 +503,7 @@ public class UserController extends HttpServlet {
             session.setAttribute("errorConfirm", "Passwords do not match.");
             hasError = true;
         }
-        
+
         // Kiểm tra username, email, phoneNumber đã tồn tại hay chưa
         if (dao.isUsernameExists(username)) {
             session.setAttribute("errorName", "Username already exists.");

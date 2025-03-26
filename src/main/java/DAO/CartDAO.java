@@ -142,4 +142,22 @@ public class CartDAO extends DBContext {
             e.printStackTrace();
         }
     }
+
+    public int getFoodStock(int foodId) {
+        int stock = 0;
+        String sql = "SELECT Quantity FROM Foods WHERE FoodID = ?";
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, foodId);
+            try ( ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    stock = rs.getInt("Quantity");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return stock;
+    }
+
 }

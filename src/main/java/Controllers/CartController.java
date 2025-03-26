@@ -123,32 +123,37 @@ public class CartController extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
-
         if (user == null) {
             // Nếu acc là null, chuyển hướng đến trang đăng nhập hoặc trang lỗi
             response.sendRedirect("LoginView.jsp"); // hoặc trang khác phù hợp
             return;
         }
-        
+
         int userId = user.getUserID();
         int productId = Integer.parseInt(request.getParameter("foodId"));
         int quantity = Integer.parseInt(request.getParameter("quantity"));
 
         CartDAO dao = new CartDAO();
 
+        // Lấy số lượng tồn kho của sản phẩm
+        int stockQuantity = dao.getFoodStock(productId); // Hàm này cần được định nghĩa trong CartDAO
+
         // Kiểm tra nếu sản phẩm đã có trong giỏ hàng
         if (dao.isFoodInCart(userId, productId)) {
             // Nếu đã có, cập nhật số lượng bằng cách cộng thêm số lượng mới
             int quantityOfExistingItem = dao.getQuantityOfExistingCartItem(userId, productId);
             int newQuantity = quantityOfExistingItem + quantity;
+
+            // Giới hạn số lượng không vượt quá hàng tồn kho
+            if (newQuantity > stockQuantity) {
+                newQuantity = stockQuantity;
+            }
             dao.updateCartItemQuantity(userId, productId, newQuantity);
         } else {
             // Nếu chưa có, thêm sản phẩm vào giỏ hàng
             dao.addCartItem(userId, productId, quantity);
         }
-
         getCart(request, response);
-
     }
 
     protected void updateCart(HttpServletRequest request, HttpServletResponse response)

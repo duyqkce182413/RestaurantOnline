@@ -110,6 +110,16 @@
     </head>
 
     <body>
+        <c:if test="${not empty sessionScope.errors}">
+            <div class="alert alert-danger">
+                <ul>
+                    <c:forEach var="error" items="${sessionScope.errors}">
+                        <li>${error}</li>
+                        </c:forEach>
+                </ul>
+            </div>
+            <c:remove var="errors" scope="session" />
+        </c:if>
 
         <jsp:include page="Header.jsp"></jsp:include>
         <% 
@@ -267,28 +277,28 @@ if (message != null) {
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-                                function myFunction() {
-                                    var x = document.getElementById("password");
-                                    if (x.type === "password") {
-                                        x.type = "text";
-                                    } else {
-                                        x.type = "password";
+                                    function myFunction() {
+                                        var x = document.getElementById("password");
+                                        if (x.type === "password") {
+                                            x.type = "text";
+                                        } else {
+                                            x.type = "password";
+                                        }
                                     }
-                                }
 
-                                document.getElementById('togglePassword').addEventListener('click', function () {
-                                    let passwordField = document.getElementById('editPassword');
-                                    let icon = this.querySelector('i');
-                                    if (passwordField.type === 'password') {
-                                        passwordField.type = 'text';
-                                        icon.classList.remove('fa-eye');
-                                        icon.classList.add('fa-eye-slash');
-                                    } else {
-                                        passwordField.type = 'password';
-                                        icon.classList.remove('fa-eye-slash');
-                                        icon.classList.add('fa-eye');
-                                    }
-                                });
+                                    document.getElementById('togglePassword').addEventListener('click', function () {
+                                        let passwordField = document.getElementById('editPassword');
+                                        let icon = this.querySelector('i');
+                                        if (passwordField.type === 'password') {
+                                            passwordField.type = 'text';
+                                            icon.classList.remove('fa-eye');
+                                            icon.classList.add('fa-eye-slash');
+                                        } else {
+                                            passwordField.type = 'password';
+                                            icon.classList.remove('fa-eye-slash');
+                                            icon.classList.add('fa-eye');
+                                        }
+                                    });
 
 </script>
 </body>

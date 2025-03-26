@@ -359,7 +359,7 @@
 
                                     <div class="feedback">
                                         <!-- Nút Trả lời -->
-                                        <button class="btn btn-sm btn-primary reply-feedback" data-feedbackid="${feedback.feedbackID}">
+                                        <button class="btn btn-sm btn-primary reply-feedback my-2" data-feedbackid="${feedback.feedbackID}">
                                             Trả lời
                                         </button>
 

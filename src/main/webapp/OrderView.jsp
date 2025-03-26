@@ -148,7 +148,7 @@
                     <c:if test="${not empty order.orderID}">
                         <a href="deleteOrder?id=${order.orderID}" class="btn btn-danger mt-3"
                            onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?');">
-                            Xóa
+                            Cancel Order
                         </a>
                     </c:if>
                 </div>

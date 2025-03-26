@@ -164,7 +164,7 @@
 
                         <div class="float-end">
                             <jsp:include page="pagination.jsp">
-                                <jsp:param name="baseUrl" value="otherServlet" />
+                                <jsp:param name="baseUrl" value="all" />
                             </jsp:include>
                         </div>
                     </div>

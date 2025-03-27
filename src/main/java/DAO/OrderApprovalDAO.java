@@ -22,7 +22,7 @@ public class OrderApprovalDAO extends DBContext {
         List<OrderApproval> approvals = new ArrayList<>();
         String sql = "SELECT oa.ApprovalID, oa.OrderID, oa.ApprovedBy, \n"
                 + "       u.UserID, u.FullName, oa.ApprovedAt, \n"
-                + "       o.TotalAmount, o.UserID AS BuyerID, \n"
+                + "       o.TotalAmount, o.UserID AS BuyerID, o.Status, \n"
                 + "       a.Name AS AddressName, a.AddressLine, a.City, \n"
                 + "       buyer.PhoneNumber AS BuyerPhone\n"
                 + "FROM OrderApproval oa\n"
@@ -47,6 +47,7 @@ public class OrderApprovalDAO extends DBContext {
 
                 order.setOrderID(rs.getInt("OrderID"));
                 order.setTotalAmount(rs.getDouble("TotalAmount"));
+                order.setStatus(rs.getString("Status"));
                 order.setUser(buyer); // Gán người mua vào đơn hàng
 
                 address.setName(rs.getString("AddressName"));

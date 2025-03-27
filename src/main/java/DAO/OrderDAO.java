@@ -136,17 +136,30 @@ public class OrderDAO extends DBContext {
     // Cập nhật trạng thái đơn hàng và ghi nhận thông tin nhân viên duyệt đơn hàng
     public boolean updateOrderStatus(int orderId, String newStatus, int staffId) {
         String query = "UPDATE Orders SET Status = ? WHERE OrderID = ?";
-
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+
+            // Lấy trạng thái hiện tại của đơn hàng
+            Order order = getOrderById(orderId);
+            if (order == null) {
+                return false; // Không tìm thấy đơn hàng
+            }
+            String currentStatus = order.getStatus();
+
             // Cập nhật trạng thái đơn hàng
             ps.setString(1, newStatus);
             ps.setInt(2, orderId);
-
             int affectedRows = ps.executeUpdate();
 
             if (affectedRows > 0) {
-                // Ghi nhận vào OrderApproval
-                insertOrderApproval(orderId, staffId);
+                // Nếu đơn hàng đang giao mà bị hủy, ghi nhận admin đã hủy
+                if ("Đang giao".equalsIgnoreCase(currentStatus) && "Đã hủy".equalsIgnoreCase(newStatus)) {
+                    insertOrderApproval(orderId, staffId);
+                } else {
+                    // Nếu chưa được duyệt trước đó, ghi nhận nhân viên duyệt đơn
+                    if (!isOrderApproved(orderId)) {
+                        insertOrderApproval(orderId, staffId);
+                    }
+                }
                 return true;
             }
             return false;
@@ -156,10 +169,24 @@ public class OrderDAO extends DBContext {
         }
     }
 
-    // Ghi nhận thông tin nhân viên duyệt đơn hàng
+    // Kiểm tra xem đơn hàng đã có nhân viên duyệt hay chưa
+    private boolean isOrderApproved(int orderId) {
+        String query = "SELECT COUNT(*) FROM OrderApproval WHERE OrderID = ?";
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, orderId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                return true; // Đơn hàng đã có nhân viên duyệt
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Chưa có nhân viên nào duyệt đơn hàng
+    }
+
+    // Chèn thông tin nhân viên duyệt đơn hàng
     private void insertOrderApproval(int orderId, int staffId) {
         String query = "INSERT INTO OrderApproval (OrderID, ApprovedBy, ApprovedAt) VALUES (?, ?, GETDATE())";
-
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, orderId);
             ps.setInt(2, staffId);
@@ -189,7 +216,7 @@ public class OrderDAO extends DBContext {
             return false;
         }
     }
-    
+
     public void updateProductQuantity(List<OrderDetail> items) {
         String query = "UPDATE Foods SET Quantity = Quantity - ? WHERE FoodID = ?";
 
@@ -262,7 +289,6 @@ public class OrderDAO extends DBContext {
         order.setTotalAmount(rs.getDouble("TotalAmount"));
         order.setStatus(rs.getString("Status"));
         order.setPaymentMethod(rs.getString("PaymentMethod"));
-
         return order;
     }
 
@@ -431,9 +457,8 @@ public class OrderDAO extends DBContext {
         // Tạo một đối tượng OrderDAO
         OrderDAO orderDAO = new OrderDAO();
 
-        // Các tham số kiểm thử (giả sử bạn đã có foodId và userId trong cơ sở dữ liệu)
-        int foodId = 2;   // Thay đổi giá trị foodId theo yêu cầu của bạn
-        int userId = 1;   // Thay đổi giá trị userId theo yêu cầu của bạn
+        int foodId = 2;
+        int userId = 1;
 
         // Kiểm tra xem người dùng đã mua món ăn này chưa
         boolean hasPurchased = orderDAO.isFoodPurchasedByUser(foodId, userId);

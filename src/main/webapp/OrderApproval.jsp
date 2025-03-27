@@ -108,7 +108,8 @@
                                         <strong>Người Mua:</strong> ${approval.order.address.name} <br>
                                         <strong>SĐT:</strong> ${approval.order.user.phoneNumber} <br>
                                         <strong>Địa Chỉ:</strong> ${approval.order.address.addressLine}, ${approval.order.address.city} <br>
-                                        <strong>Tổng Tiền:</strong> <fmt:formatNumber value="${approval.order.totalAmount}" type="currency" maxFractionDigits="0" currencySymbol="₫" />
+                                        <strong>Tổng Tiền:</strong> <fmt:formatNumber value="${approval.order.totalAmount}" type="currency" maxFractionDigits="0" currencySymbol="₫" /> <br>
+                                        <strong>Trạng thái: </strong> ${approval.order.status} <br>
                                     </td>
                                     <td><fmt:formatDate value="${approval.approvedAt}" pattern="dd/MM/yyyy HH:mm" /></td>
                                 </tr>

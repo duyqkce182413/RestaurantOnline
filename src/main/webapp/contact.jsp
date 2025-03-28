@@ -49,6 +49,12 @@
                 height: 100%;
                 border-radius: 8px;
             }
+            
+            .btn-orange {
+                background-color: orangered;
+                color: white;
+            }
+            
         </style>
     </head>
 
@@ -104,7 +110,7 @@
                                     <textarea class="form-control" id="message" name="message" rows="4"></textarea>
                                     <small class="text-danger" id="messageError"></small>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Gửi</button>
+                                <button type="submit" class="btn btn-orange">Gửi</button>
                             </form>
                         </div>
                     </div>

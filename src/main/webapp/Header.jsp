@@ -23,10 +23,10 @@
                     <a class="nav-link" href="introduction.jsp">Giới Thiệu</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Blog</a>
+                    <a class="nav-link" href="blog.jsp">Blog</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Liên Hệ</a>
+                    <a class="nav-link" href="contact.jsp">Liên Hệ</a>
                 </li>
                 <!-- Sửa điều kiện kiểm tra isAdmin -->
                 <c:if test="${sessionScope.user != null && sessionScope.user.role.equals('Admin')}">

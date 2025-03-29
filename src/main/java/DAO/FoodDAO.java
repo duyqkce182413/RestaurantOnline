@@ -177,30 +177,94 @@ public class FoodDAO extends DBContext {
         return false;
     }
 
+    public boolean updateStockQuantity(int foodId, int quantityIncrease) {
+        String sql = "UPDATE Ingredients "
+                + "SET StockQuantity = StockQuantity - (r.RequiredQuantity * ?) "
+                + "FROM Ingredients i "
+                + "JOIN Recipes r ON i.IngredientID = r.IngredientID "
+                + "WHERE r.FoodID = ?";
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, quantityIncrease);  // Số lượng tăng thêm
+            ps.setInt(2, foodId);            // FoodID để lấy công thức
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean updateFood(Food food) {
         String query = "UPDATE Foods SET FoodName=?, Price=?, CategoryID=?, Description=?, "
                 + "Image=?, Available=?, Quantity=? WHERE FoodID=?";
+        Connection conn = null;  // Khai báo conn ngoài try để sử dụng trong catch
         try {
-            Connection conn = getConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
+            conn = getConnection();
 
+            // Lấy thông tin món ăn hiện tại
+            Food currentFood = getProductBYID(String.valueOf(food.getFoodID()));
+            int currentQuantity = currentFood.getQuantity();
+            int newQuantity = food.getQuantity();
+            int quantityIncrease = newQuantity - currentQuantity;
+
+            // Kiểm tra nguyên liệu nếu số lượng tăng
+            if (quantityIncrease > 0) {
+                if (!checkIngredientAvailabilityForFood(food.getFoodID(), newQuantity, currentQuantity)) {
+                    return false;  // Không đủ nguyên liệu, không cập nhật
+                }
+            }
+
+            // Nếu Quantity = 0, tự động đặt Available = 0
+            boolean newAvailable = (newQuantity == 0) ? false : food.isAvailable();
+
+            // Bắt đầu giao dịch
+            conn.setAutoCommit(false);
+
+            // Cập nhật bảng Foods
+            PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, food.getFoodName());
             ps.setDouble(2, food.getPrice());
             ps.setInt(3, food.getCategoryID());
             ps.setString(4, food.getDescription());
             ps.setString(5, food.getImage());
-            ps.setBoolean(6, food.isAvailable());
-            ps.setInt(7, food.getQuantity());
+            ps.setBoolean(6, newAvailable);  // Sử dụng giá trị Available đã điều chỉnh
+            ps.setInt(7, newQuantity);
             ps.setInt(8, food.getFoodID());
 
             int rowsAffected = ps.executeUpdate();
-            System.out.println("Rows affected: " + rowsAffected);
 
+            // Nếu cập nhật Foods thành công và có tăng số lượng, cập nhật StockQuantity
+            if (rowsAffected > 0 && quantityIncrease > 0) {
+                if (!updateStockQuantity(food.getFoodID(), quantityIncrease)) {
+                    conn.rollback();  // Nếu cập nhật StockQuantity thất bại, rollback
+                    return false;
+                }
+            }
+
+            // Commit giao dịch nếu mọi thứ thành công
+            conn.commit();
+            conn.setAutoCommit(true);
             return rowsAffected > 0;
         } catch (Exception e) {
             e.printStackTrace();
+            try {
+                if (conn != null) {
+                    conn.rollback();  // Rollback nếu có lỗi
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();  // Đóng kết nối
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
-        return false;
     }
 
     public boolean deleteFood(int foodId) {
@@ -214,6 +278,34 @@ public class FoodDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+    }
+
+    // Trong class FoodDAO
+    public boolean checkIngredientAvailabilityForFood(int foodId, int newQuantity, int currentQuantity) {
+        String sql = "SELECT r.FoodID, r.IngredientID, r.RequiredQuantity, i.StockQuantity "
+                + "FROM Recipes r "
+                + "JOIN Ingredients i ON r.IngredientID = i.IngredientID "
+                + "WHERE r.FoodID = ?";
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, foodId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int requiredQuantity = rs.getInt("RequiredQuantity");  // Số lượng nguyên liệu cần cho 1 món
+                int stockQuantity = rs.getInt("StockQuantity");        // Số lượng nguyên liệu tồn kho
+                int quantityIncrease = newQuantity - currentQuantity;  // Số lượng tăng thêm
+                int totalRequired = requiredQuantity * quantityIncrease; // Tổng số lượng nguyên liệu cần thêm
+
+                if (quantityIncrease > 0 && stockQuantity < totalRequired) {
+                    return false;  // Không đủ nguyên liệu để tăng
+                }
+            }
+            return true;  // Đủ nguyên liệu hoặc không tăng số lượng
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // Sửa lại phương thức getAllFoods để hỗ trợ phân trang cho trang quản lý

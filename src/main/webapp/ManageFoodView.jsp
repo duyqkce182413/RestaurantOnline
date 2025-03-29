@@ -88,12 +88,17 @@
                 <!-- Main content -->
                 <div class="content col-6">
                     <h1>Food Management</h1>
-                    <!-- Search and Filter Form -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <form action="manage-foods" method="GET" class="d-flex">
-                                <input type="text" name="search" class="form-control me-2" 
-                                       placeholder="Search by Food Name" value="${param.search}">
+                <c:if test="${not empty error}">
+                    <div class="alert alert-danger" role="alert">
+                        ${error}
+                    </div>
+                </c:if>
+                <!-- Search and Filter Form -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <form action="manage-foods" method="GET" class="d-flex">
+                            <input type="text" name="search" class="form-control me-2" 
+                                   placeholder="Search by Food Name" value="${param.search}">
                             <button type="submit" class="btn btn-primary">Search</button>
                         </form>
                     </div>

@@ -214,8 +214,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Role</label>
-                                <select class="form-control" name="role">
-                                    <option value="Customer" ${sessionScope.addUserRole == 'Customer' ? 'selected' : ''}>Customer</option>
+                                <select class="form-control" name="role">                     
                                     <option value="Staff" ${sessionScope.addUserRole == 'Staff' ? 'selected' : ''}>Staff</option>
                                     <option value="Admin" ${sessionScope.addUserRole == 'Admin' ? 'selected' : ''}>Admin</option>
                                 </select>

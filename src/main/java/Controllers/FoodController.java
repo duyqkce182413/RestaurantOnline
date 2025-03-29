@@ -193,11 +193,11 @@ public class FoodController extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        
+
         session.setAttribute("user", user);
-        
+
         String foodID = request.getParameter("foodID");
-        
+
         if (foodID != null && !foodID.trim().isEmpty()) {
             FoodDAO foodDAO = new FoodDAO();
             FeedbackDAO feedbackDAO = new FeedbackDAO();
@@ -335,9 +335,15 @@ public class FoodController extends HttpServlet {
             Food food = new Food(foodId, foodName, price, categoryId, description,
                     image, available, quantity);
             FoodDAO dao = new FoodDAO();
-            dao.updateFood(food);
+            boolean updated = dao.updateFood(food);
 
-            response.sendRedirect("manage-foods");
+            if (updated) {
+                response.sendRedirect("manage-foods");
+            } else {
+                request.setAttribute("error", "Not enough ingredients to increase food quantity.");
+                request.setAttribute("food", food);
+                manageFoods(request, response);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("manage-foods?error=true");

@@ -112,7 +112,7 @@
                                             <p class="card-text">${f.price} VND</p>
                                             
                                             <c:choose>
-                                                <c:when test="${f.quantity > 0}">
+                                                <c:when test="${f.quantity > 0 and f.available}">
                                                     <button type="button" class="btn btn-primary" 
                                                             onclick="openAddToCartModal('${f.foodID}', '${f.foodName}', '${f.image}', '${f.price}', '${f.quantity}')">
                                                         Thêm vào giỏ

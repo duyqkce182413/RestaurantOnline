@@ -222,11 +222,11 @@
                         </div>
 
                         <input type="hidden" name="foodId" value="${food_detail.foodID}"> <!-- ID của món ăn -->
-                        <c:if test="${food_detail.quantity > 0}">
+                        <c:if test="${food_detail.quantity > 0 and food_detail.available}">
                             <p>Còn lại: ${food_detail.quantity}</p> 
                             <button type="submit" class="btn btn-cart mt-3 text-white">Thêm Vào Giỏ Hàng</button>
                         </c:if>
-                        <c:if test="${food_detail.quantity <= 0}">
+                        <c:if test="${food_detail.quantity <= 0 or not food_detail.available}">
                             <p>Tình trạng: Hết hàng</p>
                         </c:if>
                         <a class="btn btn-cart mt-3 bg-gradient-secondary text-white" href="all">Trở lại</a>

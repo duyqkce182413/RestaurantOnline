@@ -338,7 +338,13 @@ public class UserController extends HttpServlet {
         UserDAO dao = new UserDAO();
         User user = dao.getUserByUsername(username); // Lấy thông tin user từ database
         HttpSession session = request.getSession();
-
+        
+        if (user.getStatus().equalsIgnoreCase("Banned")) {
+            request.setAttribute("messerror", "Your account was banned!");
+            request.getRequestDispatcher("LoginView.jsp").forward(request, response);
+            return;
+        }
+        
         if (user == null) {
             // Nếu không tìm thấy user
             request.setAttribute("messerror", "Wrong Username or Password");

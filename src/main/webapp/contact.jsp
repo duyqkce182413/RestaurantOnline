@@ -10,9 +10,12 @@
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!--        <link rel="stylesheet" href="./CSS/Style.css">-->
         <link rel="stylesheet" href="./CSS/HeaderAndFooter_CSS.css">
-        <link rel="stylesheet" href="./CSS/home.css">
-        <script src="./Script/header-script.js"></script>
+        <script src="./JS/header-script.js"></script>
+
+        <!--CSS rieng-->
+        <link rel="stylesheet" href="./CSS/HomeView.css">
         <style>
             .contact-section {
                 padding: 40px 0;

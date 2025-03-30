@@ -109,6 +109,11 @@ public class CartController extends HttpServlet {
             response.sendRedirect("LoginView.jsp"); // hoặc trang khác phù hợp
             return;
         }
+        // Nếu user là Admin hoặc Staff, chuyển hướng về trang chủ
+        if (user.getRole().equalsIgnoreCase("Admin") || user.getRole().equalsIgnoreCase("Staff")) {
+            response.sendRedirect("all"); // Thay bằng trang chủ của bạn
+            return;
+        }
         CartDAO cartDAO = new CartDAO();
         int id = user.getUserID();
 
@@ -126,6 +131,12 @@ public class CartController extends HttpServlet {
         if (user == null) {
             // Nếu acc là null, chuyển hướng đến trang đăng nhập hoặc trang lỗi
             response.sendRedirect("LoginView.jsp"); // hoặc trang khác phù hợp
+            return;
+        }
+        
+        // Nếu user là Admin hoặc Staff, chuyển hướng về trang chủ
+        if (user.getRole().equalsIgnoreCase("Admin") || user.getRole().equalsIgnoreCase("Staff")) {
+            response.sendRedirect("all"); // Thay bằng trang chủ của bạn
             return;
         }
 

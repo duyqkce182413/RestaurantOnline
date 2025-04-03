@@ -136,7 +136,7 @@ public class CartController extends HttpServlet {
         
         // Nếu user là Admin hoặc Staff, chuyển hướng về trang chủ
         if (user.getRole().equalsIgnoreCase("Admin") || user.getRole().equalsIgnoreCase("Staff")) {
-            response.sendRedirect("all"); // Thay bằng trang chủ của bạn
+            response.sendRedirect("all");
             return;
         }
 

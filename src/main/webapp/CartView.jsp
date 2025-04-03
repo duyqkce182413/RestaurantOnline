@@ -242,8 +242,8 @@
 
                 <div class="cart-actions">
                     <a href="all" class="btn btn-primary">Tiếp Tục Mua</a>
-                    <form action="checkoutcart" method="post" style="display: inline;">
-                        <button type="submit" class="btn btn-success paybtn" style="border-radius: 20px">Thanh Toán</button>
+                    <form action="placeOrder" method="GET" style="display: inline;">
+                        <button type="submit" class="btn btn-success paybtn" style="border-radius: 20px">Đặt hàng</button>
                     </form>
                 </div>
 

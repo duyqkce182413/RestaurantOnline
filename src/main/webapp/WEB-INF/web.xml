@@ -142,6 +142,7 @@
     <servlet-mapping>
         <servlet-name>OrderController</servlet-name>
         <url-pattern>/ordercontroller</url-pattern>
+        <url-pattern>/placeOrder</url-pattern>
         <url-pattern>/listOrders</url-pattern>
         <url-pattern>/cancelOrder</url-pattern>
     </servlet-mapping>

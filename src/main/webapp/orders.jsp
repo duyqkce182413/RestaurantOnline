@@ -152,7 +152,7 @@
                                         <td>
                                             <ul>
                                                 <c:forEach items="${order.orderDetail}" var="item">
-                                                    <li>${item.foodID.foodName} - Số lượng: ${item.quantity} - Giá: ${item.price}</li>
+                                                    <li>${item.foodID.foodName} - Số lượng: ${item.quantity} - Giá: ${item.price} VND</li>
                                                 </c:forEach>
                                             </ul>
                                         </td>
@@ -161,7 +161,7 @@
                                             ${order.address.addressLine} - ${order.address.city} <br/> 
                                             Số điện thoại: ${order.address.phoneNumber} 
                                         </td>
-                                        <td>${order.totalAmount}</td>
+                                        <td>${order.totalAmount} VND</td>
                                         <td>
                                             <c:if test="${order.status.equals('Chưa xử lý') || order.status.equals('Đã tiếp nhận')}">
                                                 <a href="cancelOrder?id=${order.orderID}" class="btn btn-danger"

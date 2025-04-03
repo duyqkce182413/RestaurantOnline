@@ -171,7 +171,7 @@ public class AddressDAO extends DBContext {
     }
 
     public Address getDefaultAddressByUserId(int userId) throws SQLException {
-        String sql = "SELECT * FROM Address WHERE UserID = ? AND IsDefault = 1";
+        String sql = "SELECT * FROM Address WHERE UserID = ? AND IsDefault = 1 AND IsDeleted = 0";
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try ( ResultSet rs = ps.executeQuery()) {

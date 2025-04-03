@@ -128,10 +128,10 @@ public class StaffOrderController extends HttpServlet {
             boolean isUpdated = ordersDAO.updateOrderStatus(orderId, newStatus, staffId);
 
             if (isUpdated) {
-                // Kiểm tra nếu trạng thái chuyển từ "Đã tiếp nhận" sang "Đang chuẩn bị" thì cập nhật số lượng
-                if ("Đã tiếp nhận".equalsIgnoreCase(currentStatus) && "Đang chuẩn bị".equalsIgnoreCase(newStatus)) {
-                    ordersDAO.updateProductQuantity(order.getOrderDetail()); // Cập nhật số lượng sản phẩm
-                }
+//                // Kiểm tra nếu trạng thái chuyển từ "Đã tiếp nhận" sang "Đang chuẩn bị" thì cập nhật số lượng
+//                if ("Chưa xử lý".equalsIgnoreCase(currentStatus)) {
+//                    ordersDAO.updateProductQuantity(order.getOrderDetail()); // Cập nhật số lượng sản phẩm
+//                }
                 request.setAttribute("message", "Trạng thái đã được cập nhật thành công");
             } else {
                 request.setAttribute("error", "Không cập nhật được trạng thái");
@@ -225,6 +225,7 @@ public class StaffOrderController extends HttpServlet {
             // Nhân viên hoặc Admin hủy đơn hàng ở trạng thái "Chưa xử lý" hoặc "Đã tiếp nhận"
             if ("Chưa xử lý".equalsIgnoreCase(currentStatus) || "Đã tiếp nhận".equalsIgnoreCase(currentStatus)) {
                 boolean isUpdated = ordersDAO.updateOrderStatus(orderId, "Đã hủy", userId);
+                ordersDAO.updateProductQuantityForCancel(order.getOrderDetail());
                 request.setAttribute("message", isUpdated ? "Đơn hàng đã được hủy thành công." : "Hủy đơn hàng thất bại.");
             } else {
                 request.setAttribute("error", "Không thể hủy đơn hàng ở trạng thái hiện tại.");

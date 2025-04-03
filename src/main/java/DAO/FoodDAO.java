@@ -243,4 +243,18 @@ public class FoodDAO extends DBContext {
         }
         return foods;
     }
+
+    // Phương thức lấy số lượng sản phẩm hiện tại trong kho
+    public int getAvailableQuantity(int foodID) throws SQLException {
+        String query = "SELECT Quantity FROM Foods WHERE FoodID = ?";
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, foodID);
+            try ( ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("Quantity");
+                }
+                return 0; // Nếu không tìm thấy sản phẩm
+            }
+        }
+    }
 }

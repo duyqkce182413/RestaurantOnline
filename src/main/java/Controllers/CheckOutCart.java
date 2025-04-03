@@ -82,12 +82,12 @@ public class CheckOutCart extends HttpServlet {
                 orderDetails.add(orderDetail);
             }
 
+            // Cập nhật số lượng sản phẩm trong kho
+            orderDAO.updateProductQuantity(orderDetails);
             // Thêm chi tiết đơn hàng
             orderDAO.createOrderItems(orderDetails, orderId);
-
             // Xóa giỏ hàng sau khi đặt hàng thành công
             cartDAO.clearCartByUserId(user.getUserID());
-
             // Encode thông báo tiếng Việt
             String message = URLEncoder.encode("Đơn hàng đã được đặt thành công!", StandardCharsets.UTF_8);
             response.sendRedirect("listOrders?message=" + message);

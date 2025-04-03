@@ -220,6 +220,39 @@ public class OrderDAO extends DBContext {
     public void updateProductQuantity(List<OrderDetail> items) {
         String query = "UPDATE Foods SET Quantity = Quantity - ? WHERE FoodID = ?";
 
+        FoodDAO food = new FoodDAO();
+        
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
+            // Kiểm tra số lượng sản phẩm trong kho trước khi giảm
+            for (OrderDetail item : items) {
+                // Lấy số lượng sản phẩm hiện tại trong kho
+                int availableQuantity = food.getAvailableQuantity(item.getFoodID().getFoodID());
+
+                // Kiểm tra nếu số lượng trong kho không đủ
+                if (item.getQuantity() > availableQuantity) {
+                    System.out.println("Không đủ số lượng cho sản phẩm " + item.getFoodID().getFoodID() + ". Số lượng trong kho hiện tại: " + availableQuantity);
+                    // Thông báo cho người dùng về việc hết hàng
+                    throw new SQLException("Không đủ số lượng sản phẩm. Sản phẩm " + item.getFoodID().getFoodID() + " chỉ còn " + availableQuantity + " sản phẩm.");
+                }
+
+                // Nếu số lượng đủ, trừ số lượng
+                ps.setInt(1, item.getQuantity());
+                ps.setInt(2, item.getFoodID().getFoodID());
+                ps.addBatch();
+            }
+
+            ps.executeBatch(); // Thực thi batch để cập nhật số lượng tất cả sản phẩm trong danh sách
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Thông báo lỗi cho người dùng khi không đủ số lượng
+            System.out.println("Lỗi khi cập nhật số lượng sản phẩm: " + e.getMessage());
+        }
+    }
+
+    public void updateProductQuantityForCancel(List<OrderDetail> items) {
+        String query = "UPDATE Foods SET Quantity = Quantity + ? WHERE FoodID = ?";
+
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(query)) {
             for (OrderDetail item : items) {
                 ps.setInt(1, item.getQuantity());

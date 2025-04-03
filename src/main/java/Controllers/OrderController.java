@@ -4,7 +4,11 @@
  */
 package Controllers;
 
+import DAO.AddressDAO;
+import DAO.CartDAO;
 import DAO.OrderDAO;
+import Models.Address;
+import Models.CartItem;
 import Models.Order;
 import Models.User;
 import java.io.IOException;
@@ -17,6 +21,8 @@ import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -67,6 +73,9 @@ public class OrderController extends HttpServlet {
 
         try {
             switch (action) {
+                case "/placeOrder":
+                    orderConfirmation(request, response);
+                    break;
                 case "/listOrders":
                     listOrders(request, response);
                     break;
@@ -94,6 +103,47 @@ public class OrderController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
+    }
+
+    private void orderConfirmation(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("LoginView.jsp");
+            return;
+        }
+
+        CartDAO cartDAO = new CartDAO();
+        List<CartItem> cartItems = cartDAO.getcart(user.getUserID());
+
+        // Lấy địa chỉ mặc định của người dùng
+        AddressDAO addressDAO = new AddressDAO();
+        Address address = null;
+        try {
+            address = addressDAO.getDefaultAddressByUserId(user.getUserID());
+        } catch (Exception ex) {
+            Logger.getLogger(CheckOutCart.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        if (cartItems.isEmpty()) {
+            response.sendRedirect("view-cart?error=Giỏ hàng trống!");
+            return;
+        }
+
+        // Kiểm tra số lượng sản phẩm trong kho
+        for (CartItem item : cartItems) {
+            int availableQuantity = item.getFood().getQuantity(); // Giả sử có phương thức để lấy số lượng sản phẩm hiện có trong kho
+            if (item.getCart().getQuantity() > availableQuantity) {
+                String errorMessage = URLEncoder.encode("Số lượng trong kho không đủ để bạn đặt hàng cho sản phẩm " + item.getFood().getFoodName(), StandardCharsets.UTF_8);
+                response.sendRedirect("view-cart?error=" + errorMessage);
+                return;
+            }
+        }
+
+        request.setAttribute("cartItems", cartItems);
+        request.setAttribute("address", address);
+        request.getRequestDispatcher("OrderConfirmation.jsp").forward(request, response);
     }
 
     // Hiển thị danh sách đơn hàng
@@ -132,6 +182,7 @@ public class OrderController extends HttpServlet {
             boolean isUpdated = ordersDAO.updateOrderStatusCustomer(orderId, "Đã hủy", user.getUserID());
             String message = isUpdated ? "Đơn hàng đã được hủy thành công." : "Không thể hủy đơn hàng.";
             String encodedMessage = URLEncoder.encode(message, StandardCharsets.UTF_8);
+            ordersDAO.updateProductQuantityForCancel(order.getOrderDetail());
             response.sendRedirect("listOrders?message=" + encodedMessage);
         } else {
             String encodedError = URLEncoder.encode("Không thể hủy đơn hàng.", StandardCharsets.UTF_8);

@@ -124,15 +124,15 @@
                             <input type="hidden" name="ingredientId" id="editIngredientId">
                             <div class="mb-3">
                                 <label class="form-label">Ingredient Name</label>
-                                <input type="text" class="form-control" name="ingredientName" id="editIngredientName" required>
+                                <input type="text" class="form-control" name="ingredientName" id="editIngredientName" pattern="[A-Za-zÀ-ỹ\s]+" title="Vui lòng chỉ nhập chữ cái" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Stock Quantity</label>
-                                <input type="number" class="form-control" name="stockQuantity" id="editStockQuantity" required>
+                                <input type="number" class="form-control" name="stockQuantity" id="editStockQuantity" min="0" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Unit</label>
-                                <input type="text" class="form-control" name="unit" id="editUnit" required>
+                                <input type="text" class="form-control" name="unit" id="editUnit" pattern="[A-Za-zÀ-ỹ\s]+" title="Vui lòng chỉ nhập chữ cái" required>
                             </div>
                         </form>
                     </div>
@@ -156,15 +156,15 @@
                         <form id="addIngredientForm" action="add-ingredient" method="POST">
                             <div class="mb-3">
                                 <label class="form-label">Ingredient Name</label>
-                                <input type="text" class="form-control" name="ingredientName" required>
+                                <input type="text" class="form-control" name="ingredientName" pattern="[A-Za-zÀ-ỹ\s]+" title="Vui lòng chỉ nhập chữ cái" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Stock Quantity</label>
-                                <input type="number" class="form-control" name="stockQuantity" required>
+                                <input type="number" class="form-control" name="stockQuantity" min="1" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Unit</label>
-                                <input type="text" class="form-control" name="unit" required>
+                                <input type="text" class="form-control" name="unit" pattern="[A-Za-zÀ-ỹ\s]+" title="Vui lòng chỉ nhập chữ cái" required>
                             </div>
                             <button type="submit" class="btn btn-primary">Save</button>
                         </form>

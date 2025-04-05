@@ -215,7 +215,6 @@
                             <div class="mb-3">
                                 <label class="form-label">Role</label>
                                 <select class="form-control" name="role">
-                                    <option value="Customer" ${sessionScope.addUserRole == 'Customer' ? 'selected' : ''}>Customer</option>
                                     <option value="Staff" ${sessionScope.addUserRole == 'Staff' ? 'selected' : ''}>Staff</option>
                                     <option value="Admin" ${sessionScope.addUserRole == 'Admin' ? 'selected' : ''}>Admin</option>
                                 </select>
@@ -302,11 +301,8 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Role</label>
-                                <select class="form-control" name="role" id="editRole">
-                                    <option value="Customer" ${sessionScope.editUserRole == 'Customer' ? 'selected' : ''}>Customer</option>
-                                    <option value="Staff" ${sessionScope.editUserRole == 'Staff' ? 'selected' : ''}>Staff</option>
-                                    <option value="Admin" ${sessionScope.editUserRole == 'Admin' ? 'selected' : ''}>Admin</option>
-                                </select>
+                                <input type="text" class="form-control" name="role" id="editRole" 
+                                       value="${sessionScope.editUserRole}" readonly>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Status</label>
@@ -442,32 +438,32 @@
 
                             // Hiển thị modal nếu có lỗi
                             document.addEventListener('DOMContentLoaded', function () {
-                        <c:if test="${not empty sessionScope.addUserErrors}">
+            <c:if test="${not empty sessionScope.addUserErrors}">
                                 let addModal = new bootstrap.Modal(document.getElementById('addUserModal'));
                                 addModal.show();
-                            <% session.removeAttribute("addUserErrors"); %>
-                            <% session.removeAttribute("addUserUsername"); %>
-                            <% session.removeAttribute("addUserFullName"); %>
-                            <% session.removeAttribute("addUserEmail"); %>
-                            <% session.removeAttribute("addUserPhoneNumber"); %>
-                            <% session.removeAttribute("addUserDateOfBirth"); %>
-                            <% session.removeAttribute("addUserGender"); %>
-                            <% session.removeAttribute("addUserRole"); %>
-                        </c:if>
-                        <c:if test="${not empty sessionScope.editUserErrors}">
+                <% session.removeAttribute("addUserErrors"); %>
+                <% session.removeAttribute("addUserUsername"); %>
+                <% session.removeAttribute("addUserFullName"); %>
+                <% session.removeAttribute("addUserEmail"); %>
+                <% session.removeAttribute("addUserPhoneNumber"); %>
+                <% session.removeAttribute("addUserDateOfBirth"); %>
+                <% session.removeAttribute("addUserGender"); %>
+                <% session.removeAttribute("addUserRole"); %>
+            </c:if>
+            <c:if test="${not empty sessionScope.editUserErrors}">
                                 let editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
                                 editModal.show();
-                            <% session.removeAttribute("editUserErrors"); %>
-                            <% session.removeAttribute("editUserId"); %>
-                            <% session.removeAttribute("editUserUsername"); %>
-                            <% session.removeAttribute("editUserFullName"); %>
-                            <% session.removeAttribute("editUserEmail"); %>
-                            <% session.removeAttribute("editUserPhoneNumber"); %>
-                            <% session.removeAttribute("editUserDateOfBirth"); %>
-                            <% session.removeAttribute("editUserGender"); %>
-                            <% session.removeAttribute("editUserRole"); %>
-                            <% session.removeAttribute("editUserStatus"); %>
-                        </c:if>
+                <% session.removeAttribute("editUserErrors"); %>
+                <% session.removeAttribute("editUserId"); %>
+                <% session.removeAttribute("editUserUsername"); %>
+                <% session.removeAttribute("editUserFullName"); %>
+                <% session.removeAttribute("editUserEmail"); %>
+                <% session.removeAttribute("editUserPhoneNumber"); %>
+                <% session.removeAttribute("editUserDateOfBirth"); %>
+                <% session.removeAttribute("editUserGender"); %>
+                <% session.removeAttribute("editUserRole"); %>
+                <% session.removeAttribute("editUserStatus"); %>
+            </c:if>
                             });
         </script>
     </body>

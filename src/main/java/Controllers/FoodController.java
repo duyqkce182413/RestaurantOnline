@@ -193,11 +193,11 @@ public class FoodController extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        
+
         session.setAttribute("user", user);
-        
+
         String foodID = request.getParameter("foodID");
-        
+
         if (foodID != null && !foodID.trim().isEmpty()) {
             FoodDAO foodDAO = new FoodDAO();
             FeedbackDAO feedbackDAO = new FeedbackDAO();
@@ -320,6 +320,19 @@ public class FoodController extends HttpServlet {
         }
     }
 
+    protected void deleteFood(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int foodId = Integer.parseInt(request.getParameter("id"));
+            FoodDAO dao = new FoodDAO();
+            dao.deleteFood(foodId);
+            response.sendRedirect("manage-foods");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("manage-foods");
+        }
+    }
+
     protected void editFood(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -335,26 +348,29 @@ public class FoodController extends HttpServlet {
             Food food = new Food(foodId, foodName, price, categoryId, description,
                     image, available, quantity);
             FoodDAO dao = new FoodDAO();
-            dao.updateFood(food);
+            List<String> errorMessages = new ArrayList<>();
+            boolean updated = dao.updateFood(food, errorMessages);
 
-            response.sendRedirect("manage-foods");
+            if (updated) {
+                response.sendRedirect("manage-foods");
+            } else {
+                if (!errorMessages.isEmpty()) {
+                    String errorMessage;
+                    if (errorMessages.size() == 1) {
+                        errorMessage = "Not enough stock for: " + errorMessages.get(0);
+                    } else {
+                        errorMessage = "Not enough stock for the following ingredients: " + String.join(", ", errorMessages);
+                    }
+                    request.setAttribute("error", errorMessage);
+                } else {
+                    request.setAttribute("error", "Failed to update food due to an unknown error.");
+                }
+                request.setAttribute("food", food);
+                manageFoods(request, response);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("manage-foods?error=true");
         }
     }
-
-    protected void deleteFood(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            int foodId = Integer.parseInt(request.getParameter("id"));
-            FoodDAO dao = new FoodDAO();
-            dao.deleteFood(foodId);
-            response.sendRedirect("manage-foods");
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendRedirect("manage-foods");
-        }
-    }
-
 }

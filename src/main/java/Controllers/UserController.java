@@ -173,8 +173,9 @@ public class UserController extends HttpServlet {
             if (username.contains(" ")) {
                 errors.add("Username must not contain spaces.");
             }
-            if (!fullName.matches("^[a-zA-Z\\s]+$")) {
-                errors.add("Full Name must not contain numbers or special characters.");
+            // Chỉ kiểm tra số trong fullName
+            if (fullName.matches(".*[0-9].*")) {
+                errors.add("Full Name must not contain numbers.");
             }
             if (!phoneNumber.matches("^[0-9]{10}$")) {
                 errors.add("Phone Number must start with 0 and must be 10 digits with no letters or spaces.");
@@ -192,7 +193,6 @@ public class UserController extends HttpServlet {
             }
 
             if (!errors.isEmpty()) {
-                // Lưu thông tin đã nhập vào session để hiển thị lại
                 HttpSession session = request.getSession();
                 session.setAttribute("addUserErrors", errors);
                 session.setAttribute("addUserUsername", username);
@@ -202,13 +202,10 @@ public class UserController extends HttpServlet {
                 session.setAttribute("addUserDateOfBirth", dobString);
                 session.setAttribute("addUserGender", gender);
                 session.setAttribute("addUserRole", role);
-
-                // Chuyển hướng về view-users
                 response.sendRedirect("view-users");
                 return;
             }
 
-            // Tạo user mới nếu không có lỗi
             User newUser = new User();
             newUser.setUsername(username);
             newUser.setFullName(fullName);
@@ -271,8 +268,9 @@ public class UserController extends HttpServlet {
             if (username.contains(" ")) {
                 errors.add("Username must not contain spaces.");
             }
-            if (!fullName.matches("^[a-zA-Z\\s]+$")) {
-                errors.add("Full Name must not contain numbers or special characters.");
+            // Chỉ kiểm tra số trong fullName
+            if (fullName.matches(".*[0-9].*")) {
+                errors.add("Full Name must not contain numbers.");
             }
             if (!phoneNumber.matches("^[0-9]{10}$")) {
                 errors.add("Phone Number must start with 0 and must be 10 digits with no letters or spaces.");
@@ -294,7 +292,6 @@ public class UserController extends HttpServlet {
             }
 
             if (!errors.isEmpty()) {
-                // Lưu thông tin đã nhập vào session để hiển thị lại
                 HttpSession session = request.getSession();
                 session.setAttribute("editUserErrors", errors);
                 session.setAttribute("editUserId", userId);
@@ -306,13 +303,10 @@ public class UserController extends HttpServlet {
                 session.setAttribute("editUserGender", gender);
                 session.setAttribute("editUserRole", role);
                 session.setAttribute("editUserStatus", status);
-
-                // Chuyển hướng về view-users
                 response.sendRedirect("view-users");
                 return;
             }
 
-            // Cập nhật user nếu không có lỗi
             existingUser.setUsername(username);
             existingUser.setFullName(fullName);
             existingUser.setEmail(email);
@@ -338,13 +332,13 @@ public class UserController extends HttpServlet {
         UserDAO dao = new UserDAO();
         User user = dao.getUserByUsername(username); // Lấy thông tin user từ database
         HttpSession session = request.getSession();
-        
+
         if (user.getStatus().equalsIgnoreCase("Banned")) {
             request.setAttribute("messerror", "Your account was banned!");
             request.getRequestDispatcher("LoginView.jsp").forward(request, response);
             return;
         }
-        
+
         if (user == null) {
             // Nếu không tìm thấy user
             request.setAttribute("messerror", "Wrong Username or Password");
@@ -461,7 +455,7 @@ public class UserController extends HttpServlet {
             response.sendRedirect("UserProfile.jsp");
             return;
         }
-        
+
         boolean success = userDAO.updateUser(userId, fullName, email, phoneNumber, formattedDate, gender, password);
 
         if (success) {

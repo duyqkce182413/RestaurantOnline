@@ -177,32 +177,6 @@ public class FoodDAO extends DBContext {
         return false;
     }
 
-    public boolean updateFood(Food food) {
-        String query = "UPDATE Foods SET FoodName=?, Price=?, CategoryID=?, Description=?, "
-                + "Image=?, Available=?, Quantity=? WHERE FoodID=?";
-        try {
-            Connection conn = getConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
-
-            ps.setString(1, food.getFoodName());
-            ps.setDouble(2, food.getPrice());
-            ps.setInt(3, food.getCategoryID());
-            ps.setString(4, food.getDescription());
-            ps.setString(5, food.getImage());
-            ps.setBoolean(6, food.isAvailable());
-            ps.setInt(7, food.getQuantity());
-            ps.setInt(8, food.getFoodID());
-
-            int rowsAffected = ps.executeUpdate();
-            System.out.println("Rows affected: " + rowsAffected);
-
-            return rowsAffected > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public boolean deleteFood(int foodId) {
         String query = "DELETE FROM Foods WHERE FoodID = ?";
         try {
@@ -254,6 +228,138 @@ public class FoodDAO extends DBContext {
                     return rs.getInt("Quantity");
                 }
                 return 0; // Nếu không tìm thấy sản phẩm
+            }
+        }
+    }
+
+    public boolean checkIngredientAvailabilityForFood(int foodId, int newQuantity, int currentQuantity, List<String> missingIngredients) {
+        String sql = "SELECT r.FoodID, r.IngredientID, r.RequiredQuantity, i.IngredientName, i.StockQuantity "
+                + "FROM Recipes r "
+                + "JOIN Ingredients i ON r.IngredientID = i.IngredientID "
+                + "WHERE r.FoodID = ?";
+
+        boolean isAvailable = true;
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, foodId);
+            ResultSet rs = ps.executeQuery();
+
+            int quantityIncrease = newQuantity - currentQuantity;
+
+            while (rs.next()) {
+                int requiredQuantity = rs.getInt("RequiredQuantity");
+                int stockQuantity = rs.getInt("StockQuantity");
+                String ingredientName = rs.getString("IngredientName");
+                int totalRequired = requiredQuantity * quantityIncrease;
+
+                if (quantityIncrease > 0 && stockQuantity < totalRequired) {
+                    int shortage = totalRequired - stockQuantity;
+                    isAvailable = false;
+                    missingIngredients.add(ingredientName + " (thiếu " + shortage + " " + getUnit(foodId, rs.getInt("IngredientID")) + ")");
+                }
+            }
+            return isAvailable;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private String getUnit(int foodId, int ingredientId) {
+        String sql = "SELECT Unit FROM Ingredients WHERE IngredientID = ?";
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, ingredientId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("Unit");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public boolean updateStockQuantity(int foodId, int quantityIncrease) {
+        String sql = "UPDATE Ingredients "
+                + "SET StockQuantity = StockQuantity - (r.RequiredQuantity * ?) "
+                + "FROM Ingredients i "
+                + "JOIN Recipes r ON i.IngredientID = r.IngredientID "
+                + "WHERE r.FoodID = ?";
+
+        try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, quantityIncrease);  // Số lượng tăng thêm
+            ps.setInt(2, foodId);            // FoodID để lấy công thức
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateFood(Food food, List<String> errorMessages) {
+        String query = "UPDATE Foods SET FoodName=?, Price=?, CategoryID=?, Description=?, "
+                + "Image=?, Available=?, Quantity=? WHERE FoodID=?";
+        Connection conn = null;
+        try {
+            conn = getConnection();
+
+            Food currentFood = getProductBYID(String.valueOf(food.getFoodID()));
+            int currentQuantity = currentFood.getQuantity();
+            int newQuantity = food.getQuantity();
+            int quantityIncrease = newQuantity - currentQuantity;
+
+            if (quantityIncrease > 0) {
+                List<String> missingIngredients = new ArrayList<>();
+                if (!checkIngredientAvailabilityForFood(food.getFoodID(), newQuantity, currentQuantity, missingIngredients)) {
+                    errorMessages.addAll(missingIngredients);
+                    return false;
+                }
+            }
+
+            boolean newAvailable = (newQuantity == 0) ? false : food.isAvailable();
+
+            conn.setAutoCommit(false);
+
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, food.getFoodName());
+            ps.setDouble(2, food.getPrice());
+            ps.setInt(3, food.getCategoryID());
+            ps.setString(4, food.getDescription());
+            ps.setString(5, food.getImage());
+            ps.setBoolean(6, newAvailable);
+            ps.setInt(7, newQuantity);
+            ps.setInt(8, food.getFoodID());
+
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected > 0 && quantityIncrease > 0) {
+                if (!updateStockQuantity(food.getFoodID(), quantityIncrease)) {
+                    conn.rollback();
+                    return false;
+                }
+            }
+
+            conn.commit();
+            conn.setAutoCommit(true);
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
             }
         }
     }

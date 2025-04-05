@@ -132,7 +132,7 @@
                         <form id="addCategoryForm" action="add-category" method="POST">
                             <div class="mb-3">
                                 <label class="form-label">Category Name</label>
-                                <input type="text" class="form-control" name="categoryName" required>
+                                <input type="text" class="form-control" name="categoryName" pattern="[A-Za-zÀ-ỹ\s]+" title="Vui lòng chỉ nhập chữ cái" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Description</label>
@@ -161,7 +161,7 @@
                             <input type="hidden" name="categoryId" id="editCategoryId">
                             <div class="mb-3">
                                 <label class="form-label">Category Name</label>
-                                <input type="text" class="form-control" name="categoryName" id="editCategoryName" required>
+                                <input type="text" class="form-control" name="categoryName" id="editCategoryName" pattern="[A-Za-zÀ-ỹ\s]+" title="Vui lòng chỉ nhập chữ cái" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Description</label>

@@ -88,12 +88,17 @@
                 <!-- Main content -->
                 <div class="content col-6">
                     <h1>Food Management</h1>
-                    <!-- Search and Filter Form -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <form action="manage-foods" method="GET" class="d-flex">
-                                <input type="text" name="search" class="form-control me-2" 
-                                       placeholder="Search by Food Name" value="${param.search}">
+                <c:if test="${not empty error}">
+                    <div class="alert alert-danger" role="alert">
+                        ${error}
+                    </div>
+                </c:if>
+                <!-- Search and Filter Form -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <form action="manage-foods" method="GET" class="d-flex">
+                            <input type="text" name="search" class="form-control me-2" 
+                                   placeholder="Search by Food Name" value="${param.search}">
                             <button type="submit" class="btn btn-primary">Search</button>
                         </form>
                     </div>
@@ -180,11 +185,11 @@
                         <form id="addFoodForm" action="add-food" method="POST">
                             <div class="mb-3">
                                 <label class="form-label">Food Name</label>
-                                <input type="text" class="form-control" name="foodName" required>
+                                <input type="text" class="form-control" name="foodName" pattern="[A-Za-zÀ-ỹ\s]+" title="Vui lòng chỉ nhập chữ cái" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Price</label>
-                                <input type="number" step="0.01" class="form-control" name="price" required>
+                                <input type="number" step="0.01" class="form-control" name="price" min="1" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Category</label>
@@ -233,11 +238,11 @@
                             <input type="hidden" name="foodId" id="editFoodId">
                             <div class="mb-3">
                                 <label class="form-label">Food Name</label>
-                                <input type="text" class="form-control" name="foodName" id="editFoodName" required>
+                                <input type="text" class="form-control" name="foodName" id="editFoodName" pattern="[A-Za-zÀ-ỹ\s]+" title="Vui lòng chỉ nhập chữ cái" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Price</label>
-                                <input type="number" step="0.01" class="form-control" name="price" id="editPrice" required>
+                                <input type="number" step="0.01" class="form-control" name="price" id="editPrice" min="1" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Category</label>
@@ -257,7 +262,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Quantity</label>
-                                <input type="number" class="form-control" name="quantity" id="editQuantity" required>
+                                <input type="number" class="form-control" name="quantity" id="editQuantity" min="0" required>
                             </div>
                             <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input" name="available" id="editAvailable" value="true">

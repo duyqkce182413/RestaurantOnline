@@ -154,10 +154,11 @@ public class FeedbackReplyController extends HttpServlet {
         FeedbackReplyDAO replyDAO = new FeedbackReplyDAO();
         boolean isUpdated = replyDAO.updateFeedbackReply(replyID, replyText);
 
+        // Kiểm tra kết quả cập nhật phản hồi
         if (isUpdated) {
-            response.sendRedirect("viewFeedbackDetails?id=" + feedbackID + "&userId=" + staffID); // Chuyển hướng về trang chi tiết
+            response.sendRedirect("viewFeedbackDetails?id=" + feedbackID + "&userId=" + staffID + "&success=edit_reply_success");
         } else {
-            response.getWriter().write("Cập nhật phản hồi thất bại!");
+            response.sendRedirect("viewFeedbackDetails?id=" + feedbackID + "&userId=" + staffID + "&error=edit_reply_failed");
         }
     }
 
@@ -169,10 +170,12 @@ public class FeedbackReplyController extends HttpServlet {
         FeedbackReplyDAO feedbackReplyDAO = new FeedbackReplyDAO();
         boolean isDeleted = feedbackReplyDAO.deleteFeedbackReply(replyID);
 
+        // Kiểm tra kết quả xóa phản hồi
         if (isDeleted) {
-            response.sendRedirect("viewFeedbackDetails?id=" + feedbackID + "&userId=" + staffID); // Chuyển hướng về trang chi tiết
+            response.sendRedirect("viewFeedbackDetails?id=" + feedbackID + "&userId=" + staffID + "&success=delete_reply_success");
         } else {
-            response.getWriter().write("Cập nhật phản hồi thất bại!");
+            response.sendRedirect("viewFeedbackDetails?id=" + feedbackID + "&userId=" + staffID + "&error=delete_reply_failed");
         }
     }
+
 }

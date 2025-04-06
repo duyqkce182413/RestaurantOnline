@@ -94,6 +94,39 @@
                     <div class="alert alert-success">${param.message}</div>
                 </c:if>
 
+                <c:if test="${not empty param.success}">
+                    <div class="alert alert-success" style="width: 20%;">
+                        <c:choose>
+                            <c:when test="${param.success == 'delete_reply_success'}">
+                                Reply deleted successfully!
+                            </c:when>
+                            <c:when test="${param.success == 'edit_reply_success'}">
+                                Reply updated successfully!
+                            </c:when>
+                            <c:otherwise>
+                                An error occurred!
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </c:if>
+
+                <!-- Thông báo thất bại khi cập nhật phản hồi -->
+                <c:if test="${not empty param.error}">
+                    <div class="alert alert-danger" style="width: 20%;">
+                        <c:choose>
+                            <c:when test="${param.error == 'delete_reply_failed'}">
+                                Failed to delete reply!
+                            </c:when>
+                            <c:when test="${param.error == 'edit_reply_failed'}">
+                                Failed to update reply!
+                            </c:when>
+                            <c:otherwise>
+                                An error occurred!
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </c:if>
+
                 <!-- Kiểm tra feedbackDetail có tồn tại không -->
                 <c:if test="${not empty feedbackDetail}">
                     <div class="mb-3">

@@ -71,52 +71,43 @@ public class FeedbackController extends HttpServlet {
         String comment = request.getParameter("comment");
 
         if (foodIdStr == null || foodIdStr.trim().isEmpty() || ratingStr == null || ratingStr.trim().isEmpty()) {
-            response.sendRedirect("view-food-detail?error=missing_parameters&foodID=" + foodIdStr);
+            response.sendRedirect("view-food-detail?error=feedback_missing_parameters&foodID=" + foodIdStr);
             return;
         }
 
-        int foodID;
-        int rating;
-
+        int foodID, rating;
         try {
             foodID = Integer.parseInt(foodIdStr);
             rating = Integer.parseInt(ratingStr);
         } catch (NumberFormatException e) {
-            response.sendRedirect("view-food-detail?error=invalid_number&foodID=" + foodIdStr);
+            response.sendRedirect("view-food-detail?error=feedback_invalid_number&foodID=" + foodIdStr);
             return;
         }
 
-        // Kiểm tra xem rating có hợp lệ không (từ 1 đến 5)
         if (rating < 1 || rating > 5) {
-            response.sendRedirect("view-food-detail?error=invalid_rating&foodID=" + foodID);
+            response.sendRedirect("view-food-detail?error=feedback_invalid_rating&foodID=" + foodID);
             return;
         }
 
-        // Kiểm tra xem người dùng đã mua món ăn chưa
         OrderDAO orderDAO = new OrderDAO();
-        boolean hasOrdered = orderDAO.isFoodPurchasedByUser(foodID, user.getUserID());
-        if (!hasOrdered) {
-            response.sendRedirect("view-food-detail?error=no_purchase&foodID=" + foodID);
+        if (!orderDAO.isFoodPurchasedByUser(foodID, user.getUserID())) {
+            response.sendRedirect("view-food-detail?error=feedback_no_purchase&foodID=" + foodID);
             return;
         }
 
-        // Kiểm tra xem người dùng đã đánh giá món ăn này chưa
         FeedbackDAO feedbackDAO = new FeedbackDAO();
-        boolean alreadyReviewed = feedbackDAO.hasUserReviewedFood(user.getUserID(), foodID);
-        if (alreadyReviewed) {
-            response.sendRedirect("view-food-detail?error=already_reviewed&foodID=" + foodID);
+        if (feedbackDAO.hasUserReviewedFood(user.getUserID(), foodID)) {
+            response.sendRedirect("view-food-detail?error=feedback_already_reviewed&foodID=" + foodID);
             return;
         }
 
-        // Lấy thông tin món ăn
         FoodDAO foodDAO = new FoodDAO();
         Food food = foodDAO.getProductBYID(String.valueOf(foodID));
         if (food == null) {
-            response.sendRedirect("view-food-detail?error=food_not_found&foodID=" + foodIdStr);
+            response.sendRedirect("view-food-detail?error=feedback_food_not_found&foodID=" + foodIdStr);
             return;
         }
 
-        // Tạo và lưu feedback mới
         Feedback feedback = new Feedback();
         feedback.setUser(user);
         feedback.setFood(food);
@@ -126,13 +117,13 @@ public class FeedbackController extends HttpServlet {
 
         boolean success = feedbackDAO.addFeedback(feedback);
         if (success) {
-            response.sendRedirect("view-food-detail?foodID=" + foodID + "&success=comment_added");
+            response.sendRedirect("view-food-detail?foodID=" + foodID + "&success=feedback_added");
         } else {
-            response.sendRedirect("view-food-detail?foodID=" + foodID + "&error=true");
+            response.sendRedirect("view-food-detail?foodID=" + foodID + "&error=feedback_failed");
         }
     }
 
-    // Phan hoi cho moi nguoi
+    // Phản hồi cho mọi người
     private void replyFeedback(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
@@ -146,50 +137,71 @@ public class FeedbackController extends HttpServlet {
         String feedbackIdStr = request.getParameter("feedbackId");
         String replyText = request.getParameter("replyText");
 
-        if (feedbackIdStr == null || feedbackIdStr.trim().isEmpty() || replyText == null || replyText.trim().isEmpty()) {
-            response.sendRedirect("view-food-detail?error=missing_parameters&feedbackID=" + feedbackIdStr);
+        if (feedbackIdStr == null || feedbackIdStr.trim().isEmpty()) {
+            response.sendRedirect("view-food-detail?error=reply_missing_feedback_id");
+            return;
+        }
+        if (replyText == null || replyText.trim().isEmpty()) {
+            response.sendRedirect("view-food-detail?error=reply_empty_reply_text&feedbackID=" + feedbackIdStr);
             return;
         }
 
         int feedbackID;
-
         try {
             feedbackID = Integer.parseInt(feedbackIdStr);
         } catch (NumberFormatException e) {
-            response.sendRedirect("view-food-detail?error=invalid_number&feedbackID=" + feedbackIdStr);
+            response.sendRedirect("view-food-detail?error=reply_invalid_number&feedbackID=" + feedbackIdStr);
             return;
         }
 
-        // Kiểm tra xem feedback có tồn tại hay không
         FeedbackDAO feedbackDAO = new FeedbackDAO();
         Feedback feedback = feedbackDAO.getFeedbackById(feedbackID);
 
         if (feedback == null) {
-            response.sendRedirect("view-food-detail?error=feedback_not_found&feedbackID=" + feedbackIdStr);
+            response.sendRedirect("view-food-detail?error=reply_feedback_not_found&feedbackID=" + feedbackIdStr);
             return;
         }
 
-        // Kiểm tra xem người dùng có quyền trả lời feedback hay không (ví dụ: staff, admin hoặc người dùng có liên quan)
-        if (user.getUserID() != feedback.getUser().getUserID() && !user.getRole().equals("Admin") && !user.getRole().equals("Staff")) {
-            response.sendRedirect("view-food-detail?error=no_permission&feedbackID=" + feedbackIdStr);
+        if (feedback.getFood() == null) {
+            response.sendRedirect("view-food-detail?error=reply_food_not_found&feedbackID=" + feedbackIdStr);
             return;
+        }
+
+        // Chỉ cho phép trả lời nếu:
+        // 1. Là Admin hoặc Staff
+        // 2. Hoặc là người viết feedback
+        // 3. Hoặc đã mua món ăn
+        if (!user.getRole().equals("Admin") && !user.getRole().equals("Staff")) {
+            // Không phải Admin hoặc Staff
+            boolean isOwner = user.getUserID() == feedback.getUser().getUserID();
+            OrderDAO orderDAO = new OrderDAO();
+            boolean hasPurchased = orderDAO.isFoodPurchasedByUser(feedback.getFood().getFoodID(), user.getUserID());
+
+            System.out.println("UserID: " + user.getUserID() + ", FeedbackOwnerID: " + feedback.getUser().getUserID());
+            System.out.println("isOwner = " + isOwner + ", hasPurchased = " + hasPurchased);
+
+            // Kiểm tra quyền trả lời phản hồi
+            // Chỉ cho phép trả lời nếu là chủ sở hữu hoặc đã mua món ăn
+            if (!isOwner && !hasPurchased) {
+                response.sendRedirect("view-food-detail?foodID=" + feedback.getFood().getFoodID() + "&error=reply_no_purchase_permission&feedbackID=" + feedbackIdStr);
+                return;
+            }
         }
 
         // Tạo và lưu phản hồi
         FeedbackReply reply = new FeedbackReply();
         reply.setFeedback(feedback);
-        reply.setUser(user);  // Sửa tại đây để truyền đối tượng User vào
+        reply.setUser(user);
         reply.setReplyText(replyText);
         reply.setReplyAt(new Date());
 
         FeedbackDAO replyDAO = new FeedbackDAO();
         boolean success = replyDAO.addReply(reply);
 
-        // Kiểm tra kết quả và redirect
         if (success) {
-            response.sendRedirect("view-food-detail?foodID=" + feedback.getFood().getFoodID() + "&success=true");
+            response.sendRedirect("view-food-detail?foodID=" + feedback.getFood().getFoodID() + "&success=reply_added");
         } else {
-            response.sendRedirect("view-food-detail?foodID=" + feedback.getFood().getFoodID() + "&error=true");
+            response.sendRedirect("view-food-detail?foodID=" + feedback.getFood().getFoodID() + "&error=reply_failed");
         }
     }
 

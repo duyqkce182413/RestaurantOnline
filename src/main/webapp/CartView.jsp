@@ -164,22 +164,27 @@
         <jsp:include page="Header.jsp"></jsp:include>
 
             <div class="container my-5">
-                <h3 class="text-center mb-4">Giỏ Hàng Của Bạn</h3>
-                <div class="cart-table">
-                    <form action="update-cart" method="get" id="cartForm">
-                        <input type="hidden" name="action" value="update">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Sản Phẩm</th>
-                                    <th>Hình Ảnh</th>
-                                    <th>Số Lượng</th>
-                                    <th>Giá</th>
-                                    <th>Tổng</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
+            <c:if test="${not empty param.error}">
+                <div class="alert alert-danger text-center"">
+                    ${param.error}
+                </div>
+            </c:if>
+            <h3 class="text-center mb-4">Giỏ Hàng Của Bạn</h3>
+            <div class="cart-table">
+                <form action="update-cart" method="get" id="cartForm">
+                    <input type="hidden" name="action" value="update">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Sản Phẩm</th>
+                                <th>Hình Ảnh</th>
+                                <th>Số Lượng</th>
+                                <th>Giá</th>
+                                <th>Tổng</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
                             <c:forEach items="${cartItems}" var="cartItems">
 
@@ -203,16 +208,16 @@
                                     <td class="price">${cartItems.getFood().price}</td>
                                     <td class="row-total">${cartItems.getFood().price*cartItems.getCart().quantity}</td>
 <!--                            <input type="hidden" name="foodId" value="${cartItems.getFood().foodID}">-->
-                            <td>
-                                <input type="hidden" name="foodId" value="${cartItems.getFood().foodID}">
-                                <a href="javascript:void(0)" onclick="removeItem(this, ${cartItems.getFood().foodID})">
-                                    <i class="fa-solid fa-trash"></i>
-                                </a>
+                                    <td>
+                                        <input type="hidden" name="foodId" value="${cartItems.getFood().foodID}">
+                                        <a href="javascript:void(0)" onclick="removeItem(this, ${cartItems.getFood().foodID})">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
 
-                            </td>
-                            </tr>
+                                    </td>
+                                </tr>
 
-                        </c:forEach>
+                            </c:forEach>
 
                         </tbody>
 
@@ -229,11 +234,12 @@
                     </script>
                 </c:if>
 
-                 <c:if test="${param.error == 'Cart is empty'}">
+                <c:if test="${param.error == 'Cart is empty'}">
                     <script>
                         alert("Giỏ hàng không được trống");
                     </script>
                 </c:if>   
+
                 <div class="cart-summary">
                     <p><strong>Tổng số lượng:</strong> <span id="totalItems">0</span> sản phẩm</p>
                     <p><strong>Tổng số tiền:</strong> <span id="totalAmount">0</span> VND</p>

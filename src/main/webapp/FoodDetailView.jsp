@@ -235,30 +235,88 @@
 
                 <%--  ================ Phần Feedback và Phản hồi ==================== --%>
                 <div class="mt-5 feedback-section">
+                    <c:if test="${not empty param.error}">
+                        <div class="alert alert-danger">
+                            <c:choose>
+                                <c:when test="${param.error == 'feedback_missing_parameters'}">
+                                    Vui lòng cung cấp đầy đủ thông tin đánh giá!
+                                </c:when>
+                                <c:when test="${param.error == 'feedback_invalid_number'}">
+                                    ID món ăn hoặc điểm đánh giá không hợp lệ!
+                                </c:when>
+                                <c:when test="${param.error == 'feedback_invalid_rating'}">
+                                    Ðánh giá phải từ 1 đến 5 sao. Không được để trống!
+                                </c:when>
+                                <c:when test="${param.error == 'feedback_no_purchase'}">
+                                    Bạn cần mua món ăn này để đánh giá!
+                                </c:when>
+                                <c:when test="${param.error == 'feedback_already_reviewed'}">
+                                    Bạn đã đánh giá món ăn này rồi!
+                                </c:when>
+                                <c:when test="${param.error == 'feedback_food_not_found'}">
+                                    Món ăn không tồn tại!
+                                </c:when>
+                                <c:when test="${param.error == 'feedback_failed'}">
+                                    Không thể lưu đánh giá, vui lòng thử lại!
+                                </c:when>
+
+                                <c:when test="${param.error == 'reply_missing_feedback_id'}">
+                                    Không tìm thấy ID phản hồi!
+                                </c:when>
+                                <c:when test="${param.error == 'reply_empty_reply_text'}">
+                                    Vui lòng nhập nội dung phản hồi trước khi gửi!
+                                </c:when>
+                                <c:when test="${param.error == 'reply_invalid_number'}">
+                                    ID phản hồi không hợp lệ!
+                                </c:when>
+                                <c:when test="${param.error == 'reply_feedback_not_found'}">
+                                    Phản hồi không tồn tại!
+                                </c:when>
+                                <c:when test="${param.error == 'reply_food_not_found'}">
+                                    Món ăn liên quan đến phản hồi không tồn tại!
+                                </c:when>
+                                <c:when test="${param.error == 'reply_no_purchase_permission'}">
+                                    Bạn cần mua món ăn này để trả lời phản hồi!
+                                </c:when>
+                                <c:when test="${param.error == 'reply_failed'}">
+                                    Không thể lưu phản hồi, vui lòng thử lại!
+                                </c:when>
+                                <c:when test="${param.error == 'delete_invalid_reply_id'}">
+                                    ID phản hồi không hợp lệ!
+                                </c:when>
+                                <c:when test="${param.error == 'delete_reply_failed'}">
+                                    Không thể xóa phản hồi, vui lòng thử lại!
+                                </c:when>
+
+                                <c:otherwise>
+                                    Có lỗi xảy ra!
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </c:if>
+
+                    <c:if test="${not empty param.success}">
+                        <div class="alert alert-success">
+                            <c:choose>
+                                <c:when test="${param.success == 'feedback_added'}">
+                                    Đánh giá của bạn đã được gửi thành công!
+                                </c:when>
+                                <c:when test="${param.success == 'reply_added'}">
+                                    Phản hồi của bạn đã được gửi thành công!
+                                </c:when>
+                                <c:when test="${param.success == 'delete_reply_success'}">
+                                    Phản hồi đã được xóa thành công!
+                                </c:when>
+
+                                <c:otherwise>
+                                    Có lỗi xảy ra!
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </c:if>
                     <!-- Form Add Feedback -->
                     <div class="mt-4">
                         <h4>Gửi đánh giá của bạn</h4>
-                        <%-- Hiển thị thông báo khi đánh giá thành công hoặc có lỗi --%>
-                        <c:if test="${param.success == 'comment_added'}">
-                            <div class="alert alert-success">Bạn đã bình luận thành công!</div>
-                        </c:if>
-
-                        <c:if test="${param.error == 'already_reviewed'}">
-                            <div class="alert alert-warning">Bạn đã đánh giá món ăn này rồi!</div>
-                        </c:if>
-
-                        <c:if test="${param.error == 'no_purchase'}">
-                            <div class="alert alert-danger">Bạn cần mua món ăn này trước khi đánh giá!</div>
-                        </c:if>
-
-                        <c:if test="${param.error == 'invalid_rating'}">
-                            <div class="alert alert-danger">Đánh giá không hợp lệ! Vui lòng chọn số sao từ 1 đến 5.</div>
-                        </c:if>
-
-                        <c:if test="${param.error == 'food_not_found'}">
-                            <div class="alert alert-danger">Không tìm thấy món ăn!</div>
-                        </c:if>
-
                         <form action="submitFeedback" method="POST" onsubmit="return validateFeedbackForm();">
                             <input type="hidden" name="foodId" value="${food_detail.foodID}">
                             <input type="hidden" id="ratingValue" name="rating" value="0"> <!-- Giá trị mặc định là 0 sao -->
@@ -314,7 +372,6 @@
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirmDelete();">Xóa</button>
                                 </form>
                             </c:if>
-
 
                             <!-- Hiển thị phản hồi của shop nếu có -->
                             <c:if test="${not empty feedback.reply}">
@@ -372,12 +429,6 @@
                                 </div>
                             </c:if>
 
-                            <!-- Hiển thị nút phản hồi nếu chưa có phản hồi -->
-                            <c:if test="${empty feedback.reply}">
-                                <button class="btn btn-sm btn-primary reply-feedback" data-feedbackid="${feedback.feedbackID}">
-                                    Phản hồi
-                                </button>
-                            </c:if>
                             <!-- Luôn có form để JS tìm thấy -->
                             <form id="reply-form-${feedback.feedbackID}" class="reply-form" style="display:none;" method="POST" action="replyFeedback">
                                 <textarea id="replyText-${feedback.feedbackID}" name="replyText" rows="4" class="form-control" placeholder="Nhập phản hồi của bạn..."></textarea>
@@ -530,7 +581,16 @@
                                                         }
                                                     }
 
-
+                                                    // Bat Loi khi gui reply text trong
+                                                    document.querySelectorAll('.reply-form').forEach(form => {
+                                                        form.addEventListener('submit', function (e) {
+                                                            const replyText = this.querySelector('textarea[name="replyText"]').value;
+                                                            if (!replyText.trim()) {
+                                                                e.preventDefault();
+                                                                alert('Vui lòng nhập nội dung phản hồi!');
+                                                            }
+                                                        });
+                                                    });
 
 
                                                     // Sua Feedback

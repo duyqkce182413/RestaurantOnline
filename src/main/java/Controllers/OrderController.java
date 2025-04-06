@@ -131,16 +131,27 @@ public class OrderController extends HttpServlet {
             return;
         }
 
-        // Kiểm tra số lượng sản phẩm trong kho
+        // Kiểm tra số lượng sản phẩm trong kho và thu thập tất cả lỗi
+        StringBuilder errorMessages = new StringBuilder();
         for (CartItem item : cartItems) {
-            int availableQuantity = item.getFood().getQuantity(); // Giả sử có phương thức để lấy số lượng sản phẩm hiện có trong kho
+            int availableQuantity = item.getFood().getQuantity();
             if (item.getCart().getQuantity() > availableQuantity) {
-                String errorMessage = URLEncoder.encode("Số lượng trong kho không đủ để bạn đặt hàng cho sản phẩm " + item.getFood().getFoodName(), StandardCharsets.UTF_8);
-                response.sendRedirect("view-cart?error=" + errorMessage);
-                return;
+                if (errorMessages.length() > 0) {
+                    errorMessages.append("\n"); // Xuống dòng giữa các lỗi
+                }
+                errorMessages.append("Số lượng trong kho không đủ để bạn đặt hàng cho sản phẩm ")
+                        .append(item.getFood().getFoodName());
             }
         }
 
+        // Nếu có lỗi, chuyển hướng với tất cả thông báo lỗi
+        if (errorMessages.length() > 0) {
+            String encodedError = URLEncoder.encode(errorMessages.toString(), StandardCharsets.UTF_8);
+            response.sendRedirect("view-cart?error=" + encodedError);
+            return;
+        }
+
+        // Nếu không có lỗi, tiếp tục xử lý đơn hàng
         request.setAttribute("cartItems", cartItems);
         request.setAttribute("address", address);
         request.getRequestDispatcher("OrderConfirmation.jsp").forward(request, response);

@@ -490,8 +490,8 @@ public class OrderDAO extends DBContext {
         // Tạo một đối tượng OrderDAO
         OrderDAO orderDAO = new OrderDAO();
 
-        int foodId = 2;
-        int userId = 1;
+        int foodId = 1;
+        int userId = 6;
 
         // Kiểm tra xem người dùng đã mua món ăn này chưa
         boolean hasPurchased = orderDAO.isFoodPurchasedByUser(foodId, userId);

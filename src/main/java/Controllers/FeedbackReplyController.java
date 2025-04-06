@@ -87,7 +87,7 @@ public class FeedbackReplyController extends HttpServlet {
                     break;
                 case "/staff-delete-feedback-reply":
                     staffDeleteFeedbackReply(request, response);
-                    break;    
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,14 +122,24 @@ public class FeedbackReplyController extends HttpServlet {
     }
 
     private void deleteFeedbackReply(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int replyID = Integer.parseInt(request.getParameter("replyID"));
+        String replyIdStr = request.getParameter("replyID");
+        String foodIdStr = request.getParameter("foodID");
+
+        int replyID;
+        try {
+            replyID = Integer.parseInt(replyIdStr);
+        } catch (NumberFormatException e) {
+            response.sendRedirect("view-food-detail?foodID=" + foodIdStr + "&error=delete_invalid_reply_id");
+            return;
+        }
+
         FeedbackReplyDAO feedbackReplyDAO = new FeedbackReplyDAO();
         boolean isDeleted = feedbackReplyDAO.deleteFeedbackReply(replyID);
 
         if (isDeleted) {
-            response.sendRedirect("view-food-detail?foodID=" + request.getParameter("foodID") + "&success=true");
+            response.sendRedirect("view-food-detail?foodID=" + foodIdStr + "&success=delete_reply_success");
         } else {
-            response.sendRedirect("view-food-detail?foodID=" + request.getParameter("foodID") + "&error=true");
+            response.sendRedirect("view-food-detail?foodID=" + foodIdStr + "&error=delete_reply_failed");
         }
     }
 
@@ -139,7 +149,7 @@ public class FeedbackReplyController extends HttpServlet {
         String replyText = request.getParameter("replyText");
         int feedbackID = Integer.parseInt(request.getParameter("feedbackID"));
         int staffID = Integer.parseInt(request.getParameter("staffID"));
-        
+
         // Cập nhật phản hồi
         FeedbackReplyDAO replyDAO = new FeedbackReplyDAO();
         boolean isUpdated = replyDAO.updateFeedbackReply(replyID, replyText);
@@ -150,12 +160,12 @@ public class FeedbackReplyController extends HttpServlet {
             response.getWriter().write("Cập nhật phản hồi thất bại!");
         }
     }
-    
+
     private void staffDeleteFeedbackReply(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int replyID = Integer.parseInt(request.getParameter("replyID"));
         int feedbackID = Integer.parseInt(request.getParameter("feedbackID"));
         int staffID = Integer.parseInt(request.getParameter("staffID"));
-        
+
         FeedbackReplyDAO feedbackReplyDAO = new FeedbackReplyDAO();
         boolean isDeleted = feedbackReplyDAO.deleteFeedbackReply(replyID);
 

@@ -112,7 +112,6 @@
                 </div>
 
                 <!-- Recipe Table -->
-                <!-- Recipe Table -->
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -178,7 +177,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Required Quantity</label>
-                                <input type="number" class="form-control" name="requiredQuantity" min="1" required>
+                                <input type="number" step="0.1" class="form-control" name="requiredQuantity" min="0.1" required>
                             </div>
                         </form>
                     </div>
@@ -212,7 +211,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Required Quantity</label>
-                                <input type="number" class="form-control" id="editRequiredQuantity" name="requiredQuantity" min="1" required>
+                                <input type="number" step="0.1" class="form-control" id="editRequiredQuantity" name="requiredQuantity" min="0.1" required>
                             </div>
                         </form>
                     </div>
@@ -254,16 +253,16 @@
                                                     document.getElementById('editIngredientId').value = ingredientId;
                                                     document.getElementById('editFoodName').value = foodName;
                                                     document.getElementById('editIngredientName').value = ingredientName + " (" + unit + ")";
-                                                    document.getElementById('editRequiredQuantity').value = requiredQuantity;
+                                                    document.getElementById('editRequiredQuantity').value = requiredQuantity; // Hiển thị số thập phân
 
                                                     new bootstrap.Modal(document.getElementById('editRecipeModal')).show();
                                                 }
 
                                                 function confirmDelete(foodId, ingredientId, foodName, ingredientName) {
                                                     console.log("Confirm delete:", foodId, ingredientId, foodName, ingredientName);
+                                                    document.getElementById('deleteRecipeInfo').innerText = `Food: ${foodName}, Ingredient: ${ingredientName}`;
                                                     const deleteBtn = document.getElementById('deleteRecipeBtn');
                                                     deleteBtn.onclick = function () {
-                                                        // Add debug logging
                                                         console.log("Redirecting to: delete-recipe?foodId=" + foodId + "&ingredientId=" + ingredientId);
                                                         window.location.href = "delete-recipe?foodId=" + foodId + "&ingredientId=" + ingredientId;
                                                     };

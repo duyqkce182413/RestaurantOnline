@@ -247,15 +247,15 @@ public class FoodDAO extends DBContext {
             int quantityIncrease = newQuantity - currentQuantity;
 
             while (rs.next()) {
-                int requiredQuantity = rs.getInt("RequiredQuantity");
+                double requiredQuantity = rs.getDouble("RequiredQuantity"); // Thay getInt thành getDouble
                 int stockQuantity = rs.getInt("StockQuantity");
                 String ingredientName = rs.getString("IngredientName");
-                int totalRequired = requiredQuantity * quantityIncrease;
+                double totalRequired = requiredQuantity * quantityIncrease; // Thay int thành double
 
                 if (quantityIncrease > 0 && stockQuantity < totalRequired) {
-                    int shortage = totalRequired - stockQuantity;
+                    double shortage = totalRequired - stockQuantity; // Thay int thành double
                     isAvailable = false;
-                    missingIngredients.add(ingredientName + " (thiếu " + shortage + " " + getUnit(foodId, rs.getInt("IngredientID")) + ")");
+                    missingIngredients.add(ingredientName + " (thiếu " + String.format("%.1f", shortage) + " " + getUnit(foodId, rs.getInt("IngredientID")) + ")");
                 }
             }
             return isAvailable;
@@ -287,7 +287,7 @@ public class FoodDAO extends DBContext {
                 + "WHERE r.FoodID = ?";
 
         try ( Connection conn = getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, quantityIncrease);  // Số lượng tăng thêm
+            ps.setInt(1, quantityIncrease);  // Số lượng tăng thêm vẫn là int vì quantity trong Foods là int
             ps.setInt(2, foodId);            // FoodID để lấy công thức
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;

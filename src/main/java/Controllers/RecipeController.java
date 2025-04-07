@@ -133,12 +133,12 @@ public class RecipeController extends HttpServlet {
         request.getRequestDispatcher("ManageRecipeView.jsp").forward(request, response);
     }
 
-    private void addRecipe(HttpServletRequest request, HttpServletResponse response)
+   private void addRecipe(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             int foodId = Integer.parseInt(request.getParameter("foodId"));
             int ingredientId = Integer.parseInt(request.getParameter("ingredientId"));
-            int requiredQuantity = Integer.parseInt(request.getParameter("requiredQuantity"));
+            double requiredQuantity = Double.parseDouble(request.getParameter("requiredQuantity")); // Thay int thành double
 
             Recipe recipe = new Recipe(foodId, ingredientId, requiredQuantity);
             recipeDAO.addRecipe(recipe);
@@ -155,7 +155,7 @@ public class RecipeController extends HttpServlet {
         try {
             int foodId = Integer.parseInt(request.getParameter("foodId"));
             int ingredientId = Integer.parseInt(request.getParameter("ingredientId"));
-            int requiredQuantity = Integer.parseInt(request.getParameter("requiredQuantity"));
+            double requiredQuantity = Double.parseDouble(request.getParameter("requiredQuantity")); // Thay int thành double
 
             Recipe recipe = new Recipe(foodId, ingredientId, requiredQuantity);
             recipeDAO.updateRecipe(recipe);

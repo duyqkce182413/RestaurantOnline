@@ -11,8 +11,7 @@
               integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
               crossorigin="anonymous" referrerpolicy="no-referrer" />
         <!-- Bootstrap -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-              rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Custom CSS -->
         <link rel="stylesheet" href="./CSS/HeaderAndFooter_CSS.css" />
         <style>
@@ -34,7 +33,6 @@
                 text-transform: uppercase;
                 font-size: 18px;
             }
-
             .sidebar a {
                 color: white;
                 text-decoration: none;
@@ -45,12 +43,10 @@
                 text-align: left;
                 border-radius: 5px;
             }
-
             .sidebar a:hover {
                 background-color: #495057;
                 transition: background-color 0.3s;
             }
-
             .content {
                 margin-left: 250px;
                 padding: 20px;
@@ -58,13 +54,11 @@
                 width: calc(100% - 250px);
                 float: left;
             }
-
             .clearfix::after {
                 content: "";
                 display: table;
                 clear: both;
             }
-
             .is-invalid {
                 border-color: red;
             }
@@ -82,10 +76,8 @@
         <jsp:include page="Dashboard_Header.jsp"></jsp:include>
 
             <div class="wrapper clearfix row">
-                <!-- Sidebar -->
             <jsp:include page="Dashboard_Sidebar.jsp"></jsp:include>
 
-                <!-- Main content -->
                 <div class="content col-6">
                     <h1>Food Management</h1>
                 <c:if test="${not empty error}">
@@ -93,12 +85,10 @@
                         ${error}
                     </div>
                 </c:if>
-                <!-- Search and Filter Form -->
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <form action="manage-foods" method="GET" class="d-flex">
-                            <input type="text" name="search" class="form-control me-2" 
-                                   placeholder="Search by Food Name" value="${param.search}">
+                            <input type="text" name="search" class="form-control me-2" placeholder="Search by Food Name" value="${param.search}">
                             <button type="submit" class="btn btn-primary">Search</button>
                         </form>
                     </div>
@@ -116,21 +106,19 @@
                         </form>
                     </div>
                     <div class="col-md-2">
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" 
-                                data-bs-target="#addFoodModal">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addFoodModal">
                             <i class="fas fa-plus"></i> Add New Food
                         </button>
                     </div>
                 </div>
 
-                <!-- Food Table -->
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Image</th>
                             <th>Food Name</th>
-                            <th>Description</th>                            
+                            <th>Description</th>
                             <th>Price</th>
                             <th>Category</th>
                             <th>Available</th>
@@ -307,7 +295,7 @@
                                 fetch('view-food-detail?foodID=' + foodId + '&format=json')
                                         .then(response => response.json())
                                         .then(data => {
-                                            const food = data.food; // Lấy đối tượng food từ dữ liệu trả về
+                                            const food = data.food;
                                             document.getElementById('editFoodId').value = food.foodID;
                                             document.getElementById('editFoodName').value = food.foodName;
                                             document.getElementById('editPrice').value = food.price;

@@ -1,22 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Models;
 
-/**
- *
- * @author admin
- */
 public class Recipe {
+
     private int foodID;
     private int ingredientID;
-    private int requiredQuantity;
+    private double requiredQuantity; // Thay từ int sang double
 
     public Recipe() {
     }
 
-    public Recipe(int foodID, int ingredientID, int requiredQuantity) {
+    public Recipe(int foodID, int ingredientID, double requiredQuantity) { // Thay int sang double
         this.foodID = foodID;
         this.ingredientID = ingredientID;
         this.requiredQuantity = requiredQuantity;
@@ -38,11 +31,11 @@ public class Recipe {
         this.ingredientID = ingredientID;
     }
 
-    public int getRequiredQuantity() {
+    public double getRequiredQuantity() { // Thay int sang double
         return requiredQuantity;
     }
 
-    public void setRequiredQuantity(int requiredQuantity) {
+    public void setRequiredQuantity(double requiredQuantity) { // Thay int sang double
         this.requiredQuantity = requiredQuantity;
     }
 
@@ -50,6 +43,4 @@ public class Recipe {
     public String toString() {
         return "Recipe{" + "foodID=" + foodID + ", ingredientID=" + ingredientID + ", requiredQuantity=" + requiredQuantity + '}';
     }
-    
-    
 }

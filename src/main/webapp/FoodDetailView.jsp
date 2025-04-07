@@ -211,7 +211,9 @@
                 <!-- Food Details -->
                 <div class="col-md-6 margin-left">
                     <h2 class="food-name">${food_detail.foodName}</h2>
-                    <p class="food-price">${food_detail.price} VND</p>
+                    <p class="food-price">
+                        <fmt:formatNumber value="${food_detail.price}" type="number" maxFractionDigits="0" groupingUsed="true" /> VND
+                    </p>
                     <p class="food-description">Mô tả: ${food_detail.description} </p>
 
                     <!-- Quantity and Add to Cart -->

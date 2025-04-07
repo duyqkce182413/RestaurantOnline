@@ -177,8 +177,7 @@ public class CartController extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            // Nếu acc là null, chuyển hướng đến trang đăng nhập hoặc trang lỗi
-            response.sendRedirect("LoginView.jsp"); // hoặc trang khác phù hợp
+            response.sendRedirect("LoginView.jsp");
             return;
         }
 
@@ -188,25 +187,41 @@ public class CartController extends HttpServlet {
         String[] quantities = request.getParameterValues("quantity");
         String removeProductIdStr = request.getParameter("removeProductId");
 
-        System.out.println(quantities);
+        StringBuilder messageBuilder = new StringBuilder(); // Dùng để gom nhiều thông báo nếu cần
+        FoodDAO foodDAO = new FoodDAO();
         if (removeProductIdStr != null) {
             int removeProductId = Integer.parseInt(removeProductIdStr);
             dao.deleteCartItem(userId, removeProductId);
         } else if (foodIds != null && quantities != null) {
-            // Thêm sản phẩm vào giỏ hàng hoặc cập nhật số lượng
             for (int i = 0; i < foodIds.length; i++) {
                 int productId = Integer.parseInt(foodIds[i]);
                 int quantity = Integer.parseInt(quantities[i]);
-                // Kiểm tra nếu sản phẩm đã có trong giỏ hàng
-                if (dao.isFoodInCart(userId, productId)) {
 
+                int stockQuantity = dao.getFoodStock(productId);
+                String foodName = foodDAO.getFoodName(productId); // ← lấy tên món ăn
+
+                if (quantity > stockQuantity) {
+                    quantity = stockQuantity;
+                    messageBuilder.append("Món ăn <b>").append(foodName)
+                            .append("</b> vượt quá hàng tồn kho. Đã cập nhật về tối đa là <b>")
+                            .append(stockQuantity).append("</b>.<br>");
+                }
+
+                if (dao.isFoodInCart(userId, productId)) {
                     dao.updateCartItemQuantity(userId, productId, quantity);
                 } else {
-                    // Nếu chưa có, thêm sản phẩm vào giỏ hàng
                     dao.addCartItem(userId, productId, quantity);
                 }
             }
+
         }
+
+        // Nếu có thông báo thì truyền lên request
+        if (messageBuilder.length() > 0) {
+            request.setAttribute("stockMessage", messageBuilder.toString());
+        }
+
         getCart(request, response);
     }
+
 }

@@ -2,6 +2,8 @@
 <%--<%@ page import="model.Product" %>--%>
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -211,7 +213,9 @@
                                             <button type="button" class="quantity-btn" onclick="increaseQuantity(this)">+</button>
                                         </div>
                                     </td>
-                                    <td class="price">${cartItems.getFood().price}</td>
+                                    <td class="price">
+                                        <fmt:formatNumber value="${cartItems.getFood().price}" type="currency" currencySymbol="VND" groupingUsed="true" />
+                                    </td>
                                     <td class="row-total">${cartItems.getFood().price*cartItems.getCart().quantity}</td>
 <!--                            <input type="hidden" name="foodId" value="${cartItems.getFood().foodID}">-->
                                     <td>

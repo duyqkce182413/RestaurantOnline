@@ -109,8 +109,10 @@
                                             <a style="text-decoration: none" href="view-food-detail?foodID=${f.foodID}">
                                                 <h5 class="card-title">${f.foodName}</h5>
                                             </a>
-                                            <p class="card-text">${f.price} VND</p>
-                                            
+                                            <p class="card-text">
+                                                <fmt:formatNumber value="${f.price}" type="number" maxFractionDigits="0" groupingUsed="true" /> VND
+                                            </p>
+
                                             <c:choose>
                                                 <c:when test="${f.quantity > 0 and f.available}">
                                                     <button type="button" class="btn btn-primary" 
@@ -182,7 +184,7 @@
                     document.getElementById('modalFoodID').value = foodID;
                     document.getElementById('modalFoodName').innerText = foodName;
                     document.getElementById('modalFoodImage').src = '${pageContext.request.contextPath}/image/' + foodImage;
-                    document.getElementById('modalFoodPrice').innerText = `Giá: ` + foodPrice + ` VND`;
+                    document.getElementById('modalFoodPrice').innerText = `Giá: ` + Number(foodPrice).toLocaleString('vi-VN') + ` VND`;
                     document.getElementById('modalFoodQuantity').innerText = foodQuantity; // Cập nhật số lượng còn lại
                     document.getElementById('quantityInput').max = foodQuantity; // Đặt max cho input số lượng
 

@@ -363,4 +363,21 @@ public class FoodDAO extends DBContext {
             }
         }
     }
+
+    public String getFoodName(int foodId) {
+        String name = "";
+        try {
+            String sql = "SELECT FoodName FROM Foods WHERE FoodID = ?";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, foodId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                name = rs.getString("FoodName");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return name;
+    }
+
 }

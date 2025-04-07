@@ -1,6 +1,5 @@
 package Controllers;
 
-import DAO.FoodDAO;
 import DAO.UserDAO;
 import Models.User;
 import Utils.PasswordUtil;
@@ -173,7 +172,6 @@ public class UserController extends HttpServlet {
             if (username.contains(" ")) {
                 errors.add("Username must not contain spaces.");
             }
-            // Chỉ kiểm tra số trong fullName
             if (fullName.matches(".*[0-9].*")) {
                 errors.add("Full Name must not contain numbers.");
             }
@@ -183,6 +181,11 @@ public class UserController extends HttpServlet {
             if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
                 errors.add("Invalid Email format.");
             }
+            // Thêm kiểm tra độ dài mật khẩu
+            if (password == null || password.length() < 8) {
+                errors.add("Password must be at least 8 characters long.");
+            }
+
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             sdf.setLenient(false);
             Date dateOfBirth = null;
@@ -206,11 +209,14 @@ public class UserController extends HttpServlet {
                 return;
             }
 
+            // Băm mật khẩu trước khi lưu
+//            String hashedPassword = PasswordUtil.hashPassword(password);
+
             User newUser = new User();
             newUser.setUsername(username);
             newUser.setFullName(fullName);
             newUser.setEmail(email);
-            newUser.setPasswordHash(password);
+            newUser.setPasswordHash(password); //newUser.setPasswordHash(hashedPassword); // Sử dụng mật khẩu đã băm
             newUser.setPhoneNumber(phoneNumber);
             newUser.setDateOfBirth(dateOfBirth);
             newUser.setGender(gender);

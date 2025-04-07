@@ -202,7 +202,7 @@
                             <div class="mb-3">
                                 <label class="form-label">Date of Birth (dd-MM-yyyy)</label>
                                 <input type="date" class="form-control" name="dateOfBirth"
-                                       value="${sessionScope.addUserDateOfBirth}" max="2025-03-12" required>
+                                       value="${sessionScope.addUserDateOfBirth}" max="2010-04-07" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Gender</label>

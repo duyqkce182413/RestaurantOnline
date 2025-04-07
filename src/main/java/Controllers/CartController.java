@@ -133,7 +133,7 @@ public class CartController extends HttpServlet {
             response.sendRedirect("LoginView.jsp"); // hoặc trang khác phù hợp
             return;
         }
-        
+
         // Nếu user là Admin hoặc Staff, chuyển hướng về trang chủ
         if (user.getRole().equalsIgnoreCase("Admin") || user.getRole().equalsIgnoreCase("Staff")) {
             response.sendRedirect("all");
@@ -158,9 +158,14 @@ public class CartController extends HttpServlet {
             // Giới hạn số lượng không vượt quá hàng tồn kho
             if (newQuantity > stockQuantity) {
                 newQuantity = stockQuantity;
+                request.setAttribute("stockMessage", "Số lượng vượt quá hàng tồn kho. Số lượng đã được cập nhật tối đa là " + stockQuantity + ".");
             }
             dao.updateCartItemQuantity(userId, productId, newQuantity);
         } else {
+            if (quantity > stockQuantity) {
+                quantity = stockQuantity;
+                request.setAttribute("stockMessage", "Số lượng vượt quá hàng tồn kho. Chỉ thêm tối đa " + stockQuantity + " sản phẩm.");
+            }
             // Nếu chưa có, thêm sản phẩm vào giỏ hàng
             dao.addCartItem(userId, productId, quantity);
         }

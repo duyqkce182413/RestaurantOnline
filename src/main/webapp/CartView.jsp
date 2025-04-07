@@ -169,6 +169,12 @@
                     ${param.error}
                 </div>
             </c:if>
+            <c:if test="${not empty stockMessage}">
+                <div class="alert alert-warning text-center">
+                    ${stockMessage}
+                </div>
+            </c:if>
+
             <h3 class="text-center mb-4">Giỏ Hàng Của Bạn</h3>
             <div class="cart-table">
                 <form action="update-cart" method="get" id="cartForm">
